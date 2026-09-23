@@ -30,7 +30,7 @@ export default function NotFound() {
         </div>
 
         <div className="pt-8 border-t border-stone-800 text-[10px] uppercase font-mono tracking-widest text-stone-500">
-          TSquare Clothing Cafe • Abeokuta Atelier
+          TSquare Clothing Cafe • TCC Office
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
+import { PasswordInput } from "@/components/common/PasswordInput";
 import { useAuth } from "@/lib/auth-context";
 import { CheckCircle2, Lock, AlertCircle, Loader2 } from "lucide-react";
 
@@ -89,11 +90,13 @@ export default function ResetPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} className="p-8 bg-[#151513] fine-border rounded-3xl space-y-5">
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+              <label htmlFor="reset-password" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                 New Password *
               </label>
-              <input
-                type="password"
+              <PasswordInput
+                id="reset-password"
+                name="password"
+                autoComplete="new-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -103,11 +106,14 @@ export default function ResetPasswordPage() {
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+              <label htmlFor="reset-confirm-password" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                 Confirm New Password *
               </label>
-              <input
-                type="password"
+              <PasswordInput
+                id="reset-confirm-password"
+                name="confirmPassword"
+                autoComplete="new-password"
+                visibilityLabel="confirm password"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}

@@ -40,7 +40,7 @@ export default function AccountRequestsPage() {
             Your Bespoke Requests
           </h1>
           <p className="text-xs text-stone-400 mt-1 font-light">
-            Every sartorial commission submitted to the TSquare atelier in Abeokuta.
+            Every sartorial commission submitted to TCC.
           </p>
         </div>
 

@@ -50,14 +50,10 @@ export function Navbar() {
     setIsCollectionsDropdownOpen(false);
   }, [pathname]);
 
-  // Dedicated client portal and bespoke configurator have their own purpose-built concierge headers
-  if (pathname.startsWith("/account") || pathname.startsWith("/bespoke/create")) {
-    return null;
-  }
-
   return (
     <>
       <header
+        aria-label="Main site header"
         className={cn(
           "fixed top-0 inset-x-0 z-40 transition-colors duration-300 transform-gpu",
           "h-20 flex flex-col justify-center border-b",

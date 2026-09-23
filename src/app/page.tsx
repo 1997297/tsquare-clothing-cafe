@@ -396,7 +396,7 @@ export default function HomePage() {
               {
                 num: "03",
                 title: "Apply your measurements",
-                desc: "Comprehensive 28-point physiological profile taken in person at our Abeokuta atelier or via concierge.",
+                desc: "Comprehensive 28-point physiological profile taken in person at the TCC office or via concierge.",
               },
               {
                 num: "04",
@@ -627,7 +627,7 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0">
           <Image
             src="/images/editorial/hero-editorial.jpg"
-            alt="Atelier Consultation in Abeokuta"
+            alt="Consultation at the TCC office"
             fill
             className="object-cover object-top filter brightness-[0.4]"
             sizes="100vw"
@@ -645,7 +645,7 @@ export default function HomePage() {
           </h2>
 
           <p className="mt-4 text-sm sm:text-lg text-stone-300 font-sans font-light max-w-xl mx-auto leading-relaxed">
-            Book a consultation, measurement session or fitting with our master tailors at our Abeokuta atelier.
+            Book a consultation, measurement session or fitting with our master tailors at the TCC office.
           </p>
 
           <div className="mt-8">

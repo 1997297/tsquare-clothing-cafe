@@ -3,7 +3,7 @@ import ContactClient from "./ContactClient";
 export const metadata = {
   title: "Contact & Atelier Liaison | TSquare Clothing Cafe",
   description:
-    "Connect with TSquare Clothing Cafe. Visit our Abeokuta atelier, book bespoke consultations, or reach our concierge desk in Ogun State, Nigeria.",
+    "Connect with TSquare Clothing Cafe. Visit the TCC office, book bespoke consultations, or reach our concierge desk.",
 };
 
 export default function ContactPage() {

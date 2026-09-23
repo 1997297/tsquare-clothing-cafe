@@ -171,7 +171,7 @@ create table if not exists public.appointments (
   confirmed_date text,
   confirmed_time text,
   status text check (status in ('requested', 'scheduled', 'confirmed', 'completed', 'rescheduled', 'cancelled')) default 'requested' not null,
-  location text default 'Atelier Abeokuta, Ogun State' not null,
+  location text default 'TCC office' not null,
   notes text,
   created_at timestamptz default timezone('utc'::text, now()) not null,
   updated_at timestamptz default timezone('utc'::text, now()) not null

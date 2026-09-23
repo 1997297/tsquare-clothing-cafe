@@ -13,7 +13,7 @@ import {
   AlertCircle,
   XCircle,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatOfficeLocation } from "@/lib/utils";
 
 export default function AccountAppointmentsPage() {
   const { appointments } = useAccountData();
@@ -133,7 +133,7 @@ export default function AccountAppointmentsPage() {
 
                   <div className="flex items-center gap-2.5 text-stone-300">
                     <MapPin className="w-4 h-4 text-champagne shrink-0" />
-                    <span className="truncate">{apt.location}</span>
+                    <span className="truncate">{formatOfficeLocation(apt.location)}</span>
                   </div>
                 </div>
 
@@ -169,7 +169,7 @@ export default function AccountAppointmentsPage() {
           </h3>
           <p className="text-xs text-stone-400 max-w-sm mx-auto leading-relaxed">
             {tab === "upcoming"
-              ? "Reserve a personal fitting session with our Abeokuta master cutters for measurements, canvas checks, or style consultations."
+              ? "Reserve a personal fitting session with our master cutters at the TCC office for measurements, canvas checks, or style consultations."
               : "Completed salon visits and consultation checkpoints will be archived here."}
           </p>
           {tab === "upcoming" && (

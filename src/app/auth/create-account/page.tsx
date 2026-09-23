@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
+import { PasswordInput } from "@/components/common/PasswordInput";
 import { useAuth } from "@/lib/auth-context";
 import { UserPlus, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -82,7 +83,7 @@ function CreateAccountForm() {
             Create Your Client Account
           </h1>
           <p className="mt-2 text-xs text-stone-400 font-light">
-            Begin an enduring sartorial relationship with our Abeokuta tailoring house.
+            Begin an enduring sartorial relationship with our tailoring house.
           </p>
         </div>
 
@@ -193,11 +194,13 @@ function CreateAccountForm() {
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
+              <label htmlFor="create-password" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
                 Create Password *
               </label>
-              <input
-                type="password"
+              <PasswordInput
+                id="create-password"
+                name="password"
+                autoComplete="new-password"
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -207,11 +210,14 @@ function CreateAccountForm() {
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
+              <label htmlFor="confirm-password" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
                 Confirm Password *
               </label>
-              <input
-                type="password"
+              <PasswordInput
+                id="confirm-password"
+                name="confirmPassword"
+                autoComplete="new-password"
+                visibilityLabel="confirm password"
                 required
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}

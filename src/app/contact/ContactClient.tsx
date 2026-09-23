@@ -55,7 +55,7 @@ export default function ContactClient() {
           <div className="lg:col-span-5 space-y-8">
             <div className="p-8 bg-[#151513] fine-border rounded-2xl sm:rounded-3xl space-y-6">
               <h3 className="font-display text-2xl text-warm-ivory">
-                The Abeokuta Atelier
+                The TCC Office
               </h3>
 
               <div className="space-y-4 text-xs text-stone-300">
@@ -168,7 +168,7 @@ export default function ContactClient() {
                     Inquiry Received
                   </h4>
                   <p className="text-sm text-stone-300 font-light max-w-md mx-auto leading-relaxed">
-                    Thank you, <strong className="text-warm-ivory">{formData.name}</strong>. Your message has been logged with our Abeokuta atelier desk. An atelier representative will respond via email/WhatsApp shortly.
+                    Thank you, <strong className="text-warm-ivory">{formData.name}</strong>. Your message has been logged with the TCC office. A team member will respond via email/WhatsApp shortly.
                   </p>
                   <div className="pt-4">
                     <Button
@@ -260,8 +260,8 @@ export default function ContactClient() {
                         <option value="Groom / Wedding Attire Inquiry">
                           Groom / Wedding Attire Inquiry
                         </option>
-                        <option value="Abeokuta Atelier Visit">
-                          Abeokuta Atelier Visit
+                        <option value="TCC Office Visit">
+                          TCC Office Visit
                         </option>
                         <option value="Fabric & Sizing Consultation">
                           Fabric & Sizing Consultation

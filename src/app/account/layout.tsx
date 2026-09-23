@@ -74,16 +74,16 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   return (
     <div className="min-h-screen bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black flex flex-col">
       {/* ── Top Concierge Banner ── */}
-      <header className="border-b border-stone-800/80 bg-[#11110F]/95 backdrop-blur-2xl sticky top-0 z-40 shadow-[0_4px_30px_rgba(0,0,0,0.35)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+      <header aria-label="Private client header" className="border-b border-stone-800/80 bg-[#11110F]/95 backdrop-blur-2xl sticky top-0 z-40 shadow-[0_4px_30px_rgba(0,0,0,0.35)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
           {/* Brand Anchor & Boutique Navigation */}
-          <div className="flex items-center gap-3 sm:gap-6">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-6">
             <Link
               href="/"
               className="flex items-center transition-opacity hover:opacity-85 focus:outline-none"
               title="Return to TSquare Clothing Cafe Boutique"
             >
-              <BrandLogo variant="light" size="sm" align="left" />
+              <BrandLogo variant="light" size="sm" align="left" asLink={false} />
             </Link>
 
             <span className="text-stone-800 hidden sm:inline select-none">|</span>
@@ -92,10 +92,11 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
               href="/"
               className="inline-flex items-center gap-1.5 text-xs text-stone-400 hover:text-champagne transition-colors uppercase font-mono tracking-wider"
               title="Browse the Public Boutique"
+              aria-label="Return to boutique"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-champagne" />
               <span className="hidden md:inline">Return to Boutique</span>
-              <span className="md:hidden">Boutique</span>
+              <span className="hidden sm:inline md:hidden">Boutique</span>
             </Link>
 
             <span className="text-stone-800 hidden lg:inline select-none">|</span>
@@ -109,7 +110,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           </div>
 
           {/* Client Profile, Notifications & Sign Out */}
-          <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-4">
             {/* Quick Notification Bell */}
             <Link
               href="/account/notifications"
@@ -137,7 +138,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                 {clientInitials}
               </div>
               <div className="hidden md:block">
-                <p className="text-xs text-warm-ivory font-medium leading-none group-hover:text-champagne transition-colors">
+                <p className="max-w-40 truncate text-xs text-warm-ivory font-medium leading-none group-hover:text-champagne transition-colors">
                   {clientFullName}
                 </p>
                 <p className="text-[9px] text-stone-500 font-mono uppercase tracking-widest mt-1">
@@ -180,6 +181,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                 <Link
                   key={item.href}
                   href={item.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs uppercase tracking-widest font-medium transition-all whitespace-nowrap relative shrink-0",
                     isActive
@@ -202,7 +204,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
       </header>
 
       {/* ── Main Content Area ── */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <main id="account-content" className="flex-1 min-w-0 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {children}
       </main>
     </div>

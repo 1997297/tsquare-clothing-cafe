@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, Montserrat } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { SiteLayout } from "@/components/layout/SiteLayout";
 import { AuthProvider } from "@/lib/auth-context";
 
 const cinzel = Cinzel({
@@ -73,9 +72,7 @@ export default function RootLayout({
     <html lang="en" className={`${cinzel.variable} ${montserrat.variable}`}>
       <body className="min-h-screen flex flex-col bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black font-sans">
         <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <SiteLayout>{children}</SiteLayout>
         </AuthProvider>
       </body>
     </html>

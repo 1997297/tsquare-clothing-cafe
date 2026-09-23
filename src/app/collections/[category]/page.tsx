@@ -147,7 +147,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             Require a custom variant of {collection.name}?
           </h3>
           <p className="mt-3 text-xs sm:text-sm text-stone-400 font-sans font-light leading-relaxed max-w-xl mx-auto">
-            Our master tailors in Abeokuta can draft a one-of-one silhouette tailored to your exact event date, preferred fabric weight, and embroidery motif.
+            Our master tailors can draft a one-of-one silhouette tailored to your exact event date, preferred fabric weight, and embroidery motif.
           </p>
           <div className="mt-6">
             <Link

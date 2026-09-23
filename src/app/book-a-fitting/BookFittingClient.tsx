@@ -112,7 +112,7 @@ export default function BookFittingClient() {
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
           <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            Atelier Abeokuta Reservation
+            TCC Office Reservation
           </span>
           <h1 className="font-display text-4xl sm:text-6xl font-normal tracking-tight text-warm-ivory">
             Book A Fitting Session
@@ -161,7 +161,7 @@ export default function BookFittingClient() {
                 <strong className="text-warm-ivory block uppercase tracking-wider text-[10px] mb-0.5">
                   Phase 1 Confirmation Notice
                 </strong>
-                This booking submission is verified and processed through the Phase 1 interface foundation. Our Abeokuta concierge will reach out to{" "}
+                This booking submission is verified and processed through the Phase 1 interface foundation. Our TCC concierge will reach out to{" "}
                 <span className="text-warm-ivory font-mono">{formData.phone}</span> via WhatsApp/phone to confirm slot availability.
               </div>
             </div>
@@ -382,7 +382,7 @@ export default function BookFittingClient() {
                   className="h-4 w-4 text-champagne bg-stone-900 border-stone-700 rounded focus:ring-champagne"
                 />
                 <label htmlFor="existingClient" className="text-xs text-stone-300 select-none">
-                  I am an existing TSquare client with my measurement profile on record in Abeokuta.
+                  I am an existing TSquare client with my measurement profile on record at the TCC office.
                 </label>
               </div>
 
@@ -421,7 +421,7 @@ export default function BookFittingClient() {
                 )}
               </Button>
               <p className="text-[10px] text-stone-500 text-center font-mono mt-3">
-                No upfront booking fee • Atelier Abeokuta, Ogun State, Nigeria
+                No upfront booking fee • TCC office
               </p>
             </div>
           </form>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { PasswordInput } from "@/components/common/PasswordInput";
 import {
   Lock,
   LogOut,
@@ -92,11 +93,13 @@ export default function AccountSettingsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
+            <label htmlFor="settings-password" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
               New Password *
             </label>
-            <input
-              type="password"
+            <PasswordInput
+              id="settings-password"
+              name="password"
+              autoComplete="new-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -106,11 +109,14 @@ export default function AccountSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
+            <label htmlFor="settings-confirm-password" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
               Confirm New Password *
             </label>
-            <input
-              type="password"
+            <PasswordInput
+              id="settings-confirm-password"
+              name="confirmPassword"
+              autoComplete="new-password"
+              visibilityLabel="confirm password"
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

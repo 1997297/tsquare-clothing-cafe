@@ -60,7 +60,7 @@ export default function StyleDetailClient({
             <div className="relative aspect-[3/4] w-full overflow-hidden bg-espresso fine-border rounded-3xl shadow-xl">
               <Image
                 src={style.images[activeImageIndex] || style.images[0]}
-                alt={`${style.name} - View ${activeImageIndex + 1}`}
+                alt={`${style.name}, view ${activeImageIndex + 1}`}
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 60vw"
@@ -245,7 +245,7 @@ export default function StyleDetailClient({
               </div>
 
               <p className="text-[10px] text-center text-stone-500 font-mono tracking-widest pt-1">
-                Zero Mass Production • Individually Tailored in Abeokuta
+                Zero Mass Production • Individually Tailored at TCC
               </p>
             </div>
           </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
+import { PasswordInput } from "@/components/common/PasswordInput";
 import { useAuth } from "@/lib/auth-context";
 import { ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 
@@ -79,7 +80,7 @@ function SignInForm() {
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-[10px] uppercase tracking-widest text-stone-400 font-medium">
+              <label htmlFor="sign-in-password" className="block text-[10px] uppercase tracking-widest text-stone-400 font-medium">
                 Password
               </label>
               <Link
@@ -89,8 +90,10 @@ function SignInForm() {
                 Forgot Password?
               </Link>
             </div>
-            <input
-              type="password"
+            <PasswordInput
+              id="sign-in-password"
+              name="password"
+              autoComplete="current-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}

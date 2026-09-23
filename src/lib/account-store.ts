@@ -66,7 +66,7 @@ const defaultSampleAppointment: CustomerAppointment = {
   confirmedDate: "2026-10-02",
   confirmedTime: "11:30 AM",
   status: "confirmed",
-  location: "Atelier Abeokuta, VIP Salon Suite",
+  location: "TCC office",
   notes: "First basted fitting of raw wool canvas for shoulder pitch & chest drape.",
   createdAt: "2026-09-14T09:00:00Z",
 };
@@ -96,7 +96,7 @@ const defaultSampleMeasurement: CustomerMeasurementRecord = {
     trouserLength: 105,
     ankle: 38,
   },
-  notes: "Master tailor balance check completed at Abeokuta atelier.",
+  notes: "Master tailor balance check completed at the TCC office.",
   createdAt: "2026-09-08T11:00:00Z",
 };
 
@@ -106,7 +106,7 @@ const defaultSampleNotifications: CustomerNotification[] = [
     customerId: "client-default",
     type: "production_update",
     title: "Garment Entering Hand Needlework",
-    message: "Your TSQ AGBADA 024 has passed canvas basting and is now with our master embroiderers in Abeokuta.",
+    message: "Your TSQ AGBADA 024 has passed canvas basting and is now with our master embroiderers.",
     relatedEntityType: "order",
     relatedEntityId: "ord-tcc-0842",
     isRead: false,
@@ -456,7 +456,7 @@ export function useAccountData() {
         preferredDate: payload.appointmentRequest.preferredDate || new Date().toISOString().split("T")[0],
         preferredTime: payload.appointmentRequest.preferredTime || "Morning",
         status: "requested",
-        location: "Atelier Abeokuta, VIP Salon Suite",
+        location: "TCC office",
         notes: payload.appointmentRequest.notes,
         createdAt: new Date().toISOString(),
       };

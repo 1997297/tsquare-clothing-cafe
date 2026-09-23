@@ -6,7 +6,7 @@ import { Button } from "@/components/common/Button";
 export const metadata = {
   title: "Bespoke Sartorial Commission | TSquare Clothing Cafe",
   description:
-    "Discover the bespoke sartorial experience at TSquare Clothing Cafe. Individual geometry, 28-point anatomy, hand-drafted paper patterns, and master tailoring in Abeokuta.",
+    "Discover the bespoke sartorial experience at TSquare Clothing Cafe. Individual geometry, 28-point anatomy, hand-drafted paper patterns, and master tailoring at TCC.",
 };
 
 export default function BespokePage() {
@@ -32,7 +32,7 @@ export default function BespokePage() {
     {
       num: "04",
       title: "Artisanal Hand-Guided Embroidery",
-      desc: "Our Agbada and Kaftan embroidery is not computer-stamped. Master artisans in our Abeokuta atelier manually guide every needle stroke, producing intricate geometric motifs with dimensional texture.",
+      desc: "Our Agbada and Kaftan embroidery is not computer-stamped. Our master artisans manually guide every needle stroke, producing intricate geometric motifs with dimensional texture.",
       highlight: "Up to 50 Hours of Dedicated Needlework",
     },
     {
@@ -75,7 +75,7 @@ export default function BespokePage() {
           </h1>
 
           <p className="mt-6 text-base sm:text-xl text-stone-300 font-sans font-light max-w-2xl leading-relaxed">
-            True bespoke is an intimate journey of anatomy, heritage textiles, and deliberate craftsmanship. Welcome to the digital extension of our Abeokuta fashion house.
+            True bespoke is an intimate journey of anatomy, heritage textiles, and deliberate craftsmanship. Welcome to the digital extension of our fashion house.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
@@ -201,7 +201,7 @@ export default function BespokePage() {
       <section className="py-20 sm:py-28 text-center border-t border-stone-800/40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            Atelier Abeokuta
+            TCC Office
           </span>
           <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
             Begin Your Bespoke Journey

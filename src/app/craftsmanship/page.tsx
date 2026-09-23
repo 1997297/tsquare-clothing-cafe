@@ -180,7 +180,7 @@ export default function CraftsmanshipPage() {
             Witness It In Person
           </span>
           <h2 className="font-display text-3xl sm:text-4xl text-warm-ivory">
-            Visit Our Abeokuta Atelier
+            Visit the TCC Office
           </h2>
           <p className="mt-3 text-sm text-stone-400 font-light max-w-xl mx-auto leading-relaxed">
             Experience our fabric swatches, examine basted suit construction, and discuss your bespoke ideas with our master tailors.

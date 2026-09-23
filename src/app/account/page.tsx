@@ -20,7 +20,7 @@ import {
   Scissors,
   Check,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatOfficeLocation } from "@/lib/utils";
 
 const CRAFTSMANSHIP_STAGES = [
   { id: "order_confirmed", label: "Confirmed" },
@@ -86,11 +86,11 @@ export default function AccountOverviewPage() {
               {greeting}, {clientFirstName}.
             </h1>
             <p className="mt-2 text-sm text-stone-400 font-light">
-              Your TSquare wardrobe is taking shape. Every commission is cut exclusively to your anatomy in our Abeokuta atelier.
+              Your TSquare wardrobe is taking shape. Every commission is cut exclusively to your anatomy at TCC.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/bespoke/create/idea"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all shadow-sm shrink-0"
@@ -186,7 +186,7 @@ export default function AccountOverviewPage() {
 
           <div className="pt-2 flex items-center justify-between">
             <p className="text-xs text-stone-400 italic">
-              {activeOrder.specialInstructions || "Individually hand-tailored in Abeokuta with zero glued fusing."}
+              {activeOrder.specialInstructions || "Individually hand-tailored at TCC with zero glued fusing."}
             </p>
             <Link
               href={`/account/orders/${activeOrder.id}`}
@@ -362,7 +362,7 @@ export default function AccountOverviewPage() {
                   </span>
                 </div>
                 <p className="text-[11px] text-stone-400 pl-5.5">
-                  {upcomingAppointment.location}
+                  {formatOfficeLocation(upcomingAppointment.location)}
                 </p>
               </div>
 

@@ -226,7 +226,7 @@ export const GARMENT_CATEGORIES: GarmentCategoryOption[] = [
   {
     id: "traditional",
     label: "Traditional",
-    description: "Rooted in heritage craft — Aso-Oke, damask, and hand-guided embroidery in authentic cultural garments.",
+    description: "Rooted in heritage craft, with Aso-Oke, damask, and hand-guided embroidery in authentic cultural garments.",
     image: "/images/styles/traditional-chieftain.jpg",
   },
   {

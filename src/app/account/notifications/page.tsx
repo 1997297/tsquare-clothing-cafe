@@ -35,7 +35,7 @@ export default function AccountNotificationsPage() {
             Atelier Dispatches & Alerts
           </h1>
           <p className="text-xs text-stone-400 mt-1 font-light">
-            Real-time milestones, fitting scheduling updates, and tailoring notifications from our Abeokuta house.
+            Real-time milestones, fitting scheduling updates, and tailoring notifications from TCC.
           </p>
         </div>
 

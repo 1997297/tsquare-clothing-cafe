@@ -1,18 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { COLLECTIONS } from "@/data/collections";
 import { MapPin, Phone, Mail, MessageSquare } from "lucide-react";
 
 export function Footer() {
-  const pathname = usePathname();
-
-  if (pathname.startsWith("/bespoke/create")) {
-    return null;
-  }
-
   return (
     <footer className="bg-near-black text-warm-ivory border-t border-stone-800/80 pt-16 sm:pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,7 +18,7 @@ export function Footer() {
             </div>
 
             <p className="text-xs sm:text-sm text-stone-400 font-sans font-light leading-relaxed max-w-sm">
-              Contemporary African luxury menswear. Crafted in Abeokuta for the man who commands presence through character, individuality, and master tailoring.
+              Contemporary African luxury menswear. Crafted for the man who commands presence through character, individuality, and master tailoring.
             </p>
 
             <div className="flex items-start gap-2.5 text-xs text-stone-400 pt-2">

@@ -4,7 +4,7 @@ import BookFittingClient from "./BookFittingClient";
 export const metadata = {
   title: "Book A Fitting Consultation | TSquare Clothing Cafe",
   description:
-    "Schedule an appointment at our Abeokuta atelier: initial sartorial consultation, 28-point measurement, basted fitting, or final inspection.",
+    "Schedule an appointment at the TCC office: initial sartorial consultation, 28-point measurement, basted fitting, or final inspection.",
 };
 
 export default function BookFittingPage() {

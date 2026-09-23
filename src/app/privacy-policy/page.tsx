@@ -68,7 +68,7 @@ export default function PrivacyPolicyPage() {
               5. Policy Inquiries
             </h2>
             <p>
-              For questions regarding client data privacy, please contact the TSquare Clothing Cafe concierge desk at Abeokuta, Ogun State, Nigeria or via electronic mail at concierge@tsquareclothingcafe.com.
+              For questions regarding client data privacy, please contact the concierge desk at the TCC office or via electronic mail at concierge@tsquareclothingcafe.com.
             </p>
             <p className="text-[10px] text-stone-500 font-mono pt-2">
               [Note: This privacy policy establishes the baseline sartorial privacy principles for Phase 1. Final comprehensive legal disclosures will be ratified with local legal counsel prior to commercial transaction activation.]

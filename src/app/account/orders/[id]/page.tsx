@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   CreditCard,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatOfficeLocation } from "@/lib/utils";
 
 const CRAFTSMANSHIP_STAGES = [
   {
@@ -40,7 +40,7 @@ const CRAFTSMANSHIP_STAGES = [
   {
     id: "ready",
     label: "Ready for Fitting / Collection",
-    desc: "Garment prepared for final fitting appointment at Abeokuta atelier.",
+    desc: "Garment prepared for a final fitting appointment at the TCC office.",
   },
   {
     id: "completed",
@@ -276,7 +276,7 @@ export default function OrderDetailPage({
                     <p className="text-stone-400 font-mono text-[11px]">
                       {apt.confirmedDate || apt.preferredDate} at {apt.confirmedTime || apt.preferredTime}
                     </p>
-                    <p className="text-[10px] text-stone-500">{apt.location}</p>
+                    <p className="text-[10px] text-stone-500">{formatOfficeLocation(apt.location)}</p>
                   </div>
                 ))}
               </div>

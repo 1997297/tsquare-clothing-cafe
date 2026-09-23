@@ -43,7 +43,7 @@ export default function BespokeProcessPage() {
       name: "Measure",
       tagline: "Comprehensive Anatomical Mapping",
       detail:
-        "Undergo our 28-point physiological measurement session at our Abeokuta atelier or via remote bespoke guidance. We chart shoulder slope, chest drop, stance, and neck curvature.",
+        "Undergo our 28-point physiological measurement session at the TCC office or via remote bespoke guidance. We chart shoulder slope, chest drop, stance, and neck curvature.",
       actionLabel: "Book Measurement Session",
       actionHref: "/book-a-fitting",
     },
@@ -79,7 +79,7 @@ export default function BespokeProcessPage() {
       name: "Receive",
       tagline: "Ceremonial Delivery & Permanent Archive",
       detail:
-        "Collect your finished piece in person in Abeokuta or receive luxury courier delivery. The completed garment enters your permanent digital TSquare Wardrobe.",
+        "Collect your finished piece in person at the TCC office or receive luxury courier delivery. The completed garment enters your permanent digital TSquare Wardrobe.",
       actionLabel: "Private Client Portal",
       actionHref: "/auth/sign-in",
     },
@@ -152,7 +152,7 @@ export default function BespokeProcessPage() {
             Ready to initiate your bespoke journey?
           </h2>
           <p className="mt-3 text-sm text-stone-400 font-light max-w-xl mx-auto">
-            Book an appointment at our Abeokuta atelier or begin by exploring our curated signature collections.
+            Book an appointment at the TCC office or begin by exploring our curated signature collections.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
             <Button href="/book-a-fitting" variant="champagne" size="lg">

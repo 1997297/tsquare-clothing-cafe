@@ -150,7 +150,7 @@ export default function AccountProfilePage() {
             ))}
           </div>
           <p className="text-[10px] text-stone-500 mt-1.5 leading-relaxed">
-            Our Abeokuta bespoke concierge uses your preferred channel for fitting reminders and tailoring checkpoint notifications.
+            Our TCC concierge uses your preferred channel for fitting reminders and tailoring checkpoint notifications.
           </p>
         </div>
 

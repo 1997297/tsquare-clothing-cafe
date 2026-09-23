@@ -102,7 +102,7 @@ export default function SavedClient() {
                 Ready to review these pieces with a master tailor?
               </h3>
               <p className="mt-2 text-xs sm:text-sm text-stone-400 font-light">
-                Bring your curated lookbook into a consultation at our Abeokuta atelier.
+                Bring your curated lookbook into a consultation at the TCC office.
               </p>
               <div className="mt-6">
                 <Button href="/book-a-fitting" variant="champagne" size="md">

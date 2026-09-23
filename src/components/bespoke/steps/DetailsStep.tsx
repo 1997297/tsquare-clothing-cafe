@@ -115,7 +115,7 @@ export function DetailsStep({
         Down To The Detail.
       </h1>
       <p className="text-sm text-stone-400 font-sans leading-relaxed mb-10">
-        These choices define the character of your garment. Select what applies — leave the rest open for discussion with your stylist.
+        These choices define the character of your garment. Select what applies and leave the rest open for discussion with your stylist.
       </p>
 
       <div className="space-y-8 mb-10">
@@ -227,7 +227,7 @@ export function DetailsStep({
             rows={4}
             value={prefs.specialInstructions ?? ""}
             onChange={(e) => set("specialInstructions", e.target.value)}
-            placeholder="Tell us anything you would like your stylist to know — a specific detail, family motif, occasion detail, or personal note."
+            placeholder="Tell us anything you would like your stylist to know, such as a specific detail, family motif, occasion detail, or personal note."
             className="w-full bg-[#141412] border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none focus:border-champagne/50 resize-none leading-relaxed"
           />
         </div>
@@ -238,7 +238,7 @@ export function DetailsStep({
             Add Inspiration
           </label>
           <p className="text-[11px] text-stone-600 mb-4 leading-relaxed">
-            Upload images that inspire you — embroidery ideas, fit references, colour swatches, details. These are saved locally for your session only.
+            Upload images that inspire you, such as embroidery ideas, fit references, colour swatches, or details. These are saved locally for your session only.
           </p>
 
           {/* Existing previews */}

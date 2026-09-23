@@ -45,7 +45,7 @@ export function AppointmentStep({
         Would you like to visit us?
       </h1>
       <p className="text-sm text-stone-400 font-sans leading-relaxed mb-10">
-        An atelier visit is always the finest way to begin. Choose the type of visit that suits your needs — or proceed without one for now.
+        A visit to the TCC office is always the finest way to begin. Choose the type of visit that suits your needs or proceed without one for now.
       </p>
 
       {/* Appointment type selection */}
@@ -145,7 +145,7 @@ export function AppointmentStep({
               rows={3}
               value={appt.notes ?? ""}
               onChange={(e) => set("notes", e.target.value)}
-              placeholder="Any additional context for the team — e.g. travelling from out of town, specific questions to prepare."
+              placeholder="Any additional context for the team, such as travelling from out of town or specific questions to prepare."
               className="w-full bg-near-black border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none focus:border-champagne/50 resize-none leading-relaxed"
             />
           </div>

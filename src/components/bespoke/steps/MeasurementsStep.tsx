@@ -37,7 +37,7 @@ const SECTIONS: { id: Section; label: string; fields: { key: keyof MeasurementSe
     label: "Torso",
     fields: [
       { key: "stomach", label: "Stomach", hint: "Around the stomach at its fullest point." },
-      { key: "waist", label: "Waist", hint: "Natural waist — the narrowest point of the torso." },
+      { key: "waist", label: "Waist", hint: "Natural waist, the narrowest point of the torso." },
       { key: "topLength", label: "Top Length", hint: "From the top of the shoulder to your preferred garment hem." },
     ],
   },
@@ -81,7 +81,7 @@ export function MeasurementsStep({
     }
     // Validate
     if (!isNaN(num) && (num <= 0 || num > 300)) {
-      setErrors((prev) => ({ ...prev, [key]: "Enter a valid measurement (1–300)" }));
+      setErrors((prev) => ({ ...prev, [key]: "Enter a valid measurement (1 to 300)" }));
     } else {
       setErrors((prev) => {
         const next = { ...prev };

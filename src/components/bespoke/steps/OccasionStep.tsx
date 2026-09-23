@@ -33,7 +33,7 @@ export function OccasionStep({
         What Are We Dressing You For?
       </h1>
       <p className="text-sm text-stone-400 font-sans leading-relaxed mb-10">
-        The occasion shapes every choice — from fabric weight to embroidery density.
+        The occasion shapes every choice, from fabric weight to embroidery density.
       </p>
 
       {/* Occasion grid */}

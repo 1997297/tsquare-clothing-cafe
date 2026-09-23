@@ -80,7 +80,7 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
         </h2>
 
         <p className="mt-3 text-sm text-stone-300 font-sans font-light leading-relaxed">
-          At TSquare Clothing Cafe, garments are never mass-produced. Each piece begins with personal consultation, bespoke measurements, and master tailoring in our Abeokuta atelier.
+          At TSquare Clothing Cafe, garments are never mass-produced. Each piece begins with personal consultation, bespoke measurements, and master tailoring at TCC.
         </p>
 
         {/* The 4-Step Bespoke Journey Preview with Rounded-2xl cards */}
@@ -113,7 +113,7 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
                   Measurement & Posture
                 </h4>
                 <p className="text-[11px] text-stone-400 mt-0.5">
-                  In-person at Abeokuta or guided digital profile
+                  In-person at the TCC office or guided digital profile
                 </p>
               </div>
             </div>

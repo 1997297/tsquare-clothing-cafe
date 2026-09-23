@@ -107,7 +107,7 @@ export default function RequestDetailPage({
             <span>We Need One More Detail</span>
           </div>
           <p className="text-xs text-stone-300 leading-relaxed">
-            Our Abeokuta master cutter has reviewed your sleeve and chest measurements and requests a quick re-check of your shoulder slope before cutting the paper pattern.
+            Our master cutter has reviewed your sleeve and chest measurements and requests a quick re-check of your shoulder slope before cutting the paper pattern.
           </p>
           <div className="pt-2 flex items-center gap-3">
             <Link
@@ -313,7 +313,7 @@ export default function RequestDetailPage({
                 {request.appointmentRequest.preferredDate} ({request.appointmentRequest.preferredTime})
               </p>
               <p className="text-[11px] text-stone-500">
-                Atelier Abeokuta, VIP Salon Suite
+                TCC office
               </p>
             </div>
           )}
@@ -324,7 +324,7 @@ export default function RequestDetailPage({
               Atelier Standard
             </span>
             <p className="text-[11px] text-stone-400 font-light leading-relaxed">
-              Every bespoke request enters our digital archives. All patterns are individually cut and hand-tailored in Abeokuta.
+              Every bespoke request enters our digital archives. All patterns are individually cut and hand-tailored at TCC.
             </p>
           </div>
         </div>

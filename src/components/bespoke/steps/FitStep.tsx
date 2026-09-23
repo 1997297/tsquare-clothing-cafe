@@ -107,7 +107,7 @@ export function FitStep({
       </div>
 
       <p className="text-[10px] text-stone-600 italic mb-8 leading-relaxed">
-        This preference guides your pattern — final fit is always refined through progressive fitting appointments.
+        This preference guides your pattern. Final fit is always refined through progressive fitting appointments.
       </p>
 
       <div className="flex items-center gap-3">

@@ -34,7 +34,7 @@ export default function AccountOrdersPage() {
             Active Orders & Progress
           </h1>
           <p className="text-xs text-stone-400 mt-1 font-light">
-            Monitor the craftsmanship progress of your confirmed bespoke garments in our Abeokuta atelier.
+            Monitor the craftsmanship progress of your confirmed bespoke garments at TCC.
           </p>
         </div>
 
