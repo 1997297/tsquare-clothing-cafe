@@ -12,23 +12,78 @@ import {
   CheckCircle2,
   AlertCircle,
   XCircle,
+  Repeat,
+  Plus,
+  ShieldCheck,
 } from "lucide-react";
 import { cn, formatOfficeLocation } from "@/lib/utils";
 
+type AppointmentTab = "upcoming" | "requested" | "past";
+
 export default function AccountAppointmentsPage() {
-  const { appointments } = useAccountData();
-  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+  const {
+    appointments,
+    requestAppointmentReschedule,
+    requestAppointmentCancellation,
+  } = useAccountData();
 
-  const today = new Date().toISOString().split("T")[0];
+  const [tab, setTab] = useState<AppointmentTab>("upcoming");
 
-  const upcomingAppointments = appointments.filter(
-    (a) => a.status !== "completed" && a.status !== "cancelled"
+  // Modal States
+  const [rescheduleAptId, setRescheduleAptId] = useState<string | null>(null);
+  const [proposedDate, setProposedDate] = useState("");
+  const [proposedTime, setProposedTime] = useState("11:30 AM");
+  const [rescheduleReason, setRescheduleReason] = useState("");
+  const [isRescheduling, setIsRescheduling] = useState(false);
+
+  const [cancelAptId, setCancelAptId] = useState<string | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  const upcomingList = appointments.filter(
+    (a) => a.status === "confirmed" || a.status === "scheduled"
   );
-  const pastAppointments = appointments.filter(
-    (a) => a.status === "completed" || a.status === "cancelled"
+  const requestedList = appointments.filter((a) => a.status === "requested");
+  const pastList = appointments.filter(
+    (a) => a.status === "completed" || a.status === "cancelled" || a.status === "rescheduled"
   );
 
-  const displayedList = tab === "upcoming" ? upcomingAppointments : pastAppointments;
+  const displayedList =
+    tab === "upcoming" ? upcomingList : tab === "requested" ? requestedList : pastList;
+
+  const handleRescheduleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!rescheduleAptId || !proposedDate) return;
+
+    setIsRescheduling(true);
+    try {
+      await requestAppointmentReschedule(
+        rescheduleAptId,
+        proposedDate,
+        proposedTime,
+        rescheduleReason
+      );
+      setRescheduleAptId(null);
+      setProposedDate("");
+      setRescheduleReason("");
+    } finally {
+      setIsRescheduling(false);
+    }
+  };
+
+  const handleCancelSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cancelAptId) return;
+
+    setIsCancelling(true);
+    try {
+      await requestAppointmentCancellation(cancelAptId, cancelReason);
+      setCancelAptId(null);
+      setCancelReason("");
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
@@ -42,42 +97,53 @@ export default function AccountAppointmentsPage() {
             Atelier Appointments
           </h1>
           <p className="text-xs text-stone-400 mt-1 font-light">
-            Manage your personal fitting checkpoints and style consultations at TSquare Clothing Cafe.
+            Manage your personal fitting checkpoints, measurements, and consultations at the TSquare Abeokuta atelier.
           </p>
         </div>
 
         <Link
           href="/book-a-fitting"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs uppercase font-mono tracking-wider font-bold hover:bg-champagne-light transition-all self-start sm:self-auto shadow-md"
         >
-          <Calendar className="w-3.5 h-3.5" />
+          <Plus className="w-3.5 h-3.5" />
           <span>Book Fitting Session</span>
         </Link>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-stone-800/40 pb-3">
+      <div className="flex items-center gap-2 border-b border-stone-800/40 pb-3 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setTab("upcoming")}
           className={cn(
-            "px-4 py-1.5 rounded-xl text-xs uppercase font-mono tracking-wider transition-colors",
+            "px-4 py-2 rounded-xl text-xs uppercase font-mono tracking-wider transition-colors whitespace-nowrap",
             tab === "upcoming"
-              ? "bg-stone-900 text-champagne border border-stone-800 font-semibold"
+              ? "bg-stone-900 text-champagne border border-stone-700 font-semibold"
               : "text-stone-500 hover:text-stone-300"
           )}
         >
-          Upcoming & Requested ({upcomingAppointments.length})
+          Upcoming Confirmed ({upcomingList.length})
+        </button>
+        <button
+          onClick={() => setTab("requested")}
+          className={cn(
+            "px-4 py-2 rounded-xl text-xs uppercase font-mono tracking-wider transition-colors whitespace-nowrap",
+            tab === "requested"
+              ? "bg-stone-900 text-champagne border border-stone-700 font-semibold"
+              : "text-stone-500 hover:text-stone-300"
+          )}
+        >
+          Requested Sessions ({requestedList.length})
         </button>
         <button
           onClick={() => setTab("past")}
           className={cn(
-            "px-4 py-1.5 rounded-xl text-xs uppercase font-mono tracking-wider transition-colors",
+            "px-4 py-2 rounded-xl text-xs uppercase font-mono tracking-wider transition-colors whitespace-nowrap",
             tab === "past"
-              ? "bg-stone-900 text-champagne border border-stone-800 font-semibold"
+              ? "bg-stone-900 text-champagne border border-stone-700 font-semibold"
               : "text-stone-500 hover:text-stone-300"
           )}
         >
-          Archived & Past ({pastAppointments.length})
+          Archived & Past ({pastList.length})
         </button>
       </div>
 
@@ -96,7 +162,7 @@ export default function AccountAppointmentsPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-800/50">
                   <div>
                     <span className="text-[10px] uppercase font-mono text-champagne tracking-wider block mb-1">
-                      {isRequested ? "Booking Requested" : "Atelier Reservation"}
+                      {isRequested ? "Booking Requested" : "Confirmed Atelier Reservation"}
                     </span>
                     <h3 className="font-display text-lg text-warm-ivory capitalize">
                       {apt.type.replace(/-/g, " ")} Session
@@ -109,7 +175,8 @@ export default function AccountAppointmentsPage() {
                       isConfirmed && "bg-emerald-950/40 border-emerald-700 text-emerald-400",
                       isRequested && "bg-amber-950/40 border-amber-700 text-amber-400",
                       apt.status === "completed" && "bg-stone-900 border-stone-700 text-stone-400",
-                      apt.status === "cancelled" && "bg-red-950/40 border-red-800 text-red-400"
+                      apt.status === "cancelled" && "bg-red-950/40 border-red-800 text-red-400",
+                      apt.status === "rescheduled" && "bg-blue-950/40 border-blue-800 text-blue-400"
                     )}
                   >
                     {apt.status}
@@ -143,18 +210,26 @@ export default function AccountAppointmentsPage() {
                   </div>
                 )}
 
-                {/* Actions for active requested/scheduled visits */}
-                {tab === "upcoming" && (
-                  <div className="pt-3 border-t border-stone-800/40 flex items-center justify-between text-xs">
-                    <p className="text-[11px] text-stone-500">
-                      Need to adjust your timing? Our VIP concierge can reschedule with 24 hours notice.
+                {/* Actions for active visits */}
+                {tab !== "past" && (
+                  <div className="pt-4 border-t border-stone-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <p className="text-[11px] text-stone-500 font-light">
+                      Existing confirmed sessions remain authoritative until your proposed adjustment is approved.
                     </p>
-                    <Link
-                      href="/contact"
-                      className="text-xs uppercase font-mono text-champagne hover:text-champagne-light tracking-wider font-semibold shrink-0 ml-4"
-                    >
-                      Request Reschedule
-                    </Link>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <button
+                        onClick={() => setRescheduleAptId(apt.id)}
+                        className="px-3.5 py-1.5 rounded-xl border border-stone-800 hover:border-champagne/40 text-xs font-mono uppercase tracking-wider text-warm-ivory hover:text-champagne transition-colors"
+                      >
+                        Request Reschedule
+                      </button>
+                      <button
+                        onClick={() => setCancelAptId(apt.id)}
+                        className="px-3.5 py-1.5 rounded-xl border border-stone-800 hover:border-red-800/40 text-xs font-mono uppercase tracking-wider text-stone-400 hover:text-red-400 transition-colors"
+                      >
+                        Request Cancellation
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -165,14 +240,20 @@ export default function AccountAppointmentsPage() {
         <div className="p-12 bg-[#141412] fine-border rounded-3xl text-center space-y-4">
           <Calendar className="w-8 h-8 text-stone-600 mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
-            {tab === "upcoming" ? "No Scheduled Visits" : "No Past Appointments"}
+            {tab === "upcoming"
+              ? "No Upcoming Confirmed Visits"
+              : tab === "requested"
+              ? "No Pending Appointment Requests"
+              : "No Archived Past Appointments"}
           </h3>
           <p className="text-xs text-stone-400 max-w-sm mx-auto leading-relaxed">
             {tab === "upcoming"
-              ? "Reserve a personal fitting session with our master cutters at the TCC office for measurements, canvas checks, or style consultations."
-              : "Completed salon visits and consultation checkpoints will be archived here."}
+              ? "Reserve a personal fitting session with our master cutters at the TCC atelier for measurements, canvas checks, or style consultations."
+              : tab === "requested"
+              ? "Any consultation or fitting requests currently under review by our atelier will appear here."
+              : "Completed salon visits and consultation checkpoints will be permanently archived here."}
           </p>
-          {tab === "upcoming" && (
+          {tab !== "past" && (
             <div className="pt-2">
               <Link
                 href="/book-a-fitting"
@@ -183,6 +264,157 @@ export default function AccountAppointmentsPage() {
               </Link>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── Reschedule Request Modal ── */}
+      {rescheduleAptId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#141412] border border-stone-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-stone-800/80 pb-4">
+              <div>
+                <h3 className="font-display text-xl text-warm-ivory">
+                  Request Appointment Reschedule
+                </h3>
+                <p className="text-xs text-stone-400 font-light mt-0.5">
+                  Propose your preferred new date and time for concierge confirmation.
+                </p>
+              </div>
+              <button
+                onClick={() => setRescheduleAptId(null)}
+                className="text-stone-400 hover:text-warm-ivory text-sm font-mono p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleRescheduleSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
+                  New Preferred Date
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={proposedDate}
+                  onChange={(e) => setProposedDate(e.target.value)}
+                  className="w-full bg-stone-900/60 border border-stone-800 text-warm-ivory rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-champagne/40 font-mono text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
+                  New Preferred Time
+                </label>
+                <select
+                  value={proposedTime}
+                  onChange={(e) => setProposedTime(e.target.value)}
+                  className="w-full bg-stone-900/60 border border-stone-800 text-warm-ivory rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-champagne/40 font-mono text-xs"
+                >
+                  <option value="10:00 AM">10:00 AM - Morning Fitting</option>
+                  <option value="11:30 AM">11:30 AM - Late Morning</option>
+                  <option value="02:00 PM">02:00 PM - Early Afternoon</option>
+                  <option value="04:00 PM">04:00 PM - Late Afternoon</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
+                  Reason for Adjustment
+                </label>
+                <textarea
+                  rows={3}
+                  value={rescheduleReason}
+                  onChange={(e) => setRescheduleReason(e.target.value)}
+                  placeholder="Provide context regarding your scheduling change..."
+                  className="w-full bg-stone-900/60 border border-stone-800 text-warm-ivory rounded-xl p-3 focus:outline-none focus:border-champagne/40 placeholder:text-stone-600"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-stone-900/40 border border-stone-800 text-[11px] text-stone-400 leading-relaxed font-light">
+                <ShieldCheck className="w-4 h-4 text-champagne inline mr-1.5" />
+                Your current confirmed booking will remain reserved until the atelier confirms the new slot.
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRescheduleAptId(null)}
+                  className="px-4 py-2 rounded-xl border border-stone-800 text-stone-400 hover:text-warm-ivory text-xs uppercase font-mono tracking-wider"
+                >
+                  Keep Current
+                </button>
+                <button
+                  type="submit"
+                  disabled={isRescheduling || !proposedDate}
+                  className="px-5 py-2 rounded-xl bg-champagne text-near-black text-xs uppercase font-mono tracking-wider font-bold hover:bg-champagne-light disabled:opacity-50 transition-all"
+                >
+                  {isRescheduling ? "Transmitting..." : "Submit Proposal"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Cancellation Request Modal ── */}
+      {cancelAptId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#141412] border border-stone-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-stone-800/80 pb-4">
+              <div>
+                <h3 className="font-display text-xl text-warm-ivory">
+                  Request Appointment Cancellation
+                </h3>
+                <p className="text-xs text-stone-400 font-light mt-0.5">
+                  Notify our concierge of your cancellation request.
+                </p>
+              </div>
+              <button
+                onClick={() => setCancelAptId(null)}
+                className="text-stone-400 hover:text-warm-ivory text-sm font-mono p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCancelSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
+                  Reason for Cancellation
+                </label>
+                <textarea
+                  rows={3}
+                  required
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  placeholder="Please state why you wish to cancel this appointment session..."
+                  className="w-full bg-stone-900/60 border border-stone-800 text-warm-ivory rounded-xl p-3 focus:outline-none focus:border-champagne/40 placeholder:text-stone-600"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-stone-900/40 border border-stone-800 text-[11px] text-stone-400 leading-relaxed font-light">
+                Appointment history is safely preserved in accordance with TCC client care standards.
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCancelAptId(null)}
+                  className="px-4 py-2 rounded-xl border border-stone-800 text-stone-400 hover:text-warm-ivory text-xs uppercase font-mono tracking-wider"
+                >
+                  Dismiss
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCancelling || !cancelReason.trim()}
+                  className="px-5 py-2 rounded-xl bg-red-900/80 hover:bg-red-800 text-white text-xs uppercase font-mono tracking-wider font-bold disabled:opacity-50 transition-all"
+                >
+                  {isCancelling ? "Transmitting..." : "Confirm Cancellation"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

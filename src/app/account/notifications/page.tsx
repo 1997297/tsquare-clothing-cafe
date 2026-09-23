@@ -12,6 +12,8 @@ import {
   Calendar,
   AlertCircle,
   ArrowRight,
+  CreditCard,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +37,7 @@ export default function AccountNotificationsPage() {
             Atelier Dispatches & Alerts
           </h1>
           <p className="text-xs text-stone-400 mt-1 font-light">
-            Real-time milestones, fitting scheduling updates, and tailoring notifications from TCC.
+            Real-time milestones, fitting scheduling updates, payment confirmations, and tailoring notifications from TCC.
           </p>
         </div>
 
@@ -63,6 +65,12 @@ export default function AccountNotificationsPage() {
               targetUrl = `/account/orders/${notif.relatedEntityId}`;
             } else if (notif.relatedEntityType === "appointment") {
               targetUrl = "/account/appointments";
+            } else if (notif.relatedEntityType === "payment") {
+              targetUrl = notif.relatedEntityId ? `/account/payments/${notif.relatedEntityId}` : "/account/payments";
+            } else if (notif.relatedEntityType === "wardrobe") {
+              targetUrl = notif.relatedEntityId ? `/account/wardrobe/${notif.relatedEntityId}` : "/account/wardrobe";
+            } else if (notif.relatedEntityType === "concierge") {
+              targetUrl = "/account/concierge";
             }
 
             return (
@@ -87,7 +95,13 @@ export default function AccountNotificationsPage() {
                         : "bg-stone-900 border-stone-800 text-stone-500"
                     )}
                   >
-                    {notif.type.includes("order") || notif.type.includes("production") ? (
+                    {notif.type.includes("payment") ? (
+                      <CreditCard className="w-4 h-4" />
+                    ) : notif.type.includes("wardrobe") ? (
+                      <Sparkles className="w-4 h-4" />
+                    ) : notif.type.includes("concierge") ? (
+                      <MessageSquare className="w-4 h-4" />
+                    ) : notif.type.includes("order") || notif.type.includes("production") ? (
                       <Package className="w-4 h-4" />
                     ) : notif.type.includes("appointment") ? (
                       <Calendar className="w-4 h-4" />

@@ -8,10 +8,17 @@ import {
   CustomerOrder,
   CustomerAppointment,
   CustomerNotification,
+  PaymentRecord,
+  PaymentType,
+  WardrobeItem,
+  ConciergeRequest,
+  ConciergeCategory,
+  ConciergeMessage,
+  AppointmentChangeRequest,
 } from "@/types";
 import { BespokeRequestPayload } from "@/types/bespoke";
 
-const STORAGE_ACCOUNT_DATA = "tcc_client_account_data_v1";
+const STORAGE_ACCOUNT_DATA = "tcc_client_account_data_v2";
 
 interface AccountData {
   measurements: CustomerMeasurementRecord[];
@@ -20,6 +27,11 @@ interface AccountData {
   appointments: CustomerAppointment[];
   notifications: CustomerNotification[];
   savedStyleIds: string[];
+  payments: PaymentRecord[];
+  wardrobe: WardrobeItem[];
+  conciergeRequests: ConciergeRequest[];
+  conciergeMessages: ConciergeMessage[];
+  appointmentChanges: AppointmentChangeRequest[];
 }
 
 // Initial sample data for demonstration if user has empty account
@@ -126,6 +138,114 @@ const defaultSampleNotifications: CustomerNotification[] = [
   },
 ];
 
+const defaultSamplePayments: PaymentRecord[] = [
+  {
+    id: "pay-01",
+    orderId: "ord-tcc-0842",
+    customerId: "client-default",
+    amount: 100000,
+    currency: "NGN",
+    type: "deposit",
+    provider: "sandbox",
+    providerReference: "SANDBOX_TCC-PAY-260921-DEP",
+    internalReference: "TCC-PAY-260921-DEP",
+    status: "successful",
+    paidAt: "2026-09-21T11:00:00Z",
+    metadata: { note: "Initial Bespoke Production Deposit" },
+    createdAt: "2026-09-21T11:00:00Z",
+  },
+  {
+    id: "pay-02",
+    orderId: "ord-tcc-0842",
+    customerId: "client-default",
+    amount: 110000,
+    currency: "NGN",
+    type: "installment",
+    provider: "sandbox",
+    providerReference: "SANDBOX_TCC-PAY-260928-INS",
+    internalReference: "TCC-PAY-260928-INS",
+    status: "successful",
+    paidAt: "2026-09-28T14:30:00Z",
+    metadata: { note: "Canvas Completion Milestone Installment" },
+    createdAt: "2026-09-28T14:30:00Z",
+  },
+];
+
+const defaultSampleWardrobe: WardrobeItem[] = [
+  {
+    id: "wrd-01",
+    customerId: "client-default",
+    orderId: "ord-prev-0419",
+    styleId: "tsq-senator-012",
+    styleCode: "TSQ SENATOR 012",
+    styleName: "Asymmetric Placket Senator 2-Piece",
+    category: "senator",
+    heroImage: "/images/styles/tcc_senator_executive_1790045211676.jpg",
+    fabricSnapshot: {
+      name: "Italian Super 140s Tropical Wool",
+      finish: "Subtle sheen",
+      weight: "260 GSM",
+    },
+    colourSnapshot: {
+      name: "Obsidian Black with Gold Hardware",
+      hex: "#161614",
+    },
+    preferencesSnapshot: {
+      trouserCut: "Tapered with side adjusters",
+      collarStyle: "Mandarin standing collar",
+      cuffStyle: "French cuff with handcrafted cufflinks",
+    },
+    measurementsSnapshot: {
+      neck: 42,
+      shoulder: 48,
+      chest: 104,
+      sleeveLength: 88,
+      topLength: 95,
+      trouserWaist: 86,
+      hip: 102,
+      trouserLength: 105,
+    },
+    occasion: "State Executive Dinner",
+    completionDate: "2026-08-15",
+    craftsmanshipNotes: "Hand-mitered placket closure with concealed antique brass snap buttons. Pressed with natural lavender steam finish.",
+    createdAt: "2026-08-15T16:00:00Z",
+  },
+];
+
+const defaultSampleConciergeRequests: ConciergeRequest[] = [
+  {
+    id: "conc-01",
+    referenceCode: "TCC-CONC-8821",
+    customerId: "client-default",
+    category: "fitting_enquiry",
+    subject: "Shoulder Drape & Fila Cap Coordination",
+    message: "I would like to verify that the hand-folded fila cap will match the antique gold needlework of the agbada chest plate for my fitting.",
+    relatedOrderId: "ord-tcc-0842",
+    status: "in_review",
+    createdAt: "2026-09-22T08:30:00Z",
+    updatedAt: "2026-09-22T10:15:00Z",
+  },
+];
+
+const defaultSampleConciergeMessages: ConciergeMessage[] = [
+  {
+    id: "msg-01",
+    requestId: "conc-01",
+    senderType: "customer",
+    senderName: "Client",
+    message: "I would like to verify that the hand-folded fila cap will match the antique gold needlework of the agbada chest plate for my fitting.",
+    createdAt: "2026-09-22T08:30:00Z",
+  },
+  {
+    id: "msg-02",
+    requestId: "conc-01",
+    senderType: "concierge",
+    senderName: "TSquare Atelier Concierge",
+    message: "Good day. We have confirmed with our master embroiderer that the fila cap uses the identical metallic antique gold thread spool from the same dye lot. It will be prepped in your VIP Salon Suite for your October fitting.",
+    createdAt: "2026-09-22T10:15:00Z",
+  },
+];
+
 function getStoredAccountData(): AccountData {
   if (typeof window === "undefined") {
     return {
@@ -135,6 +255,11 @@ function getStoredAccountData(): AccountData {
       appointments: [defaultSampleAppointment],
       notifications: defaultSampleNotifications,
       savedStyleIds: ["tsq-agbada-024", "tsq-senator-012"],
+      payments: defaultSamplePayments,
+      wardrobe: defaultSampleWardrobe,
+      conciergeRequests: defaultSampleConciergeRequests,
+      conciergeMessages: defaultSampleConciergeMessages,
+      appointmentChanges: [],
     };
   }
   try {
@@ -160,6 +285,11 @@ function getStoredAccountData(): AccountData {
     appointments: [defaultSampleAppointment],
     notifications: defaultSampleNotifications,
     savedStyleIds: ["tsq-agbada-024", "tsq-senator-012"],
+    payments: defaultSamplePayments,
+    wardrobe: defaultSampleWardrobe,
+    conciergeRequests: defaultSampleConciergeRequests,
+    conciergeMessages: defaultSampleConciergeMessages,
+    appointmentChanges: [],
   };
 
   try {
@@ -198,6 +328,10 @@ export function useAccountData() {
           { data: dbAppointments },
           { data: dbNotifications },
           { data: dbSavedStyles },
+          { data: dbPayments },
+          { data: dbWardrobe },
+          { data: dbConciergeRequests },
+          { data: dbConciergeMessages },
         ] = await Promise.all([
           supabase
             .from("measurement_profiles")
@@ -228,9 +362,29 @@ export function useAccountData() {
             .from("saved_styles")
             .select("style_id")
             .eq("customer_id", user.id),
+          supabase
+            .from("payments")
+            .select("*")
+            .eq("customer_id", user.id)
+            .order("created_at", { ascending: false }),
+          supabase
+            .from("wardrobe_items")
+            .select("*")
+            .eq("customer_id", user.id)
+            .order("created_at", { ascending: false }),
+          supabase
+            .from("concierge_requests")
+            .select("*")
+            .eq("customer_id", user.id)
+            .order("created_at", { ascending: false }),
+          supabase
+            .from("concierge_messages")
+            .select("*")
+            .order("created_at", { ascending: true }),
         ]);
 
         if (dbMeasurements || dbRequests || dbOrders) {
+          const fallbackData = getStoredAccountData();
           setData({
             measurements: (dbMeasurements || []).map((m: any) => ({
               id: m.id,
@@ -316,6 +470,73 @@ export function useAccountData() {
               createdAt: n.created_at,
             })),
             savedStyleIds: (dbSavedStyles || []).map((s: any) => s.style_id),
+            payments: dbPayments && dbPayments.length > 0
+              ? dbPayments.map((p: any) => ({
+                  id: p.id,
+                  orderId: p.order_id,
+                  customerId: p.customer_id,
+                  amount: Number(p.amount),
+                  currency: p.currency,
+                  type: p.type,
+                  provider: p.provider,
+                  providerReference: p.provider_reference,
+                  internalReference: p.internal_reference,
+                  status: p.status,
+                  paidAt: p.paid_at,
+                  metadata: p.metadata,
+                  createdAt: p.created_at,
+                  updatedAt: p.updated_at,
+                }))
+              : fallbackData.payments,
+            wardrobe: dbWardrobe && dbWardrobe.length > 0
+              ? dbWardrobe.map((w: any) => ({
+                  id: w.id,
+                  customerId: w.customer_id,
+                  orderId: w.order_id,
+                  styleId: w.style_id,
+                  styleCode: w.style_code,
+                  styleName: w.style_name,
+                  category: w.category,
+                  heroImage: w.hero_image,
+                  galleryImages: w.gallery_images,
+                  fabricSnapshot: w.fabric_snapshot,
+                  colourSnapshot: w.colour_snapshot,
+                  preferencesSnapshot: w.preferences_snapshot,
+                  measurementsSnapshot: w.measurements_snapshot,
+                  occasion: w.occasion,
+                  completionDate: w.completion_date,
+                  craftsmanshipNotes: w.craftsmanship_notes,
+                  createdAt: w.created_at,
+                }))
+              : fallbackData.wardrobe,
+            conciergeRequests: dbConciergeRequests && dbConciergeRequests.length > 0
+              ? dbConciergeRequests.map((c: any) => ({
+                  id: c.id,
+                  referenceCode: c.reference_code,
+                  customerId: c.customer_id,
+                  category: c.category,
+                  subject: c.subject,
+                  message: c.message,
+                  relatedRequestId: c.related_request_id,
+                  relatedOrderId: c.related_order_id,
+                  relatedAppointmentId: c.related_appointment_id,
+                  status: c.status,
+                  createdAt: c.created_at,
+                  updatedAt: c.updated_at,
+                }))
+              : fallbackData.conciergeRequests,
+            conciergeMessages: dbConciergeMessages && dbConciergeMessages.length > 0
+              ? dbConciergeMessages.map((m: any) => ({
+                  id: m.id,
+                  requestId: m.request_id,
+                  senderType: m.sender_type,
+                  senderId: m.sender_id,
+                  senderName: m.sender_name,
+                  message: m.message,
+                  createdAt: m.created_at,
+                }))
+              : fallbackData.conciergeMessages,
+            appointmentChanges: fallbackData.appointmentChanges,
           });
           setIsLoading(false);
           return;
@@ -502,6 +723,479 @@ export function useAccountData() {
     setData(updatedData);
   };
 
+  // Phase 4: Record a verified payment
+  const recordPayment = async (payload: {
+    orderId: string;
+    amount: number;
+    type: PaymentType;
+    provider?: "paystack" | "flutterwave" | "manual_transfer" | "atelier_terminal" | "sandbox";
+    metadata?: Record<string, any>;
+  }) => {
+    const internalRef = `TCC-PAY-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const newPayment: PaymentRecord = {
+      id: "pay-" + Date.now(),
+      orderId: payload.orderId,
+      customerId: user?.id || profile?.id || "client-default",
+      amount: Math.round(payload.amount),
+      currency: "NGN",
+      type: payload.type,
+      provider: payload.provider || "sandbox",
+      providerReference: `SANDBOX_${internalRef}`,
+      internalReference: internalRef,
+      status: "successful",
+      paidAt: new Date().toISOString(),
+      metadata: payload.metadata || {},
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (isSupabaseConfigured && user) {
+      try {
+        await supabase.from("payments").insert({
+          order_id: newPayment.orderId,
+          customer_id: user.id,
+          amount: newPayment.amount,
+          currency: newPayment.currency,
+          type: newPayment.type,
+          provider: newPayment.provider,
+          provider_reference: newPayment.providerReference,
+          internal_reference: newPayment.internalReference,
+          status: newPayment.status,
+          paid_at: newPayment.paidAt,
+          metadata: newPayment.metadata,
+        });
+      } catch (err) {
+        console.error("Error saving payment to Supabase:", err);
+      }
+    }
+
+    const targetOrder = data.orders.find((o) => o.id === payload.orderId);
+    const orderRef = targetOrder ? targetOrder.orderReference : "Bespoke Order";
+
+    const newNotification: CustomerNotification = {
+      id: "notif-pay-" + Date.now(),
+      customerId: user?.id || "client-default",
+      type: "payment_successful",
+      title: "Payment Recorded",
+      message: `₦${payload.amount.toLocaleString()} confirmed towards ${orderRef} (${payload.type.replace(/_/g, " ")}).`,
+      relatedEntityType: "order",
+      relatedEntityId: payload.orderId,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedPayments = [newPayment, ...data.payments];
+    const updatedNotifications = [newNotification, ...data.notifications];
+    const updatedData = { ...data, payments: updatedPayments, notifications: updatedNotifications };
+
+    saveStoredAccountData(updatedData);
+    setData(updatedData);
+    return newPayment;
+  };
+
+  // Phase 4: Idempotently sync a completed order into My TSquare Wardrobe
+  const syncCompletedOrderToWardrobe = async (orderId: string) => {
+    const order = data.orders.find((o) => o.id === orderId);
+    if (!order) return null;
+
+    // Idempotency check: verify not already recorded
+    const existing = data.wardrobe.find((w) => w.orderId === orderId);
+    if (existing) return existing;
+
+    const newWardrobeItem: WardrobeItem = {
+      id: "wrd-" + Date.now(),
+      customerId: user?.id || profile?.id || "client-default",
+      orderId: order.id,
+      styleId: order.styleId,
+      styleCode: order.styleCode,
+      styleName: order.styleName,
+      category: order.garmentCategory || "agbada",
+      heroImage: "/images/styles/tcc_agbada_imperial_1790045070682.jpg",
+      fabricSnapshot: order.fabricDetails || { name: "Artisanal Heritage Fabric" },
+      colourSnapshot: order.colourDetails || { name: "Bespoke Palette", hex: "#11110F" },
+      preferencesSnapshot: order.preferences || {},
+      measurementsSnapshot: order.measurementsSnapshot || {},
+      occasion: "Atelier Commission",
+      completionDate: new Date().toISOString().split("T")[0],
+      craftsmanshipNotes: order.specialInstructions || "Master cutter handcrafted finish.",
+      createdAt: new Date().toISOString(),
+    };
+
+    if (isSupabaseConfigured && user) {
+      try {
+        await supabase.from("wardrobe_items").insert({
+          customer_id: user.id,
+          order_id: newWardrobeItem.orderId,
+          style_id: newWardrobeItem.styleId,
+          style_code: newWardrobeItem.styleCode,
+          style_name: newWardrobeItem.styleName,
+          category: newWardrobeItem.category,
+          hero_image: newWardrobeItem.heroImage,
+          fabric_snapshot: newWardrobeItem.fabricSnapshot,
+          colour_snapshot: newWardrobeItem.colourSnapshot,
+          preferences_snapshot: newWardrobeItem.preferencesSnapshot,
+          measurements_snapshot: newWardrobeItem.measurementsSnapshot,
+          occasion: newWardrobeItem.occasion,
+          completion_date: newWardrobeItem.completionDate,
+          craftsmanship_notes: newWardrobeItem.craftsmanshipNotes,
+        });
+      } catch (err) {
+        console.error("Error creating wardrobe item in Supabase:", err);
+      }
+    }
+
+    const newNotification: CustomerNotification = {
+      id: "notif-wrd-" + Date.now(),
+      customerId: user?.id || "client-default",
+      type: "wardrobe_item_added",
+      title: "Garment Added to Your Wardrobe",
+      message: `${order.styleName} is now permanently recorded in your private digital wardrobe.`,
+      relatedEntityType: "wardrobe",
+      relatedEntityId: newWardrobeItem.id,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedWardrobe = [newWardrobeItem, ...data.wardrobe];
+    const updatedNotifications = [newNotification, ...data.notifications];
+    const updatedData = { ...data, wardrobe: updatedWardrobe, notifications: updatedNotifications };
+
+    saveStoredAccountData(updatedData);
+    setData(updatedData);
+    return newWardrobeItem;
+  };
+
+  // Phase 4: Non-destructive appointment reschedule request
+  const requestAppointmentReschedule = async (
+    appointmentId: string,
+    proposedDate: string,
+    proposedTime: string,
+    reason: string
+  ) => {
+    const changeReq: AppointmentChangeRequest = {
+      id: "chg-" + Date.now(),
+      appointmentId,
+      customerId: user?.id || "client-default",
+      changeType: "reschedule",
+      proposedDate,
+      proposedTime,
+      reason,
+      status: "pending_review",
+      createdAt: new Date().toISOString(),
+    };
+
+    if (isSupabaseConfigured && user) {
+      try {
+        await supabase.from("appointment_change_requests").insert({
+          appointment_id: appointmentId,
+          customer_id: user.id,
+          change_type: "reschedule",
+          proposed_date: proposedDate,
+          proposed_time: proposedTime,
+          reason,
+          status: "pending_review",
+        });
+      } catch (err) {
+        console.error("Error logging reschedule request in Supabase:", err);
+      }
+    }
+
+    const target = data.appointments.find((a) => a.id === appointmentId);
+    const newNotification: CustomerNotification = {
+      id: "notif-resched-" + Date.now(),
+      customerId: user?.id || "client-default",
+      type: "request_update",
+      title: "Reschedule Request Transmitted",
+      message: `Your request to move your ${target?.type || "fitting"} session to ${proposedDate} (${proposedTime}) is with our concierge.`,
+      relatedEntityType: "appointment",
+      relatedEntityId: appointmentId,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedChanges = [changeReq, ...data.appointmentChanges];
+    const updatedNotifications = [newNotification, ...data.notifications];
+    const updatedData = {
+      ...data,
+      appointmentChanges: updatedChanges,
+      notifications: updatedNotifications,
+    };
+
+    saveStoredAccountData(updatedData);
+    setData(updatedData);
+    return changeReq;
+  };
+
+  // Phase 4: Non-destructive appointment cancellation request
+  const requestAppointmentCancellation = async (appointmentId: string, reason: string) => {
+    const changeReq: AppointmentChangeRequest = {
+      id: "chg-" + Date.now(),
+      appointmentId,
+      customerId: user?.id || "client-default",
+      changeType: "cancellation",
+      reason,
+      status: "pending_review",
+      createdAt: new Date().toISOString(),
+    };
+
+    if (isSupabaseConfigured && user) {
+      try {
+        await supabase.from("appointment_change_requests").insert({
+          appointment_id: appointmentId,
+          customer_id: user.id,
+          change_type: "cancellation",
+          reason,
+          status: "pending_review",
+        });
+      } catch (err) {
+        console.error("Error logging cancellation request in Supabase:", err);
+      }
+    }
+
+    const target = data.appointments.find((a) => a.id === appointmentId);
+    const newNotification: CustomerNotification = {
+      id: "notif-cancel-" + Date.now(),
+      customerId: user?.id || "client-default",
+      type: "request_update",
+      title: "Cancellation Request Received",
+      message: `Your cancellation request for ${target?.type || "fitting"} appointment has been noted by our concierge team.`,
+      relatedEntityType: "appointment",
+      relatedEntityId: appointmentId,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedChanges = [changeReq, ...data.appointmentChanges];
+    const updatedNotifications = [newNotification, ...data.notifications];
+    const updatedData = {
+      ...data,
+      appointmentChanges: updatedChanges,
+      notifications: updatedNotifications,
+    };
+
+    saveStoredAccountData(updatedData);
+    setData(updatedData);
+    return changeReq;
+  };
+
+  // Phase 4: Create TSquare Concierge request
+  const createConciergeRequest = async (payload: {
+    category: ConciergeCategory;
+    subject: string;
+    message: string;
+    relatedRequestId?: string;
+    relatedOrderId?: string;
+    relatedAppointmentId?: string;
+  }) => {
+    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const referenceCode = `TCC-CONC-${Date.now().toString().slice(-4)}-${rand}`;
+    const newReqId = "conc-" + Date.now();
+
+    const newRequest: ConciergeRequest = {
+      id: newReqId,
+      referenceCode,
+      customerId: user?.id || profile?.id || "client-default",
+      category: payload.category,
+      subject: payload.subject,
+      message: payload.message,
+      relatedRequestId: payload.relatedRequestId,
+      relatedOrderId: payload.relatedOrderId,
+      relatedAppointmentId: payload.relatedAppointmentId,
+      status: "open",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const initialMessage: ConciergeMessage = {
+      id: "msg-" + Date.now(),
+      requestId: newReqId,
+      senderType: "customer",
+      senderId: user?.id,
+      senderName: profile?.firstName || "Client",
+      message: payload.message,
+      createdAt: new Date().toISOString(),
+    };
+
+    if (isSupabaseConfigured && user) {
+      try {
+        await supabase.from("concierge_requests").insert({
+          id: newReqId,
+          reference_code: referenceCode,
+          customer_id: user.id,
+          category: payload.category,
+          subject: payload.subject,
+          message: payload.message,
+          related_request_id: payload.relatedRequestId,
+          related_order_id: payload.relatedOrderId,
+          related_appointment_id: payload.relatedAppointmentId,
+          status: "open",
+        });
+        await supabase.from("concierge_messages").insert({
+          request_id: newReqId,
+          sender_type: "customer",
+          sender_id: user.id,
+          sender_name: profile?.firstName || "Client",
+          message: payload.message,
+        });
+      } catch (err) {
+        console.error("Error creating concierge request in Supabase:", err);
+      }
+    }
+
+    const newNotification: CustomerNotification = {
+      id: "notif-conc-" + Date.now(),
+      customerId: user?.id || "client-default",
+      type: "concierge_response",
+      title: "Concierge Request Received",
+      message: `Your inquiry "${payload.subject}" has been assigned to your private client concierge.`,
+      relatedEntityType: "concierge",
+      relatedEntityId: newReqId,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedRequests = [newRequest, ...data.conciergeRequests];
+    const updatedMessages = [...data.conciergeMessages, initialMessage];
+    const updatedNotifications = [newNotification, ...data.notifications];
+    const updatedData = {
+      ...data,
+      conciergeRequests: updatedRequests,
+      conciergeMessages: updatedMessages,
+      notifications: updatedNotifications,
+    };
+
+    saveStoredAccountData(updatedData);
+    setData(updatedData);
+    return newRequest;
+  };
+
+  // Phase 4: Append message to open Concierge thread
+  const addConciergeMessage = async (requestId: string, messageText: string) => {
+    const newMsg: ConciergeMessage = {
+      id: "msg-" + Date.now(),
+      requestId,
+      senderType: "customer",
+      senderId: user?.id,
+      senderName: profile?.firstName || "Client",
+      message: messageText,
+      createdAt: new Date().toISOString(),
+    };
+
+    if (isSupabaseConfigured && user) {
+      try {
+        await supabase.from("concierge_messages").insert({
+          request_id: requestId,
+          sender_type: "customer",
+          sender_id: user.id,
+          sender_name: profile?.firstName || "Client",
+          message: messageText,
+        });
+      } catch (err) {
+        console.error("Error adding message to Supabase:", err);
+      }
+    }
+
+    const updatedMessages = [...data.conciergeMessages, newMsg];
+    const updatedData = { ...data, conciergeMessages: updatedMessages };
+
+    saveStoredAccountData(updatedData);
+    setData(updatedData);
+    return newMsg;
+  };
+
+  // Phase 4: Accept quoted price and establish confirmed order
+  const acceptBespokeQuoteAndConvertToOrder = async (requestId: string) => {
+    const targetReq = data.requests.find((r) => r.requestId === requestId);
+    if (!targetReq) return null;
+
+    const orderNum = Math.floor(1000 + Math.random() * 9000);
+    const orderRef = `TCC-ORD-${orderNum}`;
+    const quotedAmount = 320000; // Authoritative Atelier quote
+
+    const newOrder: CustomerOrder = {
+      id: "ord-tcc-" + orderNum,
+      orderReference: orderRef,
+      customerId: user?.id || profile?.id || "client-default",
+      bespokeRequestId: targetReq.requestId,
+      styleId: targetReq.styleId || "tsq-custom",
+      styleCode: targetReq.styleCode || "TSQ BESPOKE",
+      styleName: targetReq.styleName || "Bespoke Sartorial Commission",
+      garmentCategory: targetReq.garmentCategory,
+      fabricDetails: targetReq.fabric
+        ? { name: targetReq.fabric.name, finish: targetReq.fabric.finish }
+        : undefined,
+      colourDetails: targetReq.colour
+        ? { name: targetReq.colour.name, hex: targetReq.colour.hex }
+        : undefined,
+      preferences: targetReq.preferences,
+      measurementsSnapshot: (targetReq.measurements as Record<string, any>) || {},
+      status: "order_confirmed",
+      totalAmount: quotedAmount,
+      targetCompletionDate: targetReq.requiredDate || "2026-11-20",
+      productionStageUpdatedAt: new Date().toISOString(),
+      specialInstructions: targetReq.preferences?.specialInstructions,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (isSupabaseConfigured && user) {
+      try {
+        await supabase
+          .from("bespoke_requests")
+          .update({ status: "converted_to_order" })
+          .eq("request_reference", requestId);
+
+        await supabase.from("orders").insert({
+          order_reference: newOrder.orderReference,
+          customer_id: user.id,
+          style_id: newOrder.styleId,
+          style_code: newOrder.styleCode,
+          style_name: newOrder.styleName,
+          garment_category: newOrder.garmentCategory,
+          fabric_details: newOrder.fabricDetails,
+          colour_details: newOrder.colourDetails,
+          preferences: newOrder.preferences,
+          measurements_snapshot: newOrder.measurementsSnapshot,
+          status: "order_confirmed",
+          total_amount: newOrder.totalAmount,
+          target_completion_date: newOrder.targetCompletionDate,
+          special_instructions: newOrder.specialInstructions,
+        });
+      } catch (err) {
+        console.error("Error creating confirmed order in Supabase:", err);
+      }
+    }
+
+    const updatedRequests = data.requests.map((r) =>
+      r.requestId === requestId ? { ...r, status: "converted_to_order" as const } : r
+    );
+
+    const newNotification: CustomerNotification = {
+      id: "notif-ord-" + Date.now(),
+      customerId: user?.id || "client-default",
+      type: "order_confirmed",
+      title: "Bespoke Order Confirmed",
+      message: `Your commission ${orderRef} is officially established. Initial production deposit payment is now open.`,
+      relatedEntityType: "order",
+      relatedEntityId: newOrder.id,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedOrders = [newOrder, ...data.orders];
+    const updatedNotifications = [newNotification, ...data.notifications];
+    const updatedData = {
+      ...data,
+      requests: updatedRequests,
+      orders: updatedOrders,
+      notifications: updatedNotifications,
+    };
+
+    saveStoredAccountData(updatedData);
+    setData(updatedData);
+    return newOrder;
+  };
+
   return {
     data,
     isLoading,
@@ -511,11 +1205,23 @@ export function useAccountData() {
     orders: data.orders,
     appointments: data.appointments,
     notifications: data.notifications,
+    payments: data.payments,
+    wardrobe: data.wardrobe,
+    conciergeRequests: data.conciergeRequests,
+    conciergeMessages: data.conciergeMessages,
+    appointmentChanges: data.appointmentChanges,
     unreadNotificationsCount: data.notifications.filter((n) => !n.isRead).length,
     saveMeasurementProfile,
     addBespokeRequest,
     markNotificationAsRead,
     markAllNotificationsAsRead,
+    recordPayment,
+    syncCompletedOrderToWardrobe,
+    requestAppointmentReschedule,
+    requestAppointmentCancellation,
+    createConciergeRequest,
+    addConciergeMessage,
+    acceptBespokeQuoteAndConvertToOrder,
     reloadData,
   };
 }

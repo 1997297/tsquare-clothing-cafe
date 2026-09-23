@@ -275,3 +275,163 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- ==============================================================================
+-- 9. PAYMENTS TABLE (Phase 4: Commercial & Financial Architecture)
+-- ==============================================================================
+create table if not exists public.payments (
+  id uuid default gen_random_uuid() primary key,
+  order_id uuid references public.orders(id) on delete restrict not null,
+  customer_id uuid references public.profiles(id) on delete restrict not null,
+  amount numeric(12, 2) not null check (amount > 0),
+  currency text default 'NGN' not null,
+  type text check (type in ('deposit', 'installment', 'final_payment', 'full_payment', 'adjustment')) not null,
+  provider text check (provider in ('paystack', 'flutterwave', 'manual_transfer', 'atelier_terminal', 'sandbox')) default 'sandbox' not null,
+  provider_reference text,
+  internal_reference text unique not null,
+  status text check (status in ('pending', 'successful', 'failed', 'refunded')) default 'pending' not null,
+  paid_at timestamptz,
+  metadata jsonb default '{}'::jsonb,
+  created_at timestamptz default timezone('utc'::text, now()) not null,
+  updated_at timestamptz default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_payments_order on public.payments(order_id);
+create index if not exists idx_payments_customer on public.payments(customer_id);
+create index if not exists idx_payments_status on public.payments(status);
+
+-- Payments RLS: Customers can ONLY read their own payments.
+-- Customers cannot insert, alter amounts, fake success, or update records directly via client SQL.
+alter table public.payments enable row level security;
+
+create policy "Users can view their own payments"
+  on public.payments for select
+  using (auth.uid() = customer_id);
+
+-- ==============================================================================
+-- 10. WARDROBE ITEMS TABLE (Phase 4: My TSquare Wardrobe)
+-- ==============================================================================
+create table if not exists public.wardrobe_items (
+  id uuid default gen_random_uuid() primary key,
+  customer_id uuid references public.profiles(id) on delete cascade not null,
+  order_id uuid references public.orders(id) on delete restrict unique not null, -- Guarantees idempotency
+  style_id text not null,
+  style_code text not null,
+  style_name text not null,
+  category text not null,
+  hero_image text not null,
+  gallery_images jsonb default '[]'::jsonb,
+  fabric_snapshot jsonb not null default '{}'::jsonb,
+  colour_snapshot jsonb not null default '{}'::jsonb,
+  preferences_snapshot jsonb not null default '{}'::jsonb,
+  measurements_snapshot jsonb not null default '{}'::jsonb,
+  occasion text,
+  completion_date text not null,
+  craftsmanship_notes text,
+  created_at timestamptz default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_wardrobe_customer on public.wardrobe_items(customer_id);
+create index if not exists idx_wardrobe_order on public.wardrobe_items(order_id);
+
+-- Wardrobe Items RLS: Customers can view their own archive.
+alter table public.wardrobe_items enable row level security;
+
+create policy "Users can view their own wardrobe"
+  on public.wardrobe_items for select
+  using (auth.uid() = customer_id);
+
+-- ==============================================================================
+-- 11. CONCIERGE REQUESTS & MESSAGES TABLES (Phase 4: Client Services)
+-- ==============================================================================
+create table if not exists public.concierge_requests (
+  id uuid default gen_random_uuid() primary key,
+  reference_code text unique not null,
+  customer_id uuid references public.profiles(id) on delete cascade not null,
+  category text check (category in ('discuss_order', 'discuss_request', 'fitting_enquiry', 'payment_question', 'style_consultation', 'general_enquiry')) not null,
+  subject text not null,
+  message text not null,
+  related_request_id text,
+  related_order_id text,
+  related_appointment_id text,
+  status text check (status in ('open', 'in_review', 'awaiting_customer', 'resolved', 'closed')) default 'open' not null,
+  created_at timestamptz default timezone('utc'::text, now()) not null,
+  updated_at timestamptz default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_concierge_requests_customer on public.concierge_requests(customer_id);
+create index if not exists idx_concierge_requests_status on public.concierge_requests(status);
+
+alter table public.concierge_requests enable row level security;
+
+create policy "Users can view their own concierge requests"
+  on public.concierge_requests for select
+  using (auth.uid() = customer_id);
+
+create policy "Users can submit concierge requests"
+  on public.concierge_requests for insert
+  with check (auth.uid() = customer_id);
+
+create table if not exists public.concierge_messages (
+  id uuid default gen_random_uuid() primary key,
+  request_id uuid references public.concierge_requests(id) on delete cascade not null,
+  sender_type text check (sender_type in ('customer', 'concierge')) not null,
+  sender_id uuid references public.profiles(id) on delete set null,
+  sender_name text not null,
+  message text not null,
+  created_at timestamptz default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_concierge_messages_request on public.concierge_messages(request_id);
+
+alter table public.concierge_messages enable row level security;
+
+create policy "Users can view messages for their concierge requests"
+  on public.concierge_messages for select
+  using (
+    exists (
+      select 1 from public.concierge_requests r
+      where r.id = concierge_messages.request_id
+      and r.customer_id = auth.uid()
+    )
+  );
+
+create policy "Users can add messages to their own open requests"
+  on public.concierge_messages for insert
+  with check (
+    sender_type = 'customer' and
+    exists (
+      select 1 from public.concierge_requests r
+      where r.id = concierge_messages.request_id
+      and r.customer_id = auth.uid()
+    )
+  );
+
+-- ==============================================================================
+-- 12. APPOINTMENT CHANGE REQUESTS TABLE (Phase 4: Non-Destructive Reschedule/Cancel)
+-- ==============================================================================
+create table if not exists public.appointment_change_requests (
+  id uuid default gen_random_uuid() primary key,
+  appointment_id uuid references public.appointments(id) on delete cascade not null,
+  customer_id uuid references public.profiles(id) on delete cascade not null,
+  change_type text check (change_type in ('reschedule', 'cancellation')) not null,
+  proposed_date text,
+  proposed_time text,
+  reason text,
+  status text check (status in ('pending_review', 'approved', 'declined')) default 'pending_review' not null,
+  created_at timestamptz default timezone('utc'::text, now()) not null,
+  reviewed_at timestamptz
+);
+
+create index if not exists idx_appointment_changes_appt on public.appointment_change_requests(appointment_id);
+
+alter table public.appointment_change_requests enable row level security;
+
+create policy "Users can view their appointment change requests"
+  on public.appointment_change_requests for select
+  using (auth.uid() = customer_id);
+
+create policy "Users can submit appointment change requests"
+  on public.appointment_change_requests for insert
+  with check (auth.uid() = customer_id);
+

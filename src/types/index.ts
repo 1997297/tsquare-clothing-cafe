@@ -142,7 +142,7 @@ export interface CustomerOrder {
     hex: string;
   };
   preferences?: Record<string, any>;
-  measurementsSnapshot: Record<string, number>;
+  measurementsSnapshot: Record<string, any>;
   status: CustomerOrderStatus;
   totalAmount?: number;
   targetCompletionDate?: string;
@@ -185,7 +185,15 @@ export type NotificationType =
   | "order_confirmed"
   | "production_update"
   | "order_ready"
-  | "appointment_confirmed";
+  | "order_completed"
+  | "appointment_confirmed"
+  | "reschedule_response"
+  | "payment_successful"
+  | "payment_failed"
+  | "payment_recorded"
+  | "balance_updated"
+  | "wardrobe_item_added"
+  | "concierge_response";
 
 export interface CustomerNotification {
   id: string;
@@ -193,9 +201,138 @@ export interface CustomerNotification {
   type: NotificationType;
   title: string;
   message: string;
-  relatedEntityType?: "request" | "order" | "appointment";
+  relatedEntityType?: "request" | "order" | "appointment" | "payment" | "wardrobe" | "concierge";
   relatedEntityId?: string;
   isRead: boolean;
   readAt?: string;
   createdAt: string;
 }
+
+/**
+ * Phase 4 Commercial & Financial Model Types
+ */
+export type PaymentType =
+  | "deposit"
+  | "installment"
+  | "final_payment"
+  | "full_payment"
+  | "adjustment";
+
+export type PaymentStatus = "pending" | "successful" | "failed" | "refunded";
+
+export interface PaymentRecord {
+  id: string;
+  orderId: string;
+  customerId: string;
+  amount: number;
+  currency: string;
+  type: PaymentType;
+  provider: "paystack" | "flutterwave" | "manual_transfer" | "atelier_terminal" | "sandbox";
+  providerReference?: string;
+  internalReference: string;
+  status: PaymentStatus;
+  paidAt?: string;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface OrderPaymentPosition {
+  orderTotal: number;
+  amountPaid: number;
+  outstandingBalance: number;
+  percentagePaid: number;
+  percentageRemaining: number;
+  paymentStatus: "not_started" | "partially_paid" | "paid" | "pending";
+}
+
+/**
+ * Phase 4 My TSquare Wardrobe Types
+ */
+export interface WardrobeItem {
+  id: string;
+  customerId: string;
+  orderId: string;
+  styleId: string;
+  styleCode: string;
+  styleName: string;
+  category: ProductCategory;
+  heroImage: string;
+  galleryImages?: string[];
+  fabricSnapshot: {
+    name: string;
+    description?: string;
+    finish?: string;
+    weight?: string;
+  };
+  colourSnapshot: {
+    name: string;
+    hex: string;
+  };
+  preferencesSnapshot: Record<string, any>;
+  measurementsSnapshot: Record<string, number>;
+  occasion?: string;
+  completionDate: string;
+  craftsmanshipNotes?: string;
+  createdAt: string;
+}
+
+/**
+ * Phase 4 TSquare Concierge Types
+ */
+export type ConciergeCategory =
+  | "discuss_order"
+  | "discuss_request"
+  | "fitting_enquiry"
+  | "payment_question"
+  | "style_consultation"
+  | "general_enquiry";
+
+export type ConciergeStatus =
+  | "open"
+  | "in_review"
+  | "awaiting_customer"
+  | "resolved"
+  | "closed";
+
+export interface ConciergeRequest {
+  id: string;
+  referenceCode: string;
+  customerId: string;
+  category: ConciergeCategory;
+  subject: string;
+  message: string;
+  relatedRequestId?: string;
+  relatedOrderId?: string;
+  relatedAppointmentId?: string;
+  status: ConciergeStatus;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface ConciergeMessage {
+  id: string;
+  requestId: string;
+  senderType: "customer" | "concierge";
+  senderId?: string;
+  senderName: string;
+  message: string;
+  createdAt: string;
+}
+
+/**
+ * Phase 4 Appointment Change Request Types
+ */
+export interface AppointmentChangeRequest {
+  id: string;
+  appointmentId: string;
+  customerId: string;
+  changeType: "reschedule" | "cancellation";
+  proposedDate?: string;
+  proposedTime?: string;
+  reason?: string;
+  status: "pending_review" | "approved" | "declined";
+  createdAt: string;
+  reviewedAt?: string;
+}
+

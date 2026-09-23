@@ -1,9 +1,9 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { useAccountData } from "@/lib/account-store";
 import {
   ArrowLeft,
@@ -25,7 +25,9 @@ export default function RequestDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const { requests } = useAccountData();
+  const router = useRouter();
+  const { requests, acceptBespokeQuoteAndConvertToOrder } = useAccountData();
+  const [isConverting, setIsConverting] = useState(false);
 
   const request = requests.find((r) => r.requestId === id);
 
@@ -140,12 +142,26 @@ export default function RequestDetailPage({
             </span>
           </div>
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <button className="px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all">
-              Accept Quote & Convert to Order
+            <button
+              onClick={async () => {
+                setIsConverting(true);
+                try {
+                  const newOrder = await acceptBespokeQuoteAndConvertToOrder(request.requestId);
+                  if (newOrder) {
+                    router.push(`/account/orders/${newOrder.id}`);
+                  }
+                } finally {
+                  setIsConverting(false);
+                }
+              }}
+              disabled={isConverting}
+              className="px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light disabled:opacity-50 transition-all shadow-md"
+            >
+              {isConverting ? "Establishing Order..." : "Accept Quote & Convert to Order"}
             </button>
             <Link
-              href="/contact"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-stone-700 text-stone-300 hover:text-warm-ivory text-xs uppercase tracking-widest font-semibold transition-all"
+              href="/account/concierge"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-stone-700 text-stone-300 hover:text-warm-ivory hover:border-champagne/40 text-xs uppercase tracking-widest font-semibold transition-all"
             >
               Discuss With TSquare Concierge
             </Link>

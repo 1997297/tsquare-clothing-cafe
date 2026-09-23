@@ -20,6 +20,9 @@ import {
   ArrowLeft,
   Loader2,
   ShieldCheck,
+  CreditCard,
+  Sparkles,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +32,10 @@ const NAV_ITEMS = [
   { href: "/account/orders", label: "Orders", icon: Package },
   { href: "/account/measurements", label: "Measurements", icon: Ruler },
   { href: "/account/appointments", label: "Appointments", icon: Calendar },
+  { href: "/account/payments", label: "Payments", icon: CreditCard },
+  { href: "/account/wardrobe", label: "Wardrobe", icon: Sparkles },
   { href: "/account/saved", label: "Saved Looks", icon: Heart },
+  { href: "/account/concierge", label: "Concierge", icon: MessageSquare },
   { href: "/account/notifications", label: "Notifications", icon: Bell },
   { href: "/account/profile", label: "Profile", icon: User },
   { href: "/account/settings", label: "Settings", icon: Settings },

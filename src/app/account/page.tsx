@@ -19,8 +19,11 @@ import {
   AlertTriangle,
   Scissors,
   Check,
+  CreditCard,
+  MessageSquare,
 } from "lucide-react";
 import { cn, formatOfficeLocation } from "@/lib/utils";
+import { formatNaira } from "@/lib/payments/service";
 
 const CRAFTSMANSHIP_STAGES = [
   { id: "order_confirmed", label: "Confirmed" },
@@ -39,6 +42,8 @@ export default function AccountOverviewPage() {
     appointments,
     currentMeasurement,
     notifications,
+    payments,
+    wardrobe,
     data: { savedStyleIds },
   } = useAccountData();
 
@@ -72,6 +77,12 @@ export default function AccountOverviewPage() {
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
 
   const clientFirstName = profile?.firstName || "Client";
+
+  const totalCommitted = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+  const totalSettled = payments
+    .filter((p) => p.status === "successful")
+    .reduce((sum, p) => sum + p.amount, 0);
+  const totalOutstanding = Math.max(0, totalCommitted - totalSettled);
 
   return (
     <div className="space-y-10 animate-in fade-in duration-300">
@@ -107,6 +118,32 @@ export default function AccountOverviewPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Commercial Position Highlight (When balance is due) ── */}
+      {totalOutstanding > 0 && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#141412] border border-amber-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-950/40 border border-amber-800/40 flex items-center justify-center text-amber-400 shrink-0">
+              <CreditCard className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs text-warm-ivory font-medium">
+                Outstanding Balance: <span className="font-mono text-champagne font-bold">{formatNaira(totalOutstanding)}</span>
+              </p>
+              <p className="text-[11px] text-stone-400 font-light">
+                Milestone settlement is due across your active bespoke commissions.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/account/payments"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-stone-900 border border-stone-800 hover:border-champagne/40 text-xs font-mono uppercase tracking-wider text-warm-ivory hover:text-champagne transition-colors self-start sm:self-auto shrink-0"
+          >
+            <span>Review Payments</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
 
       {/* ── Section 1: Priority Active Garment Focus ── */}
       {activeOrder ? (
@@ -389,7 +426,58 @@ export default function AccountOverviewPage() {
         </div>
       </div>
 
-      {/* ── Section 3: Saved Looks Teaser ── */}
+      {/* ── Section 3: My TSquare Wardrobe Preview ── */}
+      {wardrobe.length > 0 && (
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-champagne" />
+              <h3 className="font-display text-lg text-warm-ivory">
+                My TSquare Wardrobe
+              </h3>
+            </div>
+            <Link
+              href="/account/wardrobe"
+              className="text-xs text-stone-400 hover:text-champagne uppercase font-mono tracking-wider"
+            >
+              View Full Archive ({wardrobe.length})
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {wardrobe.slice(0, 3).map((w) => (
+              <Link
+                key={w.id}
+                href={`/account/wardrobe/${w.id}`}
+                className="group p-4 rounded-2xl bg-[#141412] fine-border hover:border-champagne/40 transition-colors flex items-center gap-4"
+              >
+                <div className="relative w-14 h-16 rounded-xl overflow-hidden bg-stone-900 shrink-0">
+                  <Image
+                    src={w.heroImage}
+                    alt={w.styleName}
+                    fill
+                    className="object-cover object-top group-hover:scale-105 transition-transform"
+                    sizes="56px"
+                  />
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <span className="text-[9px] font-mono uppercase text-champagne tracking-wider block">
+                    {w.styleCode}
+                  </span>
+                  <p className="text-xs font-medium text-warm-ivory truncate group-hover:text-champagne transition-colors">
+                    {w.styleName}
+                  </p>
+                  <p className="text-[10px] text-stone-500 font-mono">
+                    Finished {new Date(w.completionDate).toLocaleDateString("en-NG", { month: "short", year: "numeric" })}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Section 4: Saved Looks Teaser ── */}
       {savedStyles.length > 0 && (
         <div className="space-y-4 pt-4">
           <div className="flex items-center justify-between">
