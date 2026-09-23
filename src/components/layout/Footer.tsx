@@ -1,9 +1,18 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { COLLECTIONS } from "@/data/collections";
 import { MapPin, Phone, Mail, MessageSquare } from "lucide-react";
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/bespoke/create")) {
+    return null;
+  }
+
   return (
     <footer className="bg-near-black text-warm-ivory border-t border-stone-800/80 pt-16 sm:pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

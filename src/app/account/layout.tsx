@@ -74,43 +74,79 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   return (
     <div className="min-h-screen bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black flex flex-col">
       {/* ── Top Concierge Banner ── */}
-      <header className="border-b border-stone-800/80 bg-[#121210]/95 backdrop-blur-xl sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      <header className="border-b border-stone-800/80 bg-[#11110F]/95 backdrop-blur-2xl sticky top-0 z-40 shadow-[0_4px_30px_rgba(0,0,0,0.35)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+          {/* Brand Anchor & Boutique Navigation */}
+          <div className="flex items-center gap-3 sm:gap-6">
+            <Link
+              href="/"
+              className="flex items-center transition-opacity hover:opacity-85 focus:outline-none"
+              title="Return to TSquare Clothing Cafe Boutique"
+            >
+              <BrandLogo variant="light" size="sm" align="left" />
+            </Link>
+
+            <span className="text-stone-800 hidden sm:inline select-none">|</span>
+
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-xs text-stone-400 hover:text-champagne transition-colors uppercase font-mono tracking-wider"
+              title="Browse the Public Boutique"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to TCC</span>
+              <ArrowLeft className="w-3.5 h-3.5 text-champagne" />
+              <span className="hidden md:inline">Return to Boutique</span>
+              <span className="md:hidden">Boutique</span>
             </Link>
-            <span className="text-stone-700 hidden sm:inline">|</span>
-            <div className="hidden sm:flex items-center gap-2">
+
+            <span className="text-stone-800 hidden lg:inline select-none">|</span>
+
+            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-full bg-champagne/10 border border-champagne/20">
               <ShieldCheck className="w-3.5 h-3.5 text-champagne" />
-              <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-stone-400">
+              <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-medium">
                 Private Client Concierge
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Client Profile, Notifications & Sign Out */}
+          <div className="flex items-center gap-2.5 sm:gap-4">
+            {/* Quick Notification Bell */}
+            <Link
+              href="/account/notifications"
+              className="relative p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-stone-800/40 rounded-xl transition-colors focus:outline-none"
+              title="Notifications"
+              aria-label={`Notifications (${unreadNotificationsCount} unread)`}
+            >
+              <Bell className="w-4 h-4" />
+              {unreadNotificationsCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-champagne text-[9px] font-bold text-near-black ring-2 ring-[#11110F]">
+                  {unreadNotificationsCount}
+                </span>
+              )}
+            </Link>
+
+            <div className="h-5 w-px bg-stone-800/80 hidden sm:block" />
+
+            {/* Profile Avatar & Name */}
             <Link
               href="/account/profile"
-              className="flex items-center gap-3 text-left group hover:opacity-90 transition-opacity"
+              className="flex items-center gap-3 text-left group hover:opacity-90 transition-opacity focus:outline-none"
+              title="View Client Profile"
             >
-              <div className="w-8 h-8 rounded-full bg-champagne/15 border border-champagne/40 flex items-center justify-center font-display text-xs text-champagne font-bold tracking-wider">
+              <div className="w-9 h-9 rounded-xl bg-champagne/15 border border-champagne/40 flex items-center justify-center font-display text-xs text-champagne font-bold tracking-wider shadow-inner group-hover:border-champagne transition-colors">
                 {clientInitials}
               </div>
               <div className="hidden md:block">
                 <p className="text-xs text-warm-ivory font-medium leading-none group-hover:text-champagne transition-colors">
                   {clientFullName}
                 </p>
-                <p className="text-[9px] text-stone-500 font-mono uppercase tracking-widest mt-0.5">
+                <p className="text-[9px] text-stone-500 font-mono uppercase tracking-widest mt-1">
                   Verified Client
                 </p>
               </div>
             </Link>
 
+            {/* Sign Out Button */}
             <button
               onClick={async () => {
                 await signOut();
@@ -118,7 +154,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
               }}
               title="Sign Out"
               aria-label="Sign out from private client portal"
-              className="p-2 text-stone-400 hover:text-warm-ivory hover:bg-stone-800/40 rounded-xl transition-colors"
+              className="p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-stone-800/50 rounded-xl transition-colors focus:outline-none ml-1"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -126,41 +162,43 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         </div>
 
         {/* ── Sub Navigation Tabs ── */}
-        <nav
-          aria-label="Private Client Navigation"
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1 overflow-x-auto no-scrollbar py-1"
-        >
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              item.href === "/account"
-                ? pathname === "/account"
-                : pathname.startsWith(item.href);
+        <div className="border-t border-stone-800/60 bg-[#0F0F0D]/60 backdrop-blur-md">
+          <nav
+            aria-label="Private Client Navigation"
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2"
+          >
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const isActive =
+                item.href === "/account"
+                  ? pathname === "/account"
+                  : pathname.startsWith(item.href);
 
-            const isNotification = item.href === "/account/notifications";
+              const isNotification = item.href === "/account/notifications";
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-widest font-medium transition-all whitespace-nowrap relative shrink-0",
-                  isActive
-                    ? "bg-stone-900 text-champagne border border-stone-800 shadow-sm"
-                    : "text-stone-400 hover:text-warm-ivory hover:bg-stone-900/40"
-                )}
-              >
-                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-champagne" : "text-stone-500")} />
-                <span>{item.label}</span>
-                {isNotification && unreadNotificationsCount > 0 && (
-                  <span className="ml-1 px-1.5 py-0.2 rounded-full bg-champagne text-near-black text-[9px] font-bold">
-                    {unreadNotificationsCount}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs uppercase tracking-widest font-medium transition-all whitespace-nowrap relative shrink-0",
+                    isActive
+                      ? "bg-stone-900/90 text-champagne border border-stone-700/70 shadow-sm"
+                      : "text-stone-400 hover:text-warm-ivory hover:bg-stone-800/40"
+                  )}
+                >
+                  <Icon className={cn("w-3.5 h-3.5", isActive ? "text-champagne" : "text-stone-500")} />
+                  <span>{item.label}</span>
+                  {isNotification && unreadNotificationsCount > 0 && (
+                    <span className="ml-1 px-1.5 py-0.2 rounded-full bg-champagne text-near-black text-[9px] font-bold">
+                      {unreadNotificationsCount}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
       </header>
 
       {/* ── Main Content Area ── */}

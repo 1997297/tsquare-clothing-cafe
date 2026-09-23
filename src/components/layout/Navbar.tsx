@@ -50,6 +50,11 @@ export function Navbar() {
     setIsCollectionsDropdownOpen(false);
   }, [pathname]);
 
+  // Dedicated client portal and bespoke configurator have their own purpose-built concierge headers
+  if (pathname.startsWith("/account") || pathname.startsWith("/bespoke/create")) {
+    return null;
+  }
+
   return (
     <>
       <header
