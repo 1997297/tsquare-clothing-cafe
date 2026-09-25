@@ -40,6 +40,8 @@ export function FabricStep({
           return (
             <button
               key={fabric.id}
+              type="button"
+              aria-pressed={isSelected}
               onClick={() => onSelect(fabric)}
               className={cn(
                 "w-full text-left p-5 rounded-2xl border transition-all duration-200 group",
@@ -98,6 +100,7 @@ export function FabricStep({
 
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -105,6 +108,7 @@ export function FabricStep({
           Back
         </button>
         <button
+          type="button"
           onClick={onContinue}
           disabled={!config.fabric}
           className={cn(

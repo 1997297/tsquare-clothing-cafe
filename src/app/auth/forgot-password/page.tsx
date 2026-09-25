@@ -1,17 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { useAuth } from "@/lib/auth-context";
 import { ArrowLeft, CheckCircle2, KeyRound, AlertCircle, Loader2 } from "lucide-react";
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordForm() {
+  const searchParams = useSearchParams();
   const { resetPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState(() =>
+    searchParams.get("error") === "invalid_or_expired"
+      ? "That recovery link is invalid or has expired. Request a new one below."
+      : ""
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,7 +64,7 @@ export default function ForgotPasswordPage() {
         )}
 
         {submitted ? (
-          <div className="p-8 bg-[#151513] fine-border rounded-3xl text-center space-y-4 animate-in zoom-in-95 duration-200">
+          <div className="p-8 bg-stone-950 fine-border rounded-3xl text-center space-y-4 animate-in zoom-in-95 duration-200">
             <CheckCircle2 className="h-10 w-10 text-champagne mx-auto" />
             <h3 className="font-display text-xl text-warm-ivory">
               Recovery Dispatch Sent
@@ -73,13 +79,16 @@ export default function ForgotPasswordPage() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-8 bg-[#151513] fine-border rounded-3xl space-y-5">
+          <form onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+              <label htmlFor="recovery-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                 Client Email Address
               </label>
               <input
                 type="email"
+                id="recovery-email"
+                name="email"
+                autoComplete="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -124,5 +133,13 @@ export default function ForgotPasswordPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-near-black grid place-items-center"><Loader2 className="w-8 h-8 animate-spin text-champagne" /></div>}>
+      <ForgotPasswordForm />
+    </Suspense>
   );
 }

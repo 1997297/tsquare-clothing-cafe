@@ -8,16 +8,21 @@ import { Button } from "@/components/common/Button";
 import { PasswordInput } from "@/components/common/PasswordInput";
 import { useAuth } from "@/lib/auth-context";
 import { ArrowRight, AlertCircle, Loader2 } from "lucide-react";
+import { sanitizeInternalPath } from "@/lib/validation";
 
 function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextUrl = searchParams.get("next") || "/account";
+  const nextUrl = sanitizeInternalPath(searchParams.get("next"), "/account");
 
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState(() =>
+    searchParams.get("error") === "service_unavailable"
+      ? "Account services are temporarily unavailable."
+      : ""
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,7 +35,7 @@ function SignInForm() {
       if (error) {
         setErrorMsg(error.message || "Invalid email or password. Please verify your credentials.");
       } else {
-        router.push(nextUrl);
+        router.replace(nextUrl);
       }
     } catch {
       setErrorMsg("An unexpected connection issue occurred. Please try again.");
@@ -63,13 +68,16 @@ function SignInForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-8 bg-[#151513] fine-border rounded-3xl space-y-5">
+        <form onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
           <div>
-            <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+            <label htmlFor="sign-in-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
               Client Email Address
             </label>
             <input
               type="email"
+              id="sign-in-email"
+              name="email"
+              autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}

@@ -76,7 +76,7 @@ export default function AccountOrdersPage() {
             return (
               <div
                 key={order.id}
-                className="p-6 sm:p-8 rounded-3xl bg-[#141412] fine-border space-y-6 hover:border-stone-700/80 transition-colors"
+                className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6 hover:border-stone-700/80 transition-colors"
               >
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-stone-800/60">
@@ -167,7 +167,7 @@ export default function AccountOrdersPage() {
           })}
         </div>
       ) : (
-        <div className="p-12 bg-[#141412] fine-border rounded-3xl text-center space-y-4">
+        <div className="p-12 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
           <Package className="w-8 h-8 text-stone-600 mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
             {tab === "active" ? "No Active Orders Under Tailoring" : "No Completed Garments Yet"}

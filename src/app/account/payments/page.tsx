@@ -64,7 +64,7 @@ export default function AccountPaymentsPage() {
       {/* ── Financial Position Overview Cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Total Committed */}
-        <div className="p-6 rounded-3xl bg-[#141412] fine-border space-y-2">
+        <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-mono tracking-widest text-stone-500">
               Total Commission Value
@@ -80,7 +80,7 @@ export default function AccountPaymentsPage() {
         </div>
 
         {/* Total Settled */}
-        <div className="p-6 rounded-3xl bg-[#141412] fine-border space-y-2">
+        <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-mono tracking-widest text-champagne">
               Total Settled
@@ -98,7 +98,7 @@ export default function AccountPaymentsPage() {
         </div>
 
         {/* Total Outstanding */}
-        <div className="p-6 rounded-3xl bg-[#141412] fine-border space-y-2">
+        <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-mono tracking-widest text-stone-400">
               Outstanding Balance
@@ -133,7 +133,7 @@ export default function AccountPaymentsPage() {
             return (
               <div
                 key={order.id}
-                className="p-6 sm:p-8 rounded-3xl bg-[#141412] fine-border space-y-6"
+                className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800/60 pb-5">
                   <div>
@@ -260,7 +260,7 @@ export default function AccountPaymentsPage() {
             {filteredPayments.map((payment) => (
               <div
                 key={payment.id}
-                className="p-5 rounded-2xl bg-[#141412] fine-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-stone-700 transition-colors"
+                className="p-5 rounded-2xl bg-stone-950 fine-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-stone-700 transition-colors"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-champagne/10 border border-champagne/25 flex items-center justify-center shrink-0 mt-0.5 text-champagne">
@@ -324,7 +324,7 @@ export default function AccountPaymentsPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-[#141412] rounded-3xl fine-border space-y-3">
+          <div className="text-center py-16 bg-stone-950 rounded-3xl fine-border space-y-3">
             <CreditCard className="w-8 h-8 text-stone-600 mx-auto" />
             <h3 className="font-display text-lg text-warm-ivory">
               No Payment Records in this Category

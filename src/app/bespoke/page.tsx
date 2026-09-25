@@ -55,7 +55,7 @@ export default function BespokePage() {
       <section className="relative min-h-[75vh] flex items-center justify-center overflow-hidden pt-28 pb-16">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=85&w=2000&auto=format&fit=crop"
+            src="/images/atelier/bespoke-heritage.jpg"
             alt="TSquare Bespoke Tailoring Experience"
             fill
             priority
@@ -111,7 +111,7 @@ export default function BespokePage() {
             <div className="lg:col-span-6 grid grid-cols-2 gap-4">
               <div className="relative aspect-[3/4] bg-espresso fine-border overflow-hidden">
                 <Image
-                  src="https://images.unsplash.com/photo-1618886614638-80e3c103d31a?q=80&w=800&auto=format&fit=crop"
+                  src="/images/atelier/precision-suiting.jpg"
                   alt="Pattern cutting and chalk marks"
                   fill
                   sizes="25vw"
@@ -120,7 +120,7 @@ export default function BespokePage() {
               </div>
               <div className="relative aspect-[3/4] bg-espresso fine-border overflow-hidden translate-y-6">
                 <Image
-                  src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop"
+                  src="/images/atelier/tailoring-craft.jpg"
                   alt="Hand stitching and lapel roll"
                   fill
                   sizes="25vw"
@@ -133,7 +133,7 @@ export default function BespokePage() {
       </section>
 
       {/* The 6 Pillars of TSquare Bespoke */}
-      <section className="py-24 sm:py-32 bg-[#0E0E0C]">
+      <section className="py-24 sm:py-32 bg-near-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
             <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block mb-3">

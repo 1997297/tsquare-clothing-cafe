@@ -12,6 +12,7 @@ import {
   Shield,
 } from "lucide-react";
 import { Button } from "@/components/common/Button";
+import { submitContactEnquiryAction } from "./actions";
 
 export default function ContactClient() {
   const [formData, setFormData] = useState({
@@ -23,15 +24,19 @@ export default function ContactClient() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate frontend validation & processing
-    setTimeout(() => {
-      setIsLoading(false);
+    setSubmitError("");
+    const result = await submitContactEnquiryAction(formData);
+    if (result.ok) {
       setIsSubmitted(true);
-    }, 600);
+    } else {
+      setSubmitError(result.error);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -53,7 +58,7 @@ export default function ContactClient() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           {/* Left Column: Atelier Information & Socials */}
           <div className="lg:col-span-5 space-y-8">
-            <div className="p-8 bg-[#151513] fine-border rounded-2xl sm:rounded-3xl space-y-6">
+            <div className="p-8 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl space-y-6">
               <h3 className="font-display text-2xl text-warm-ivory">
                 The TCC Office
               </h3>
@@ -151,7 +156,7 @@ export default function ContactClient() {
 
           {/* Right Column: Interactive Concierge Message Form */}
           <div className="lg:col-span-7">
-            <div className="p-8 sm:p-10 bg-[#151513] fine-border rounded-2xl sm:rounded-3xl">
+            <div className="p-8 sm:p-10 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl">
               <div className="mb-6">
                 <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold block mb-1">
                   Atelier Dispatch
@@ -194,11 +199,14 @@ export default function ContactClient() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                      <label htmlFor="contact-name" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                         Full Name *
                       </label>
                       <input
+                        id="contact-name"
+                        name="name"
                         type="text"
+                        autoComplete="name"
                         required
                         value={formData.name}
                         onChange={(e) =>
@@ -210,11 +218,14 @@ export default function ContactClient() {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                      <label htmlFor="contact-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                         Email Address *
                       </label>
                       <input
+                        id="contact-email"
+                        name="email"
                         type="email"
+                        autoComplete="email"
                         required
                         value={formData.email}
                         onChange={(e) =>
@@ -228,11 +239,14 @@ export default function ContactClient() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                      <label htmlFor="contact-phone" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                         Phone / WhatsApp *
                       </label>
                       <input
+                        id="contact-phone"
+                        name="phone"
                         type="tel"
+                        autoComplete="tel"
                         required
                         value={formData.phone}
                         onChange={(e) =>
@@ -244,10 +258,12 @@ export default function ContactClient() {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                      <label htmlFor="contact-subject" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                         Subject of Inquiry
                       </label>
                       <select
+                        id="contact-subject"
+                        name="subject"
                         value={formData.subject}
                         onChange={(e) =>
                           setFormData({ ...formData, subject: e.target.value })
@@ -272,10 +288,12 @@ export default function ContactClient() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                    <label htmlFor="contact-message" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                       Message / Special Requests *
                     </label>
                     <textarea
+                      id="contact-message"
+                      name="message"
                       required
                       rows={5}
                       value={formData.message}
@@ -288,6 +306,7 @@ export default function ContactClient() {
                   </div>
 
                   <div className="pt-2">
+                    {submitError && <p role="alert" className="mb-3 text-xs text-red-300">{submitError}</p>}
                     <Button
                       type="submit"
                       variant="champagne"

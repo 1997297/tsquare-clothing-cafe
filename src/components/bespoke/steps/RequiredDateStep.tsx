@@ -52,7 +52,7 @@ export function RequiredDateStep({
           min={todayStr}
           onChange={(e) => onDateChange(e.target.value)}
           className={cn(
-            "w-full sm:w-72 bg-[#141412] border rounded-xl text-sm text-warm-ivory px-4 py-3.5 focus:outline-none transition-colors",
+            "w-full sm:w-72 bg-stone-950 border rounded-xl text-sm text-warm-ivory px-4 py-3.5 focus:outline-none transition-colors",
             isPast
               ? "border-amber-700/60 focus:border-amber-500"
               : "border-stone-800 focus:border-champagne/50"
@@ -76,7 +76,7 @@ export function RequiredDateStep({
       )}
 
       {/* Lead time note */}
-      <div className="mb-10 p-5 bg-[#141412] border border-stone-800/50 rounded-xl">
+      <div className="mb-10 p-5 bg-stone-950 border border-stone-800/50 rounded-xl">
         <p className="text-[10px] uppercase tracking-widest text-stone-600 mb-2 font-mono">
           Typical Atelier Lead Times
         </p>
@@ -101,6 +101,7 @@ export function RequiredDateStep({
 
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -108,6 +109,7 @@ export function RequiredDateStep({
           Back
         </button>
         <button
+          type="button"
           onClick={onContinue}
           disabled={!config.requiredDate || isPast}
           className={cn(

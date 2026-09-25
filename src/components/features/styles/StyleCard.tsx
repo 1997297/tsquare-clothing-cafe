@@ -109,14 +109,17 @@ export function StyleCard({ style, priority = false, className }: StyleCardProps
 
         {/* Available Color Dots */}
         {style.availableColours && style.availableColours.length > 0 && (
-          <div className="mt-3 flex items-center gap-1.5" aria-label="Available colours">
+          <div className="mt-3 flex items-center gap-1.5" role="list" aria-label="Available colours">
             {style.availableColours.map((c, i) => (
               <span
                 key={i}
                 title={c.name}
+                role="listitem"
                 className="h-3 w-3 rounded-full border border-stone-600/60 shadow-inner"
                 style={{ backgroundColor: c.hex }}
-              />
+              >
+                <span className="sr-only">{c.name}</span>
+              </span>
             ))}
             <span className="ml-1 text-[9px] uppercase tracking-wider text-stone-500">
               {style.availableColours.length} Palettes

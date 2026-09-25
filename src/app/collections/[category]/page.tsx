@@ -139,7 +139,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         )}
 
         {/* Bottom Consultation Link with Rounded-3xl */}
-        <div className="mt-20 p-8 sm:p-12 bg-[#141412] fine-border rounded-3xl text-center max-w-3xl mx-auto shadow-md">
+        <div className="mt-20 p-8 sm:p-12 bg-stone-950 fine-border rounded-3xl text-center max-w-3xl mx-auto shadow-md">
           <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold block mb-2">
             Personal Customization
           </span>

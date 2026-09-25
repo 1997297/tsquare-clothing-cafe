@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { COLLECTIONS } from "@/data/collections";
-import { MapPin, Phone, Mail, MessageSquare } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -89,9 +89,9 @@ export function Footer() {
 
           {/* Collections Column */}
           <div className="space-y-4">
-            <h4 className="text-xs uppercase tracking-[0.25em] font-semibold text-warm-ivory">
+            <h2 className="text-xs uppercase tracking-[0.25em] font-semibold text-warm-ivory">
               Collections
-            </h4>
+            </h2>
             <ul className="space-y-2.5 text-xs text-stone-400">
               {COLLECTIONS.map((c) => (
                 <li key={c.id}>
@@ -116,9 +116,9 @@ export function Footer() {
 
           {/* Sartorial Services & House */}
           <div className="space-y-4">
-            <h4 className="text-xs uppercase tracking-[0.25em] font-semibold text-warm-ivory">
+            <h2 className="text-xs uppercase tracking-[0.25em] font-semibold text-warm-ivory">
               The House
-            </h4>
+            </h2>
             <ul className="space-y-2.5 text-xs text-stone-400">
               <li>
                 <Link href="/bespoke" className="hover:text-champagne transition-colors tracking-wide">
@@ -155,9 +155,9 @@ export function Footer() {
 
           {/* Private Client & Concierge */}
           <div className="space-y-4">
-            <h4 className="text-xs uppercase tracking-[0.25em] font-semibold text-warm-ivory">
+            <h2 className="text-xs uppercase tracking-[0.25em] font-semibold text-warm-ivory">
               Private Client
-            </h4>
+            </h2>
             <ul className="space-y-2.5 text-xs text-stone-400">
               <li>
                 <Link href="/auth/sign-in" className="hover:text-champagne transition-colors tracking-wide">
@@ -175,14 +175,14 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <span className="text-stone-600 block pt-1">
-                  Measurement Archiving (Phase 2)
-                </span>
+                <Link href="/account/measurements" className="hover:text-champagne transition-colors tracking-wide block pt-1">
+                  Measurement Archive
+                </Link>
               </li>
               <li>
-                <span className="text-stone-600">
-                  Digital Wardrobe (Phase 3)
-                </span>
+                <Link href="/account/wardrobe" className="hover:text-champagne transition-colors tracking-wide">
+                  Digital Wardrobe
+                </Link>
               </li>
             </ul>
           </div>

@@ -9,11 +9,12 @@ import { PasswordInput } from "@/components/common/PasswordInput";
 import { useAuth } from "@/lib/auth-context";
 import { UserPlus, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { sanitizeInternalPath } from "@/lib/validation";
 
 function CreateAccountForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextUrl = searchParams.get("next") || "/account";
+  const nextUrl = sanitizeInternalPath(searchParams.get("next"), "/account");
 
   const { signUp } = useAuth();
   const [formData, setFormData] = useState({
@@ -95,7 +96,7 @@ function CreateAccountForm() {
         )}
 
         {verificationRequired ? (
-          <div className="p-8 bg-[#151513] fine-border rounded-3xl text-center space-y-4 animate-in zoom-in-95 duration-200">
+          <div className="p-8 bg-stone-950 fine-border rounded-3xl text-center space-y-4 animate-in zoom-in-95 duration-200">
             <CheckCircle2 className="h-10 w-10 text-champagne mx-auto" />
             <h3 className="font-display text-xl text-warm-ivory">
               Confirmation Dispatch Sent
@@ -111,14 +112,17 @@ function CreateAccountForm() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-8 bg-[#151513] fine-border rounded-3xl space-y-4">
+          <form onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
+                <label htmlFor="create-first-name" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
                   First Name *
                 </label>
                 <input
+                  id="create-first-name"
+                  name="firstName"
                   type="text"
+                  autoComplete="given-name"
                   required
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
@@ -128,11 +132,14 @@ function CreateAccountForm() {
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
+                <label htmlFor="create-last-name" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
                   Last Name *
                 </label>
                 <input
+                  id="create-last-name"
+                  name="lastName"
                   type="text"
+                  autoComplete="family-name"
                   required
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
@@ -143,11 +150,14 @@ function CreateAccountForm() {
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
+              <label htmlFor="create-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
                 Email Address *
               </label>
               <input
+                id="create-email"
+                name="email"
                 type="email"
+                autoComplete="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -157,11 +167,14 @@ function CreateAccountForm() {
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
+              <label htmlFor="create-phone" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
                 Phone / WhatsApp Number *
               </label>
               <input
+                id="create-phone"
+                name="phone"
                 type="tel"
+                autoComplete="tel"
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -170,15 +183,16 @@ function CreateAccountForm() {
               />
             </div>
 
-            <div>
-              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+            <fieldset>
+              <legend className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                 Preferred Contact Method
-              </label>
+              </legend>
               <div className="grid grid-cols-3 gap-2">
                 {(["whatsapp", "phone", "email"] as const).map((method) => (
                   <button
                     key={method}
                     type="button"
+                    aria-pressed={formData.preferredContact === method}
                     onClick={() => setFormData({ ...formData, preferredContact: method })}
                     className={cn(
                       "py-2 rounded-xl text-[11px] font-medium uppercase tracking-wider border transition-colors capitalize",
@@ -191,7 +205,7 @@ function CreateAccountForm() {
                   </button>
                 ))}
               </div>
-            </div>
+            </fieldset>
 
             <div>
               <label htmlFor="create-password" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">

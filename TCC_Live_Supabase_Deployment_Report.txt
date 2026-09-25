@@ -1,0 +1,448 @@
+TCC - TSQUARE CLOTHING CAFE
+LIVE SUPABASE DEPLOYMENT AND VERIFICATION REPORT
+
+Report date: 25 September 2026
+Scope: Connect and deploy the completed Phase 3-4 foundation to the new live Supabase project.
+Phase 5 was not started.
+
+EXECUTIVE OUTCOME
+
+The checked-in TCC baseline schema and all three remediation migrations were deployed successfully to the new live Supabase project in the required order. The migrations were not modified.
+
+The live database, Row Level Security, trusted function permissions, private Storage bucket, authentication flow, public intake forms, application tests, and production build were verified. A temporary two-customer live security probe passed 23 checks and cleaned up all of its data.
+
+The database deployment itself has no unresolved schema error. The Phase 5 gate remains closed until a staff authorization model is defined and approved. No Phase 5 interface or workflow was built.
+
+
+## Project Connection
+
+Project name: TSquare Clothing Cafe
+Linked project ref: egahodxarflluctmnkqu
+Project status during verification: ACTIVE_HEALTHY
+Database region: eu-north-1
+Database engine observed: PostgreSQL 17
+Supabase CLI version: 2.117.0
+supabase/config.toml exists: YES
+Linked project reference verified from supabase/.temp/project-ref: YES
+supabase/.temp remains ignored by Git: YES
+
+The CLI was authenticated with the Supabase profile that owns the project and the repository was linked successfully.
+
+
+## Environment
+
+Configured variable names:
+
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+- SUPABASE_SECRET_KEY
+- NEXT_PUBLIC_SITE_URL
+- NEXT_PUBLIC_TCC_DEMO_MODE
+
+Verification:
+
+- The project URL matches the linked project.
+- The browser/normal SSR clients prefer NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.
+- The trusted server-only client prefers SUPABASE_SECRET_KEY.
+- Legacy NEXT_PUBLIC_SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY are compatibility fallbacks only.
+- The secret client is protected by server-only and is imported only by server modules.
+- No Client Component imports the secret client or a privileged variable.
+- Demo mode is disabled.
+- .env.local is ignored by Git.
+- No secret value was printed, added to source control, or included in this report.
+
+Files updated for modern key names:
+
+- .env.example
+- src/lib/supabase/client.ts
+- src/lib/supabase/server.ts
+- src/lib/server/supabase-admin.ts
+- src/middleware.ts
+
+
+## Baseline
+
+Authoritative file: supabase/schema.sql
+Application command: supabase db query --linked --file supabase/schema.sql
+Status: APPLIED SUCCESSFULLY
+
+The remote public schema was confirmed empty before execution. The exact checked-in baseline was applied without retyping or regeneration.
+
+Expected base tables created:
+
+- profiles
+- measurement_profiles
+- bespoke_requests
+- orders
+- appointments
+- saved_styles
+- notifications
+- payments
+- wardrobe_items
+- concierge_requests
+- concierge_messages
+- appointment_change_requests
+
+All 12 base tables existed after deployment, contained zero pre-existing customer rows, and had RLS enabled before remediation migration deployment continued.
+
+
+## Migrations
+
+Dry run: PASS
+
+The linked dry run proposed exactly these migrations, in this order:
+
+1. 20260923130313_harden_customer_authority.sql
+   Status: APPLIED SUCCESSFULLY
+
+2. 20260923130321_trusted_workflows_and_public_intake.sql
+   Status: APPLIED SUCCESSFULLY
+
+3. 20260923130330_private_reference_storage.sql
+   Status: APPLIED SUCCESSFULLY
+
+The three migration files were deployed unchanged. The live migration history contains all three versions and no unexpected TCC migration.
+
+
+## Live Database
+
+Deployed relevant public tables:
+
+- profiles
+- measurement_profiles
+- bespoke_requests
+- orders
+- appointments
+- saved_styles
+- notifications
+- payments
+- wardrobe_items
+- concierge_requests
+- concierge_messages
+- appointment_change_requests
+- lifecycle_events
+- contact_enquiries
+- public_fitting_requests
+
+All 15 public tables have RLS enabled.
+
+Live structural checks confirmed:
+
+- Unique measurement customer/version index exists.
+- Partial unique index permits at most one current measurement profile per customer.
+- Unique request-to-order relationship exists for non-null bespoke request IDs.
+- Unique provider/provider-reference payment idempotency index exists.
+- Unique Order-to-Wardrobe relationship exists.
+- Payment provider constraint excludes the former sandbox provider.
+- Payment/order and wardrobe/order ownership triggers exist.
+- Appointment relationship trigger exists.
+- Auth-user profile creation trigger points to private.handle_new_user().
+
+
+## RLS
+
+Customer access model verified from live grants and policies:
+
+- profiles: customer can read only their own row and update only first name, last name, phone, preferred contact, avatar URL, and updated timestamp.
+- measurement_profiles: customer can read only their own history. Direct customer insert/update/delete is blocked.
+- bespoke_requests: customer can read only their own requests. Direct customer insert/update/delete is blocked.
+- orders: customer can read only their own orders. Direct insert/update/delete is blocked.
+- appointments: customer can read only their own appointments. Direct operational mutation is blocked.
+- saved_styles: customer can read, insert, and delete only their own saved styles.
+- notifications: customer can read only their own notifications and update only is_read/read_at. Content and identity fields cannot be changed.
+- payments: customer can read only their own payments. Direct insert/update/delete is blocked.
+- wardrobe_items: customer can read only their own wardrobe. Direct insert/update/delete is blocked.
+- concierge_requests and concierge_messages: customer can read only owned threads. Direct writes are blocked and use trusted server operations.
+- appointment_change_requests: customer can read only owned requests. Direct insert/update is blocked and trusted requests start pending review.
+- lifecycle_events: customer can read only their own events and cannot write them.
+- contact_enquiries and public_fitting_requests: anon/authenticated roles have no direct table privileges; trusted server intake writes are used.
+
+Trusted function verification:
+
+- All eight trusted public workflow functions exist.
+- anon execute: DENIED
+- authenticated execute: DENIED
+- service_role execute: ALLOWED
+- Customer request-to-order conversion: DENIED
+- Customer verified-payment recording: DENIED
+
+Live two-customer probe: PASS, 23/23 checks
+
+The probe verified:
+
+- Cross-customer profile isolation.
+- Own saved-style persistence and cross-customer isolation.
+- Forged saved-style ownership blocked with PostgreSQL 42501.
+- Direct measurement, bespoke request, order, appointment, payment, wardrobe, concierge, and appointment-change inserts blocked with PostgreSQL 42501.
+- Trusted order-conversion and payment RPCs blocked with PostgreSQL 42501.
+- Notification read-state update allowed.
+- Notification title tampering blocked with PostgreSQL 42501.
+- Cross-customer notification isolation.
+- Private Storage owner upload/read allowed.
+- Cross-customer Storage reads, uploads, reciprocal reads, and signed-URL creation blocked.
+
+The temporary second customer, rows, notifications, saved style, and Storage objects were deleted after the probe. Cleanup counts were verified as zero.
+
+
+## Measurement Security
+
+Status: PASS
+
+- Unique customer/version constraint is live.
+- Maximum one current row per customer is enforced by a partial unique index.
+- Historical rows cannot be directly edited by customers.
+- Customers cannot directly set TSquare verification state.
+- New versions use the trusted service-role workflow after server-side customer authentication.
+
+
+## Bespoke Security
+
+Status: PASS
+
+- Customers cannot insert arbitrary trusted bespoke records directly.
+- Customers cannot directly change quote, approval status, converted state, or internal/admin fields.
+- Normal submission uses the authenticated server action and trusted service-role workflow.
+- Customer reads remain owner-scoped.
+
+
+## Order Security
+
+Status: PASS
+
+- Customers have owner-scoped read access only.
+- Customers cannot insert, update, or delete authoritative orders.
+- Trusted request-to-order function exists.
+- The function is unavailable to anon/authenticated roles.
+- Conversion remains reserved for a future trusted staff/system workflow.
+
+
+## Payment Security
+
+Status: PASS
+
+- Customers cannot create successful payments or modify amount, status, provider reference, or ownership.
+- Provider/reference idempotency is enforced by a live unique partial index.
+- Payment/order customer consistency is enforced by a live trigger.
+- The sandbox provider is absent from the live provider constraint.
+- No real payment provider was activated.
+
+
+## Wardrobe Security
+
+Status: PASS
+
+- Customers have owner-scoped read access only.
+- Unique Order-to-Wardrobe relationship is live.
+- Trusted creation requires an eligible completed order.
+- Customers cannot forge wardrobe items directly.
+
+
+## Appointment Security
+
+Status: PASS
+
+- Customers cannot directly change confirmed date/time, location, operational status, or completion state.
+- Appointment ownership and related request/order consistency trigger is live.
+- Direct appointment-change inserts are blocked.
+- Trusted change requests validate ownership and begin in pending_review state.
+- Customers cannot self-approve a change request.
+
+
+## Notification Security
+
+Status: PASS
+
+- Customer read-state updates persisted successfully.
+- Customer title/content tampering was rejected with PostgreSQL 42501.
+- Cross-customer notification reads returned no rows.
+
+
+## Concierge Security
+
+Status: PASS
+
+- UUID persistence model is live.
+- Customer thread ownership is enforced.
+- Customer sender identity is derived by the trusted workflow.
+- Customers cannot impersonate staff.
+- Related request/order/appointment ownership checks exist in the trusted function.
+- Direct customer table writes are blocked.
+
+
+## Storage
+
+Bucket: bespoke-references
+Status: PASS
+
+Live bucket configuration:
+
+- Public: false
+- Maximum file size: 10 MB
+- Allowed MIME types: image/jpeg, image/png, image/webp
+- Customer-folder ownership policies: present
+
+Live behavior verified:
+
+- Customer A uploaded and read a file in Customer A's folder.
+- Customer B could not read Customer A's file.
+- Customer B could not upload into Customer A's folder.
+- Customer A could not read Customer B's file.
+- Customer A could create a signed URL for Customer A's file.
+- Customer B could not create a signed URL for Customer A's file.
+- All temporary Storage objects were removed after verification.
+
+
+## Database Lint
+
+Command: supabase db lint --linked --fail-on error
+Status: PASS
+Result: No schema errors found across extensions, private, and public schemas.
+
+Supabase advisors:
+
+- Security: no error-level finding. Two informational RLS-without-policy notices exist for contact_enquiries and public_fitting_requests. This is intentional: RLS is enabled and anon/authenticated have no direct privileges because trusted server intake is used.
+- Performance: four informational unindexed foreign-key findings.
+- Performance: 19 unused-index informational findings. This is expected on a brand-new empty database and is not evidence that the indexes are unnecessary.
+
+
+## pgTAP
+
+Status: NOT RUN
+
+The installed CLI explicitly supports supabase test db --linked. The linked test command was attempted against supabase/tests/remediation_security.test.sql, but the CLI test runner stopped before executing SQL because Docker and Podman are not installed or available on PATH.
+
+Exact environment error:
+
+docker: command not found (podman also not found)
+
+The pgTAP file remains unchanged. Its 12 security conditions were also verified individually from live catalogs, and the separate two-customer live probe passed 23/23 checks.
+
+
+## Auth Test
+
+Signup: PASS
+
+- The TCC Create Account form reached the new Supabase Auth project.
+- A valid-format test account was created.
+- public.profiles was created automatically with the submitted first name, last name, phone, and preferred contact.
+
+Email verification behavior: PASS WITH DELIVERY LIMITATION
+
+- Signup returned no session and the UI displayed a truthful confirmation-required message.
+- Live auth.users showed email_confirmed_at as null before confirmation.
+- Password login before confirmation was rejected and the UI displayed "Please verify your email before signing in."
+- A server-only Admin API action confirmed only the test fixture so login testing could continue.
+- Receipt/click-through of a real email was not tested because no inbox was supplied.
+
+Login: PASS
+
+- Confirmed test credentials created a real Supabase session.
+- The browser reached /account.
+- The live profile loaded as Codex Verification.
+- Empty account sections rendered as real empty states, not mock data.
+
+Protected route: PASS
+
+- Signed-out /account redirected to /auth/sign-in?next=%2Faccount.
+
+Logout: PASS
+
+- Logout ended the session and returned the browser to sign-in.
+- A subsequent /account request remained protected.
+
+The test Auth user and its profile were deleted after verification. The final live test-user and profile counts returned to zero.
+
+
+## Public Intake Test
+
+Contact form: PASS
+
+- The browser displayed "Inquiry Received" only after the server action succeeded.
+- A live contact_enquiries row was verified with status new.
+
+Book a Fitting: PASS
+
+- The browser displayed "Fitting Request Logged" only after the server action succeeded.
+- A live public_fitting_requests row was verified with status requested, future date 2026-10-15, and 11:00 AM preferred time.
+- The UI truthfully stated that the request was not yet a confirmed slot.
+
+Both agent-created intake rows were deleted after verification. Final cleanup counts returned to zero.
+
+
+## Application Tests
+
+TypeScript
+
+Status: PASS
+Command: npm run typecheck
+Result: zero TypeScript errors.
+
+Lint
+
+Status: PASS WITH WARNINGS
+Command: npm run lint
+Result: zero errors, 85 warnings.
+Warnings are mainly legacy unused imports plus two existing explicit-any mapper warnings.
+
+Tests
+
+Status: PASS
+Command: npm test
+Result: 9/9 tests passed.
+Non-blocking warning: MODULE_TYPELESS_PACKAGE_JSON for the TypeScript test import path.
+
+Build
+
+Status: PASS
+Command: npm run build
+Framework: Next.js 15.5.25
+Result: optimized production build completed and 53/53 static pages were generated.
+
+Browser
+
+Status: PASS
+
+- Fresh dev server restarted on the user-confirmed port 3001.
+- Home page contained meaningful content and complete navigation.
+- No captured console errors.
+- Signup, sign-in, authenticated account, logout, protected redirect, Contact, and Book a Fitting were exercised through the browser.
+- Browser automation and the dev server were closed after testing.
+
+
+## Remaining Problems
+
+BLOCKING
+
+1. Phase 5 staff authorization model is not defined.
+   Before exposing staff/admin mutations, define staff identity, roles, least-privilege authorization, revocation, session policy, and audit requirements. The trusted database operations exist but must remain service-only until this model is approved.
+
+2. Production payment processing is not active.
+   This is intentional. A real provider, verified webhook path, secret management, replay handling, settlement/reconciliation, refunds, and operational ownership are still required before accepting production payments.
+
+3. Production email delivery and redirect behavior needs a real-inbox test.
+   Supabase correctly enforced email confirmation, but actual message receipt and confirmation-link click-through were not verified. Before launch, configure the production Site URL/redirect allowlist and test with a controlled inbox.
+
+NON-BLOCKING
+
+1. Linked pgTAP execution requires Docker Desktop or Podman on this workstation, or a CI runner that provides the pgTAP test environment.
+
+2. Supabase performance advisor reports four unindexed foreign keys. Review query patterns before adding indexes in a future migration.
+
+3. The 19 unused-index notices reflect an empty new database. Reassess only after representative production traffic exists.
+
+4. ESLint reports 85 warnings, mainly unused imports, with zero errors.
+
+5. Node's test runner reports MODULE_TYPELESS_PACKAGE_JSON. This does not affect the passing tests or production build.
+
+6. Archived/private reference-image presentation can be expanded later with signed-URL refresh and orphan-upload cleanup workflows.
+
+
+## Phase 5 Gate
+
+Live Supabase deployment foundation: SATISFIES THE PHASE 3-4 TECHNICAL DEPLOYMENT REQUIREMENTS.
+
+Phase 5 implementation gate: NOT YET OPEN.
+
+Reason: the live baseline, migrations, RLS, trusted workflow boundaries, Storage, auth integration, public intake, and application build are working and verified. However, Phase 5 must not begin until the staff authorization model in Remaining Problems is explicitly designed and approved. The future Phase 5 UI must use the prepared trusted operations without granting browser customers authority over orders, payments, wardrobe, operational appointments, or trusted bespoke state.
+
+Phase 5 was not started.

@@ -53,10 +53,13 @@ export default function SearchClient() {
           </p>
 
           {/* Search Input Box */}
-          <div className="mt-8 relative flex items-center bg-[#151513] fine-border p-2">
+          <div className="mt-8 relative flex items-center bg-stone-950 fine-border p-2">
             <Search className="h-5 w-5 text-stone-400 ml-3" />
+            <label htmlFor="collection-search" className="sr-only">Search the collection</label>
             <input
               type="text"
+              id="collection-search"
+              name="query"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by code (e.g. TSQ AGBADA 024), silhouette, groom, black..."

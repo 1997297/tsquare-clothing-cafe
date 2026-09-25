@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, X, ArrowRight } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { searchStyles } from "@/data/styles";
 import { Style } from "@/types";
+import { trapTabKey } from "@/lib/a11y";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -16,15 +17,26 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Style[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (isOpen) {
+      previousFocusRef.current = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
       document.body.style.overflow = "hidden";
-      setTimeout(() => inputRef.current?.focus(), 50);
+      const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 50);
+      return () => {
+        window.clearTimeout(focusTimer);
+        document.body.style.overflow = "unset";
+      };
     } else {
       document.body.style.overflow = "unset";
       setQuery("");
       setResults([]);
+      previousFocusRef.current?.focus();
+      previousFocusRef.current = null;
     }
     return () => {
       document.body.style.overflow = "unset";
@@ -33,6 +45,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      trapTabKey(e, dialogRef.current);
       if (e.key === "Escape") onClose();
     };
     if (isOpen) {
@@ -67,6 +80,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   return (
     <div
       role="dialog"
+      ref={dialogRef}
       aria-modal="true"
       aria-label="Search TCC collections"
       className="fixed inset-0 z-50 flex flex-col bg-near-black/95 backdrop-blur-xl animate-in fade-in duration-200"
@@ -75,9 +89,12 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
       <div className="border-b border-stone-800/80 px-4 sm:px-8 py-6 max-w-5xl w-full mx-auto flex items-center justify-between gap-4">
         <div className="relative flex-1 flex items-center bg-stone-900/60 border border-stone-800 rounded-2xl px-4 py-2">
           <Search className="h-5 w-5 text-stone-400 mr-3" />
+          <label htmlFor="collection-search-modal" className="sr-only">Search the collection</label>
           <input
             ref={inputRef}
             type="text"
+            id="collection-search-modal"
+            name="query"
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
             placeholder="Search by style code, silhouette, occasion, fabric..."
@@ -86,6 +103,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         </div>
 
         <button
+          type="button"
           onClick={onClose}
           aria-label="Close search"
           className="p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-stone-800/60 rounded-full transition-colors"
@@ -106,6 +124,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
               {quickTerms.map((term) => (
                 <button
                   key={term}
+                  type="button"
                   onClick={() => handleQueryChange(term)}
                   className="px-4 py-2 border border-stone-800 bg-stone-900/40 text-stone-300 hover:border-champagne hover:text-champagne text-xs uppercase tracking-widest transition-colors font-sans rounded-xl"
                 >

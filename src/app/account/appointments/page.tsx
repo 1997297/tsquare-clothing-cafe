@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useAccountData } from "@/lib/account-store";
 import {
@@ -17,6 +17,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { cn, formatOfficeLocation } from "@/lib/utils";
+import { trapTabKey } from "@/lib/a11y";
+import { ReturnLink } from "@/components/common/ReturnLink";
 
 type AppointmentTab = "upcoming" | "requested" | "past";
 
@@ -27,7 +29,7 @@ export default function AccountAppointmentsPage() {
     requestAppointmentCancellation,
   } = useAccountData();
 
-  const [tab, setTab] = useState<AppointmentTab>("upcoming");
+  const [tab, setTab] = useState<AppointmentTab>("requested");
 
   // Modal States
   const [rescheduleAptId, setRescheduleAptId] = useState<string | null>(null);
@@ -39,6 +41,27 @@ export default function AccountAppointmentsPage() {
   const [cancelAptId, setCancelAptId] = useState<string | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const [isCancelling, setIsCancelling] = useState(false);
+  const [actionError, setActionError] = useState("");
+  const rescheduleDialogRef = useRef<HTMLDivElement>(null);
+  const cancelDialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const dialog = rescheduleAptId ? rescheduleDialogRef.current : cancelAptId ? cancelDialogRef.current : null;
+    if (!dialog) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    dialog.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      trapTabKey(event, dialog);
+      if (event.key !== "Escape") return;
+      setRescheduleAptId(null);
+      setCancelAptId(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      previousFocus?.focus();
+    };
+  }, [cancelAptId, rescheduleAptId]);
 
   const upcomingList = appointments.filter(
     (a) => a.status === "confirmed" || a.status === "scheduled"
@@ -56,6 +79,7 @@ export default function AccountAppointmentsPage() {
     if (!rescheduleAptId || !proposedDate) return;
 
     setIsRescheduling(true);
+    setActionError("");
     try {
       await requestAppointmentReschedule(
         rescheduleAptId,
@@ -66,6 +90,8 @@ export default function AccountAppointmentsPage() {
       setRescheduleAptId(null);
       setProposedDate("");
       setRescheduleReason("");
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "The change request could not be submitted.");
     } finally {
       setIsRescheduling(false);
     }
@@ -76,10 +102,13 @@ export default function AccountAppointmentsPage() {
     if (!cancelAptId) return;
 
     setIsCancelling(true);
+    setActionError("");
     try {
       await requestAppointmentCancellation(cancelAptId, cancelReason);
       setCancelAptId(null);
       setCancelReason("");
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "The cancellation request could not be submitted.");
     } finally {
       setIsCancelling(false);
     }
@@ -87,6 +116,7 @@ export default function AccountAppointmentsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
+      <ReturnLink href="/account" label="Return to Dashboard" />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800/60 pb-6">
         <div>
@@ -109,6 +139,8 @@ export default function AccountAppointmentsPage() {
           <span>Book Fitting Session</span>
         </Link>
       </div>
+
+      {actionError && <p role="alert" className="p-4 rounded-2xl bg-red-950/30 border border-red-800/50 text-xs text-red-300">{actionError}</p>}
 
       {/* Tabs */}
       <div className="flex items-center gap-2 border-b border-stone-800/40 pb-3 overflow-x-auto no-scrollbar">
@@ -157,7 +189,7 @@ export default function AccountAppointmentsPage() {
             return (
               <div
                 key={apt.id}
-                className="p-6 sm:p-7 rounded-3xl bg-[#141412] fine-border space-y-4 hover:border-stone-700/80 transition-colors"
+                className="p-6 sm:p-7 rounded-3xl bg-stone-950 fine-border space-y-4 hover:border-stone-700/80 transition-colors"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-800/50">
                   <div>
@@ -237,7 +269,7 @@ export default function AccountAppointmentsPage() {
           })}
         </div>
       ) : (
-        <div className="p-12 bg-[#141412] fine-border rounded-3xl text-center space-y-4">
+        <div className="p-12 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
           <Calendar className="w-8 h-8 text-stone-600 mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
             {tab === "upcoming"
@@ -270,10 +302,10 @@ export default function AccountAppointmentsPage() {
       {/* ── Reschedule Request Modal ── */}
       {rescheduleAptId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#141412] border border-stone-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl">
+          <div ref={rescheduleDialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="reschedule-title" className="bg-stone-950 border border-stone-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl focus:outline-none">
             <div className="flex items-center justify-between border-b border-stone-800/80 pb-4">
               <div>
-                <h3 className="font-display text-xl text-warm-ivory">
+                <h3 id="reschedule-title" className="font-display text-xl text-warm-ivory">
                   Request Appointment Reschedule
                 </h3>
                 <p className="text-xs text-stone-400 font-light mt-0.5">
@@ -360,10 +392,10 @@ export default function AccountAppointmentsPage() {
       {/* ── Cancellation Request Modal ── */}
       {cancelAptId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#141412] border border-stone-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl">
+          <div ref={cancelDialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="cancel-appointment-title" className="bg-stone-950 border border-stone-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl focus:outline-none">
             <div className="flex items-center justify-between border-b border-stone-800/80 pb-4">
               <div>
-                <h3 className="font-display text-xl text-warm-ivory">
+                <h3 id="cancel-appointment-title" className="font-display text-xl text-warm-ivory">
                   Request Appointment Cancellation
                 </h3>
                 <p className="text-xs text-stone-400 font-light mt-0.5">

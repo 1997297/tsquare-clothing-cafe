@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useAccountData } from "@/lib/account-store";
 import {
@@ -18,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function AccountNotificationsPage() {
+  const [actionError, setActionError] = useState("");
   const {
     notifications,
     unreadNotificationsCount,
@@ -43,7 +45,12 @@ export default function AccountNotificationsPage() {
 
         {unreadNotificationsCount > 0 && (
           <button
-            onClick={() => markAllNotificationsAsRead()}
+            onClick={() => {
+              setActionError("");
+              void markAllNotificationsAsRead().catch((error) =>
+                setActionError(error instanceof Error ? error.message : "Notifications could not be updated.")
+              );
+            }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-stone-800 hover:border-champagne text-xs uppercase font-mono tracking-wider text-stone-300 hover:text-champagne transition-colors self-start sm:self-auto"
           >
             <CheckCheck className="w-4 h-4" />
@@ -51,6 +58,8 @@ export default function AccountNotificationsPage() {
           </button>
         )}
       </div>
+
+      {actionError && <p role="alert" className="p-4 rounded-2xl bg-red-950/30 border border-red-800/50 text-xs text-red-300">{actionError}</p>}
 
       {/* Notifications List */}
       {notifications.length > 0 ? (
@@ -77,13 +86,18 @@ export default function AccountNotificationsPage() {
               <div
                 key={notif.id}
                 onClick={() => {
-                  if (isUnread) markNotificationAsRead(notif.id);
+                  if (isUnread) {
+                    setActionError("");
+                    void markNotificationAsRead(notif.id).catch((error) =>
+                      setActionError(error instanceof Error ? error.message : "That notification could not be updated.")
+                    );
+                  }
                 }}
                 className={cn(
                   "p-5 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4",
                   isUnread
-                    ? "bg-[#161614] border-champagne/40 shadow-sm"
-                    : "bg-[#141412] border-stone-800/60 opacity-80 hover:opacity-100"
+                    ? "bg-stone-950 border-champagne/40 shadow-sm"
+                    : "bg-stone-950 border-stone-800/60 opacity-80 hover:opacity-100"
                 )}
               >
                 <div className="flex items-start gap-4">
@@ -154,7 +168,7 @@ export default function AccountNotificationsPage() {
           })}
         </div>
       ) : (
-        <div className="p-12 bg-[#141412] fine-border rounded-3xl text-center space-y-4">
+        <div className="p-12 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
           <Bell className="w-8 h-8 text-stone-600 mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
             All Caught Up

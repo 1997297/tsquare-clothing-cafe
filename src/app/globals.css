@@ -6,11 +6,49 @@
 
 :root {
   --font-clash: 'Clash Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --color-near-black: #11110F;
-  --color-warm-ivory: #F3EFE7;
-  --color-espresso: #30251F;
-  --color-stone: #A79C8C;
-  --color-champagne: #B79A68;
+  --color-near-black: 17 17 15;
+  --color-warm-ivory: 243 239 231;
+  --color-warm-ivory-light: 250 247 242;
+  --color-espresso: 48 37 31;
+  --color-stone-50: 247 246 244;
+  --color-stone-100: 239 236 232;
+  --color-stone-200: 221 215 206;
+  --color-stone-300: 198 189 173;
+  --color-stone-400: 179 166 148;
+  --color-stone-500: 167 156 140;
+  --color-stone-600: 139 127 111;
+  --color-stone-700: 108 97 83;
+  --color-stone-800: 73 65 55;
+  --color-stone-900: 43 38 32;
+  --color-stone-950: 20 20 18;
+  --color-champagne: 183 154 104;
+  --color-champagne-light: 209 184 139;
+  --color-champagne-dark: 150 122 73;
+  --calendar-icon-filter: invert(1) sepia(0.18) saturate(0.8) brightness(1.18);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --color-near-black: 246 241 232;
+  --color-warm-ivory: 36 31 26;
+  --color-warm-ivory-light: 255 252 247;
+  --color-espresso: 231 220 204;
+  --color-stone-50: 36 31 26;
+  --color-stone-100: 45 39 33;
+  --color-stone-200: 59 51 43;
+  --color-stone-300: 75 65 55;
+  --color-stone-400: 95 82 69;
+  --color-stone-500: 119 102 84;
+  --color-stone-600: 146 126 105;
+  --color-stone-700: 184 167 146;
+  --color-stone-800: 211 197 178;
+  --color-stone-900: 231 222 208;
+  --color-stone-950: 239 232 220;
+  --color-champagne: 137 103 52;
+  --color-champagne-light: 165 132 77;
+  --color-champagne-dark: 100 73 34;
+  --calendar-icon-filter: sepia(0.25) saturate(0.8) brightness(0.5);
+  color-scheme: light;
 }
 
 @layer base {
@@ -25,14 +63,31 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #11110F;
+    background: rgb(var(--color-near-black));
   }
   ::-webkit-scrollbar-thumb {
-    background: #30251F;
+    background: rgb(var(--color-espresso));
     border-radius: 0px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #B79A68;
+    background: rgb(var(--color-champagne));
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: var(--calendar-icon-filter);
+    opacity: 0.82;
+    transition: filter 160ms ease, opacity 160ms ease;
+  }
+
+  input[type="date"]:hover::-webkit-calendar-picker-indicator,
+  input[type="date"]:focus::-webkit-calendar-picker-indicator {
+    opacity: 1;
+  }
+
+  input[type="date"]:disabled::-webkit-calendar-picker-indicator {
+    cursor: not-allowed;
+    opacity: 0.35;
   }
 }
 
@@ -56,5 +111,5 @@
 
 /* Restrained fine border */
 .fine-border {
-  border: 1px solid rgba(167, 156, 140, 0.18);
+  border: 1px solid rgb(var(--color-stone-500) / 0.18);
 }

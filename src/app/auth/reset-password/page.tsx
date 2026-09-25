@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { PasswordInput } from "@/components/common/PasswordInput";
@@ -10,13 +9,29 @@ import { useAuth } from "@/lib/auth-context";
 import { CheckCircle2, Lock, AlertCircle, Loader2 } from "lucide-react";
 
 export default function ResetPasswordPage() {
-  const router = useRouter();
-  const { updatePassword } = useAuth();
+  const { updatePassword, session, isLoading } = useAuth();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-near-black grid place-items-center"><Loader2 className="w-8 h-8 animate-spin text-champagne" /></div>;
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-near-black grid place-items-center px-4 text-center">
+        <div className="max-w-md space-y-4">
+          <AlertCircle className="w-9 h-9 text-amber-400 mx-auto" />
+          <h1 className="font-display text-2xl text-warm-ivory">Recovery Link Invalid or Expired</h1>
+          <p className="text-sm text-stone-400">Request a new recovery email to continue securely.</p>
+          <Button href="/auth/forgot-password" variant="champagne">Request a New Link</Button>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +88,7 @@ export default function ResetPasswordPage() {
         )}
 
         {success ? (
-          <div className="p-8 bg-[#151513] fine-border rounded-3xl text-center space-y-4 animate-in zoom-in-95 duration-200">
+          <div className="p-8 bg-stone-950 fine-border rounded-3xl text-center space-y-4 animate-in zoom-in-95 duration-200">
             <CheckCircle2 className="h-10 w-10 text-champagne mx-auto" />
             <h3 className="font-display text-xl text-warm-ivory">
               Password Successfully Updated
@@ -88,7 +103,7 @@ export default function ResetPasswordPage() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-8 bg-[#151513] fine-border rounded-3xl space-y-5">
+          <form onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
             <div>
               <label htmlFor="reset-password" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                 New Password *

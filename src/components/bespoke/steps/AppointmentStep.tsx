@@ -55,6 +55,8 @@ export function AppointmentStep({
           return (
             <button
               key={type.id}
+              type="button"
+              aria-pressed={isSelected}
               onClick={() => onUpdate({ ...appt, type: type.id })}
               className={cn(
                 "w-full flex items-start gap-4 p-5 rounded-2xl border text-left transition-all duration-200",
@@ -85,7 +87,7 @@ export function AppointmentStep({
 
       {/* Appointment details (when a type is selected that isn't "none") */}
       {needsDetails && (
-        <div className="mb-8 p-5 bg-[#141412] border border-stone-800/50 rounded-2xl space-y-5 animate-in fade-in duration-200">
+        <div className="mb-8 p-5 bg-stone-950 border border-stone-800/50 rounded-2xl space-y-5 animate-in fade-in duration-200">
           <p className="text-[10px] uppercase tracking-widest text-stone-500 font-mono">
             Preferred Appointment Details
           </p>
@@ -100,6 +102,7 @@ export function AppointmentStep({
             </label>
             <input
               id="appt-date"
+              name="appointmentDate"
               type="date"
               value={appt.preferredDate ?? ""}
               min={today}
@@ -109,14 +112,16 @@ export function AppointmentStep({
           </div>
 
           {/* Time */}
-          <div>
-            <p className="text-[10px] uppercase tracking-widest text-stone-500 mb-3">
+          <fieldset>
+            <legend className="text-[10px] uppercase tracking-widest text-stone-500 mb-3">
               Preferred Time
-            </p>
+            </legend>
             <div className="flex flex-wrap gap-2">
               {TIME_OPTIONS.map((t) => (
                 <button
                   key={t.id}
+                  type="button"
+                  aria-pressed={appt.preferredTime === t.id}
                   onClick={() => set("preferredTime", t.id)}
                   className={cn(
                     "flex flex-col items-start px-4 py-3 rounded-xl border text-left transition-all duration-150",
@@ -130,7 +135,7 @@ export function AppointmentStep({
                 </button>
               ))}
             </div>
-          </div>
+          </fieldset>
 
           {/* Notes */}
           <div>
@@ -142,6 +147,7 @@ export function AppointmentStep({
             </label>
             <textarea
               id="appt-notes"
+              name="appointmentNotes"
               rows={3}
               value={appt.notes ?? ""}
               onChange={(e) => set("notes", e.target.value)}
@@ -158,6 +164,7 @@ export function AppointmentStep({
 
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -165,6 +172,7 @@ export function AppointmentStep({
           Back
         </button>
         <button
+          type="button"
           onClick={onContinue}
           disabled={!appt.type}
           className={cn(

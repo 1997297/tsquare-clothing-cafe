@@ -29,13 +29,13 @@ export default function PaymentReceiptPage({
   const payment = payments.find((p) => p.id === id || p.internalReference === id);
   const order = payment ? orders.find((o) => o.id === payment.orderId) : null;
 
-  if (!payment) {
+  if (!payment || payment.status !== "successful") {
     return (
       <div className="py-20 text-center space-y-4">
         <AlertCircle className="w-8 h-8 text-stone-600 mx-auto" />
         <h2 className="font-display text-2xl text-warm-ivory">Receipt Not Located</h2>
         <p className="text-xs text-stone-400">
-          The requested payment transaction reference could not be found in your private archive.
+          An official receipt is available only for a verified successful payment in your private archive.
         </p>
         <Link
           href="/account/payments"
@@ -80,7 +80,7 @@ export default function PaymentReceiptPage({
       </div>
 
       {/* ── Official Luxury Receipt Card ── */}
-      <div className="p-8 sm:p-12 rounded-3xl bg-[#141412] fine-border space-y-8 print:border-none print:p-0 print:bg-white print:text-black">
+      <div className="p-8 sm:p-12 rounded-3xl bg-stone-950 fine-border space-y-8 print:border-none print:p-0 print:bg-white print:text-black">
         {/* Atelier Header */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b border-stone-800/80 pb-8 print:border-stone-200">
           <div className="space-y-3">
@@ -107,7 +107,7 @@ export default function PaymentReceiptPage({
         </div>
 
         {/* Amount Hero */}
-        <div className="p-6 rounded-2xl bg-[#0F0F0D] border border-stone-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:bg-stone-50 print:border-stone-200">
+        <div className="p-6 rounded-2xl bg-near-black border border-stone-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:bg-stone-50 print:border-stone-200">
           <div>
             <span className="text-[10px] uppercase font-mono tracking-widest text-stone-500">
               Amount Received

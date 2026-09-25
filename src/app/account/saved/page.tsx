@@ -4,17 +4,31 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSavedStyles } from "@/lib/saved-store";
 import { getStyleById } from "@/data/styles";
-import { Heart, Trash2, ArrowRight, Sparkles } from "lucide-react";
+import { Heart, Trash2, ArrowRight, Sparkles, Loader2 } from "lucide-react";
+import { ReturnLink } from "@/components/common/ReturnLink";
 
 export default function AccountSavedPage() {
-  const { savedIds, toggle } = useSavedStyles();
+  const { savedIds, toggle, error, isLoaded } = useSavedStyles();
 
   const savedStyles = savedIds
     .map((id) => getStyleById(id))
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
 
+  if (!isLoaded) {
+    return (
+      <div className="space-y-8 animate-in fade-in duration-300">
+        <ReturnLink href="/account" label="Return to Dashboard" />
+        <div className="flex min-h-64 items-center justify-center rounded-3xl bg-stone-950 fine-border text-xs uppercase tracking-widest text-stone-400">
+          <Loader2 className="mr-2 h-4 w-4 animate-spin text-champagne" />
+          Loading Saved Looks...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
+      <ReturnLink href="/account" label="Return to Dashboard" />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800/60 pb-6">
         <div>
@@ -38,13 +52,15 @@ export default function AccountSavedPage() {
         </Link>
       </div>
 
+      {error && <p role="alert" className="p-4 rounded-2xl bg-red-950/30 border border-red-800/50 text-xs text-red-300">{error}</p>}
+
       {/* Grid */}
       {savedStyles.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {savedStyles.map((style) => (
             <div
               key={style.id}
-              className="group rounded-3xl bg-[#141412] fine-border p-4 space-y-4 hover:border-champagne/40 transition-all flex flex-col justify-between"
+              className="group rounded-3xl bg-stone-950 fine-border p-4 space-y-4 hover:border-champagne/40 transition-all flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-espresso">
@@ -97,7 +113,7 @@ export default function AccountSavedPage() {
           ))}
         </div>
       ) : (
-        <div className="p-12 bg-[#141412] fine-border rounded-3xl text-center space-y-4">
+        <div className="p-12 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
           <Heart className="w-8 h-8 text-stone-600 mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
             Your Wishlist Is Empty

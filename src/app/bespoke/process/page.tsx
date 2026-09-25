@@ -111,7 +111,7 @@ export default function BespokeProcessPage() {
               </div>
 
               {/* Step Card Content */}
-              <div className="p-6 sm:p-8 bg-[#151513] fine-border hover:border-stone-700 transition-colors">
+              <div className="p-6 sm:p-8 bg-stone-950 fine-border hover:border-stone-700 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-3">
                   <h3 className="font-display text-2xl sm:text-3xl text-warm-ivory">
                     {step.num}. {step.name}

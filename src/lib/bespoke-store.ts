@@ -32,6 +32,7 @@ export function getEmptyConfig(
   isIdeaPath = false
 ): BespokeConfiguration {
   return {
+    draftId: undefined,
     styleSlug,
     isIdeaPath,
     preferences: {},
@@ -109,6 +110,13 @@ export function saveSubmission(payload: BespokeRequestPayload): void {
   }
 }
 
+export function completeSubmission(payload: BespokeRequestPayload): void {
+  if (typeof window === "undefined") return;
+  if (payload.persistence === "local") saveSubmission(payload);
+  else localStorage.setItem("tcc_last_submission", JSON.stringify(payload));
+  clearStoredConfig();
+}
+
 export function getLastSubmission(): BespokeRequestPayload | null {
   if (typeof window === "undefined") return null;
   try {
@@ -133,6 +141,7 @@ export function buildPayload(
     styleId: config.styleId,
     styleCode: config.styleCode,
     styleName: config.styleName,
+    styleImage: config.styleImage,
     garmentCategory: config.garmentCategory,
     isIdeaPath: config.isIdeaPath,
     fabric: config.fabric,
@@ -171,16 +180,16 @@ export function useBespokeConfig(
   // Hydrate from localStorage on mount
   useEffect(() => {
     const stored = getStoredConfig();
-    if (
-      stored &&
-      stored.styleSlug === initialSlug
-    ) {
-      setConfigState(stored);
+    if (stored && stored.styleSlug === initialSlug) {
+      const hydrated = { ...stored, draftId: stored.draftId ?? crypto.randomUUID() };
+      setConfigState(hydrated);
+      setStoredConfig(hydrated);
     } else if (initialSlug) {
       // New journey for a different style — start fresh
       const fresh = getEmptyConfig(initialSlug, initialIsIdea);
-      setConfigState(fresh);
-      setStoredConfig(fresh);
+      const hydrated = { ...fresh, draftId: crypto.randomUUID() };
+      setConfigState(hydrated);
+      setStoredConfig(hydrated);
     }
     setIsLoaded(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -281,10 +290,7 @@ export function useBespokeConfig(
   // ─── Submission ──────────────────────────────
 
   const submitRequest = useCallback((): BespokeRequestPayload => {
-    const payload = buildPayload(config);
-    saveSubmission(payload);
-    clearStoredConfig();
-    return payload;
+    return buildPayload(config);
   }, [config]);
 
   // ─── Reset ───────────────────────────────────

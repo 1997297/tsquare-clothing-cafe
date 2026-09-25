@@ -97,7 +97,7 @@ export default function StoryPage() {
         </section>
 
         {/* Story Section 3: The TSquare Man */}
-        <section className="mb-20 p-8 sm:p-12 bg-[#141412] fine-border rounded-2xl sm:rounded-3xl">
+        <section className="mb-20 p-8 sm:p-12 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl">
           <div className="border-b border-stone-800 pb-3 mb-6">
             <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold">
               03 • The Archetype

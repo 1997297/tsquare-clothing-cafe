@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useAccountData } from "@/lib/account-store";
 import { useAuth } from "@/lib/auth-context";
@@ -21,14 +21,16 @@ import {
   ArrowRight,
   ShieldCheck,
   ChevronDown,
+  type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trapTabKey } from "@/lib/a11y";
 
 const CATEGORIES: {
   id: ConciergeCategory;
   label: string;
   desc: string;
-  icon: any;
+  icon: LucideIcon;
 }[] = [
   {
     id: "discuss_order",
@@ -95,6 +97,23 @@ export default function ConciergePage() {
   // Reply State
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
+  const [actionError, setActionError] = useState("");
+  const newRequestDialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showNewModal || !newRequestDialogRef.current) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    newRequestDialogRef.current.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      trapTabKey(event, newRequestDialogRef.current);
+      if (event.key === "Escape") setShowNewModal(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      previousFocus?.focus();
+    };
+  }, [showNewModal]);
 
   const activeRequest = conciergeRequests.find((r) => r.id === activeRequestId);
   const activeMessages = conciergeMessages.filter((m) => m.requestId === activeRequestId);
@@ -104,6 +123,7 @@ export default function ConciergePage() {
     if (!subject.trim() || !message.trim()) return;
 
     setIsSubmitting(true);
+    setActionError("");
     try {
       const newReq = await createConciergeRequest({
         category: selectedCategory,
@@ -119,6 +139,8 @@ export default function ConciergePage() {
       setRelatedOrderId("");
       setRelatedRequestId("");
       setActiveRequestId(newReq.id);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "The concierge request could not be submitted.");
     } finally {
       setIsSubmitting(false);
     }
@@ -129,9 +151,12 @@ export default function ConciergePage() {
     if (!replyText.trim() || !activeRequestId) return;
 
     setIsReplying(true);
+    setActionError("");
     try {
       await addConciergeMessage(activeRequestId, replyText.trim());
       setReplyText("");
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Your reply could not be sent.");
     } finally {
       setIsReplying(false);
     }
@@ -170,6 +195,7 @@ export default function ConciergePage() {
       </div>
 
       {/* ── Main Concierge Interface ── */}
+      {actionError && <p role="alert" className="p-4 rounded-2xl bg-red-950/30 border border-red-800/50 text-xs text-red-300">{actionError}</p>}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left: Active Inquiries List */}
         <div className="lg:col-span-4 space-y-4">
@@ -193,8 +219,8 @@ export default function ConciergePage() {
                     className={cn(
                       "w-full text-left p-4 rounded-2xl border transition-all duration-200 block space-y-2",
                       isSelected
-                        ? "bg-[#181816] border-champagne/50 shadow-md"
-                        : "bg-[#141412] border-stone-800/80 hover:border-stone-700 hover:bg-stone-900/40"
+                        ? "bg-stone-950 border-champagne/50 shadow-md"
+                        : "bg-stone-950 border-stone-800/80 hover:border-stone-700 hover:bg-stone-900/40"
                     )}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -227,7 +253,7 @@ export default function ConciergePage() {
               })}
             </div>
           ) : (
-            <div className="p-8 text-center bg-[#141412] rounded-3xl fine-border space-y-3">
+            <div className="p-8 text-center bg-stone-950 rounded-3xl fine-border space-y-3">
               <MessageSquare className="w-6 h-6 text-stone-600 mx-auto" />
               <p className="text-xs text-stone-400 font-light">
                 No active concierge conversations.
@@ -242,7 +268,7 @@ export default function ConciergePage() {
           )}
 
           {/* Official Atelier Contact Information */}
-          <div className="p-5 rounded-3xl bg-[#121210] border border-stone-800/80 space-y-3 text-xs">
+          <div className="p-5 rounded-3xl bg-near-black border border-stone-800/80 space-y-3 text-xs">
             <div className="flex items-center gap-2 text-warm-ivory font-display">
               <ShieldCheck className="w-4 h-4 text-champagne" />
               <span>Direct Client Care</span>
@@ -259,9 +285,9 @@ export default function ConciergePage() {
         {/* Right: Active Conversation Thread View */}
         <div className="lg:col-span-8">
           {activeRequest ? (
-            <div className="rounded-3xl bg-[#141412] fine-border overflow-hidden flex flex-col min-h-[580px]">
+            <div className="rounded-3xl bg-stone-950 fine-border overflow-hidden flex flex-col min-h-[580px]">
               {/* Thread Header */}
-              <div className="p-6 border-b border-stone-800/80 bg-[#121210] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-6 border-b border-stone-800/80 bg-near-black flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-mono text-xs font-bold text-champagne">
@@ -314,7 +340,7 @@ export default function ConciergePage() {
                           "p-4 rounded-2xl text-xs leading-relaxed",
                           isClient
                             ? "bg-champagne/15 text-warm-ivory border border-champagne/30 rounded-tr-sm"
-                            : "bg-[#181816] text-stone-200 border border-stone-800 rounded-tl-sm"
+                            : "bg-stone-950 text-stone-200 border border-stone-800 rounded-tl-sm"
                         )}
                       >
                         {msg.message}
@@ -327,7 +353,7 @@ export default function ConciergePage() {
               {/* Thread Reply Input Form */}
               <form
                 onSubmit={handleSendReply}
-                className="p-4 border-t border-stone-800/80 bg-[#121210] flex items-center gap-3"
+                className="p-4 border-t border-stone-800/80 bg-near-black flex items-center gap-3"
               >
                 <input
                   type="text"
@@ -347,7 +373,7 @@ export default function ConciergePage() {
               </form>
             </div>
           ) : (
-            <div className="rounded-3xl bg-[#141412] fine-border p-12 text-center space-y-4">
+            <div className="rounded-3xl bg-stone-950 fine-border p-12 text-center space-y-4">
               <Sparkles className="w-8 h-8 text-champagne mx-auto" />
               <h3 className="font-display text-xl text-warm-ivory">
                 Select an inquiry to view dialogue
@@ -363,10 +389,10 @@ export default function ConciergePage() {
       {/* ── New Concierge Request Modal ── */}
       {showNewModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#141412] border border-stone-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl">
+          <div ref={newRequestDialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="new-concierge-title" className="bg-stone-950 border border-stone-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl focus:outline-none">
             <div className="flex items-center justify-between border-b border-stone-800/80 pb-4">
               <div>
-                <h3 className="font-display text-xl text-warm-ivory">
+                <h3 id="new-concierge-title" className="font-display text-xl text-warm-ivory">
                   New Concierge Inquiry
                 </h3>
                 <p className="text-xs text-stone-400 font-light mt-0.5">
@@ -374,6 +400,8 @@ export default function ConciergePage() {
                 </p>
               </div>
               <button
+                type="button"
+                aria-label="Close new concierge inquiry"
                 onClick={() => setShowNewModal(false)}
                 className="text-stone-400 hover:text-warm-ivory text-sm font-mono p-1"
               >
@@ -383,15 +411,16 @@ export default function ConciergePage() {
 
             <form onSubmit={handleCreateRequest} className="space-y-4 text-xs">
               {/* Category Picker */}
-              <div>
-                <label className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
+              <fieldset>
+                <legend className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
                   Inquiry Focus
-                </label>
+                </legend>
                 <div className="grid grid-cols-2 gap-2">
                   {CATEGORIES.map((c) => (
                     <button
                       key={c.id}
                       type="button"
+                      aria-pressed={selectedCategory === c.id}
                       onClick={() => setSelectedCategory(c.id)}
                       className={cn(
                         "p-2.5 rounded-xl border text-left flex items-center gap-2 transition-all",
@@ -405,14 +434,16 @@ export default function ConciergePage() {
                     </button>
                   ))}
                 </div>
-              </div>
+              </fieldset>
 
               {/* Subject */}
               <div>
-                <label className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
+                <label htmlFor="concierge-subject" className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
                   Subject Summary
                 </label>
                 <input
+                  id="concierge-subject"
+                  name="subject"
                   type="text"
                   required
                   value={subject}
@@ -425,10 +456,12 @@ export default function ConciergePage() {
               {/* Optional Order Linking */}
               {orders.length > 0 && (
                 <div>
-                  <label className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
+                  <label htmlFor="concierge-order" className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
                     Link to Active Commission (Optional)
                   </label>
                   <select
+                    id="concierge-order"
+                    name="relatedOrderId"
                     value={relatedOrderId}
                     onChange={(e) => setRelatedOrderId(e.target.value)}
                     className="w-full bg-stone-900/60 border border-stone-800 text-warm-ivory rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-champagne/40 font-mono text-xs"
@@ -445,10 +478,12 @@ export default function ConciergePage() {
 
               {/* Message */}
               <div>
-                <label className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
+                <label htmlFor="concierge-message" className="text-[10px] uppercase font-mono text-stone-400 block mb-1.5">
                   Detailed Message
                 </label>
                 <textarea
+                  id="concierge-message"
+                  name="message"
                   rows={4}
                   required
                   value={message}

@@ -18,6 +18,7 @@ import { useSavedStyles } from "@/lib/saved-store";
 import { useAuth } from "@/lib/auth-context";
 import { COLLECTIONS } from "@/data/collections";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -58,8 +59,8 @@ export function Navbar() {
           "fixed top-0 inset-x-0 z-40 transition-colors duration-300 transform-gpu",
           "h-20 flex flex-col justify-center border-b",
           isScrolled || !isHomepage || isMobileMenuOpen
-            ? "bg-[#11110F]/85 backdrop-blur-2xl backdrop-saturate-150 border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.06)]"
-            : "bg-[#11110F]/60 backdrop-blur-xl backdrop-saturate-150 border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2),inset_0_1px_0_0_rgba(255,255,255,0.04)]"
+            ? "bg-near-black/85 backdrop-blur-2xl backdrop-saturate-150 border-warm-ivory/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.06)]"
+            : "bg-near-black/60 backdrop-blur-xl backdrop-saturate-150 border-warm-ivory/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2),inset_0_1px_0_0_rgba(255,255,255,0.04)]"
         )}
       >
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
@@ -109,7 +110,7 @@ export function Navbar() {
               {/* Collections Dropdown Menu with Rounded Corners */}
               <div
                 className={cn(
-                  "absolute top-full -left-4 w-64 bg-[#11110F]/85 backdrop-blur-2xl backdrop-saturate-150 border border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.06)] py-3 rounded-2xl transition-all duration-200 z-50 mt-2",
+                  "absolute top-full -left-4 w-64 bg-near-black/85 backdrop-blur-2xl backdrop-saturate-150 border border-warm-ivory/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.06)] py-3 rounded-2xl transition-all duration-200 z-50 mt-2",
                   isCollectionsDropdownOpen
                     ? "opacity-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 -translate-y-1 pointer-events-none"
@@ -189,6 +190,8 @@ export function Navbar() {
               Book Fitting
             </Link>
 
+            <ThemeToggle className="hidden sm:inline-flex" />
+
             {/* Search Button */}
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -228,7 +231,7 @@ export function Navbar() {
 
         {/* Mobile Navigation Drawer with Rounded Touches */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full inset-x-0 border-b border-stone-800/80 bg-[#11110F]/95 backdrop-blur-2xl px-6 py-8 space-y-6 animate-in slide-in-from-top-2 duration-300 rounded-b-3xl shadow-2xl">
+          <div className="lg:hidden absolute top-full inset-x-0 border-b border-stone-800/80 bg-near-black/95 backdrop-blur-2xl px-6 py-8 space-y-6 animate-in slide-in-from-top-2 duration-300 rounded-b-3xl shadow-2xl">
             <div className="space-y-4">
               <div className="text-[10px] uppercase font-mono tracking-[0.28em] text-stone-500">
                 Primary Navigation
@@ -283,6 +286,10 @@ export function Navbar() {
             </div>
 
             <div className="pt-6 border-t border-stone-800/80 space-y-3">
+              <div className="flex items-center justify-between rounded-xl border border-stone-800 px-4 py-2 text-xs uppercase tracking-widest text-stone-400 sm:hidden">
+                <span>Appearance</span>
+                <ThemeToggle />
+              </div>
               <Link
                 href="/book-a-fitting"
                 className="flex w-full items-center justify-center bg-champagne text-near-black py-3.5 text-xs font-bold uppercase tracking-[0.22em] rounded-xl shadow-md"

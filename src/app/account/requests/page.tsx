@@ -83,7 +83,7 @@ export default function AccountRequestsPage() {
               <div
                 key={request.requestId}
                 className={cn(
-                  "p-6 rounded-3xl bg-[#141412] fine-border transition-all duration-200 space-y-4",
+                  "p-6 rounded-3xl bg-stone-950 fine-border transition-all duration-200 space-y-4",
                   isClarificationNeeded && "border-amber-600/50 bg-amber-950/10",
                   isPricingReady && "border-champagne/50 bg-champagne/5"
                 )}
@@ -167,7 +167,7 @@ export default function AccountRequestsPage() {
           })}
         </div>
       ) : (
-        <div className="p-12 bg-[#141412] fine-border rounded-3xl text-center space-y-4">
+        <div className="p-12 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
           <FileText className="w-8 h-8 text-stone-600 mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
             No Bespoke Requests Found

@@ -41,6 +41,8 @@ export function StyleStep({
             return (
               <button
                 key={cat.id}
+                type="button"
+                aria-pressed={isSelected}
                 onClick={() => onSelectCategory(cat.id)}
                 className={cn(
                   "relative overflow-hidden rounded-2xl border text-left transition-all duration-200 group",
@@ -83,6 +85,7 @@ export function StyleStep({
         </div>
 
         <button
+          type="button"
           onClick={onContinue}
           disabled={!config.garmentCategory}
           className={cn(
@@ -115,7 +118,7 @@ export function StyleStep({
       </p>
 
       {/* Style card */}
-      <div className="flex flex-col sm:flex-row gap-6 p-5 bg-[#141412] border border-stone-800/60 rounded-2xl mb-8">
+      <div className="flex flex-col sm:flex-row gap-6 p-5 bg-stone-950 border border-stone-800/60 rounded-2xl mb-8">
         {/* Image */}
         <div className="relative w-full sm:w-32 h-48 sm:h-40 rounded-xl overflow-hidden shrink-0 bg-espresso">
           <Image
@@ -166,7 +169,7 @@ export function StyleStep({
 
       {/* Colour preview if available */}
       {style.availableColours.length > 0 && (
-        <div className="mb-8 p-4 bg-[#141412] border border-stone-800/60 rounded-xl">
+        <div className="mb-8 p-4 bg-stone-950 border border-stone-800/60 rounded-xl">
           <p className="text-[10px] uppercase tracking-widest text-stone-500 mb-3">
             Starting Colours Available
           </p>
@@ -174,7 +177,7 @@ export function StyleStep({
             {style.availableColours.map((c) => (
               <div key={c.name} className="flex items-center gap-1.5">
                 <span
-                  className="w-4 h-4 rounded-full border border-white/20"
+                  className="w-4 h-4 rounded-full border border-warm-ivory/20"
                   style={{ background: c.hex }}
                   title={c.name}
                 />
@@ -186,6 +189,7 @@ export function StyleStep({
       )}
 
       <button
+        type="button"
         onClick={onContinue}
         className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-champagne text-near-black hover:bg-champagne-light transition-all duration-200"
       >

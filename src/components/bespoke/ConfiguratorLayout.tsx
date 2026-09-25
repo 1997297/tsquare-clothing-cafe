@@ -22,10 +22,10 @@ export function ConfiguratorLayout({
   return (
     <div className="min-h-screen bg-near-black flex flex-col">
       {/* ── Top bar ── */}
-      <header className="sticky top-0 z-30 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-stone-800/60 bg-[#11110F]/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-stone-800/60 bg-near-black/90 backdrop-blur-xl">
         {/* Back */}
         <Link
-          href="/styles"
+          href="/collections"
           className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-stone-400 hover:text-warm-ivory transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
@@ -52,7 +52,7 @@ export function ConfiguratorLayout({
 
       <div className="flex flex-1 overflow-hidden">
         {/* ── Desktop Sidebar ── */}
-        <aside className="hidden lg:flex flex-col w-80 xl:w-96 border-r border-stone-800/60 bg-[#0E0E0C] overflow-y-auto">
+        <aside className="hidden lg:flex flex-col w-80 xl:w-96 border-r border-stone-800/60 bg-near-black overflow-y-auto">
           <div className="p-6 xl:p-8 space-y-8 flex-1">
             {/* Garment summary */}
             <StyleSummary config={config} />
@@ -73,7 +73,7 @@ export function ConfiguratorLayout({
         {/* ── Main Content ── */}
         <main className="flex-1 overflow-y-auto">
           {/* Mobile: compact garment reference strip */}
-          <div className="lg:hidden px-4 pt-4 pb-3 border-b border-stone-800/50 bg-[#0E0E0C]">
+          <div className="lg:hidden px-4 pt-4 pb-3 border-b border-stone-800/50 bg-near-black">
             <StyleSummary config={config} compact />
           </div>
 

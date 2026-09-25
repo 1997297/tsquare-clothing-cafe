@@ -1,0 +1,1362 @@
+TCC — TSQUARE CLOTHING CAFE
+COMPREHENSIVE PHASE 1–4 IMPLEMENTATION AUDIT
+
+Audit date: 23 September 2026
+Scope: Architecture, Supabase, Authentication, Security, Payments, Wardrobe and Regression Review
+Audit type: Inspection only
+
+Overall conclusion: TCC is not yet safe enough for Phase 5.
+
+
+A. EXECUTIVE SUMMARY
+====================
+
+TCC contains a substantial Phase 1–4 frontend implementation:
+
+- A complete public-facing site, catalogue, style details, search, bespoke introduction and account UI.
+- An eleven-step “Make This Mine” configurator with central client state.
+- Supabase browser/server clients, authentication context and account middleware.
+- A broad relational schema with RLS enabled in the checked-in SQL.
+- Customer-facing requests, orders, measurements, appointments, payments, wardrobe, notifications and concierge interfaces.
+- Passing TypeScript and production builds.
+- Representative desktop, tablet and mobile routes without observed runtime exceptions or horizontal overflow.
+
+Important strengths:
+
+- auth.users.id is the intended identity anchor.
+- Orders, payments and wardrobe records have no customer-write RLS policy.
+- Saved styles and wardrobe items have useful uniqueness constraints.
+- Requests, orders and wardrobe records attempt to retain historical snapshots.
+- No service-role secret or payment secret is exposed in client code.
+- Cross-customer reads are logically blocked by the repository RLS definitions, assuming those policies are actually deployed.
+
+Principal risks:
+
+1. Payment success is trusted in the browser. Clicking “Confirm Payment” creates a local successful payment and “verified” receipt without a provider, callback, webhook or server verification.
+2. Customers can modify trusted bespoke-request fields, including quote, approval status and administrative notes, through a broad RLS update policy.
+3. The request-to-order flow is client-controlled. It hardcodes a quote, changes the request to converted, attempts a prohibited browser order insert, ignores the failure, and displays a local order anyway.
+4. Measurement verification and history are customer-writable. A customer can claim TSquare verification, edit earlier versions, and create inconsistent current/version state.
+5. Appointment policies allow customers to update confirmation, operational status and confirmed scheduling fields.
+6. Live empty accounts can display sample payments, wardrobe garments and staff concierge replies.
+7. Most Supabase mutations ignore returned error values, so the application reports success when persistence has failed.
+8. No trusted server-side business workflow exists for pricing, orders, payments, production, wardrobe generation, notifications or appointment approval.
+
+There is only a SQL snapshot, not a migration history or a connected Supabase environment.
+
+NOT VERIFIED: Actual production schema deployment, RLS activation, grants, storage configuration and live customer isolation.
+
+These issues must be addressed before introducing Phase 5 administrative authority.
+
+
+B. ARCHITECTURE MAP
+===================
+
+Framework:
+- Next.js App Router.
+- package.json declares Next ^15.2.1; the installed version inspected was 15.5.25.
+- package.json declares React and React DOM ^19.0.0; installed versions were 19.3.0.
+
+TypeScript:
+- Strict TypeScript.
+- noEmit enabled.
+- Bundler module resolution.
+- allowJs enabled.
+- skipLibCheck enabled.
+
+Styling:
+- Tailwind CSS 3.
+- Global CSS.
+- clsx and tailwind-merge utilities.
+- Dark premium visual system.
+
+State management:
+- React contexts and custom hooks backed by localStorage.
+- No Redux or Zustand.
+- Important modules:
+  - src/lib/auth-context.tsx
+  - src/lib/account-store.ts
+  - src/lib/bespoke-store.ts
+  - src/lib/saved-store.ts
+
+Validation:
+- Handwritten client validation.
+- No schema-validation library.
+
+Authentication:
+- Supabase Auth context.
+- SSR cookie client.
+- Middleware route protection.
+- Local mock fallback when Supabase is not configured.
+
+Data access:
+- Predominantly direct Supabase browser calls.
+- No repository/service boundary for business operations.
+- No business API routes.
+- No Server Actions.
+- Only route handler: GET /auth/callback.
+
+Database:
+- One checked-in SQL file: supabase/schema.sql.
+- No migration chain or linked-project metadata.
+
+Storage:
+- No Supabase Storage client usage, buckets or policies.
+
+Payments:
+- Payment types and financial calculation helpers.
+- An always-successful sandbox adapter.
+- No real payment provider.
+
+Admin:
+- No admin routes, roles or workflows, as expected before Phase 5.
+
+Environment-variable inventory:
+
+PUBLIC SAFE / SUPABASE
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+SERVER ONLY
+- SUPABASE_SERVICE_ROLE_KEY is mentioned in .env.example but is not consumed by the application.
+
+PAYMENT SECRETS
+- None.
+
+OTHER REQUIRED VARIABLES
+- None found.
+
+No actual .env or .env.local was present in the inspected repository. Current local execution consequently used demo/mock mode.
+
+
+C. PHASE IMPLEMENTATION MATRIX
+==============================
+
+Feature: Public website
+Intended phase: 1
+Actual implementation: Broad public route set and static content.
+Status: IMPLEMENTED
+
+Feature: Collections and categories
+Intended phase: 1
+Actual implementation: Six category routes backed by local catalogue data.
+Status: IMPLEMENTED
+
+Feature: Style details
+Intended phase: 1
+Actual implementation: Twelve generated style-detail paths.
+Status: IMPLEMENTED
+
+Feature: Search
+Intended phase: 1
+Actual implementation: Client-side search over local style data.
+Status: IMPLEMENTED
+
+Feature: Contact
+Intended phase: 1
+Actual implementation: Form waits with setTimeout, then claims success.
+Status: MOCKED
+
+Feature: Book a fitting
+Intended phase: 1
+Actual implementation: Form waits with setTimeout; no persistence.
+Status: MOCKED
+
+Feature: Authentication UI
+Intended phase: 1/3
+Actual implementation: Complete UI connected to Supabase when configured, arbitrary mock login otherwise.
+Status: PARTIAL
+
+Feature: Responsive foundation
+Intended phase: 1
+Actual implementation: Representative routes worked at mobile, tablet and desktop widths.
+Status: IMPLEMENTED
+
+Feature: Configurator
+Intended phase: 2
+Actual implementation: Eleven-step local-state flow with step validation and review.
+Status: PARTIAL
+
+Feature: Start From An Idea
+Intended phase: 2
+Actual implementation: Category-first configurator path.
+Status: IMPLEMENTED
+
+Feature: Reference uploads
+Intended phase: 2
+Actual implementation: Object URLs only; no byte upload or durable storage.
+Status: MOCKED
+
+Feature: Customer profiles
+Intended phase: 3
+Actual implementation: Supabase profile reads/updates with local fallback.
+Status: PARTIAL
+
+Feature: Protected account
+Intended phase: 3
+Actual implementation: Middleware and client guard, but fail-open/mock behavior without environment variables.
+Status: PROBLEMATIC
+
+Feature: Dashboard
+Intended phase: 3
+Actual implementation: Mixed database, local and seeded sample data.
+Status: PROBLEMATIC
+
+Feature: Measurement history
+Intended phase: 3
+Actual implementation: Versioned table and UI; mutable history and unsafe current-version update.
+Status: PROBLEMATIC
+
+Feature: Bespoke persistence
+Intended phase: 3
+Actual implementation: Direct browser insert; errors ignored and submission not awaited.
+Status: PROBLEMATIC
+
+Feature: Orders
+Intended phase: 3
+Actual implementation: Read-only customer schema/UI; no authoritative order-creation workflow.
+Status: PARTIAL
+
+Feature: Appointments
+Intended phase: 3/4
+Actual implementation: UI and tables exist; public form mocked and trusted fields customer-writable.
+Status: PROBLEMATIC
+
+Feature: Saved looks
+Intended phase: 1/3
+Actual implementation: Local UI plus one-way login upsert; no database hydration/removal sync.
+Status: PARTIAL
+
+Feature: Notifications
+Intended phase: 3/4
+Actual implementation: Database read/update plus locally generated sample events.
+Status: PARTIAL
+
+Feature: Payment position
+Intended phase: 4
+Actual implementation: Client calculations from successful payment records.
+Status: IMPLEMENTED
+
+Feature: Payment provider
+Intended phase: 4
+Actual implementation: Always-successful sandbox object; not a real checkout integration.
+Status: MOCKED
+
+Feature: Payment verification
+Intended phase: 4
+Actual implementation: Browser creates successful local result.
+Status: PROBLEMATIC
+
+Feature: Wardrobe
+Intended phase: 4
+Actual implementation: Read-only database model, but generation is an unsuccessful client insert followed by local success.
+Status: PROBLEMATIC
+
+Feature: Order Similar / Use As Inspiration
+Intended phase: 4
+Actual implementation: Buttons exist; destination parameters are not consumed and one slug is invalid.
+Status: PROBLEMATIC
+
+Feature: Concierge
+Intended phase: 4
+Actual implementation: UI/local data; live request insert uses a non-UUID ID for a UUID column.
+Status: PROBLEMATIC
+
+Feature: Storage
+Intended phase: 2/3/4
+Actual implementation: No implementation.
+Status: MISSING
+
+Feature: Admin
+Intended phase: 5
+Actual implementation: Correctly absent.
+Status: NOT YET APPLICABLE
+
+
+D. ROUTE AND PROTECTION MATRIX
+==============================
+
+PUBLIC
+
+- /
+- /collections
+- /collections/agbada
+- /collections/senator
+- /collections/kaftan
+- /collections/traditional
+- /collections/bespoke
+- /collections/formal
+- /styles/[slug]
+- /search
+- /saved
+- /bespoke
+- /bespoke/process
+- /how-it-works
+- /bespoke/create/[styleSlug]
+- /bespoke/create/idea
+- /bespoke/create/confirmation
+- /book-a-fitting
+- /contact
+- /story
+- /craftsmanship
+- /privacy-policy
+- /terms-and-conditions
+- Custom 404
+
+AUTH
+
+- /auth/sign-in
+- /auth/create-account
+- /auth/forgot-password
+- /auth/reset-password
+- /auth/callback
+
+Authenticated users are redirected away from auth pages by middleware when Supabase is configured. The callback is public and has redirect/error-handling weaknesses.
+
+PRIVATE CUSTOMER
+
+- /account
+- /account/requests
+- /account/requests/[id]
+- /account/orders
+- /account/orders/[id]
+- /account/measurements
+- /account/appointments
+- /account/payments
+- /account/payments/[id]
+- /account/wardrobe
+- /account/wardrobe/[id]
+- /account/saved
+- /account/concierge
+- /account/notifications
+- /account/profile
+- /account/settings
+
+Protection finding:
+- Middleware and a client layout guard protect /account/* when Supabase is configured.
+- When the Supabase URL/key are absent, middleware permits the request and the application uses mock-mode authentication.
+- This is not an acceptable production fail-closed posture.
+- Live RLS is intended as the data-access backstop, but deployed policies are NOT VERIFIED.
+
+API / SERVER
+
+- GET /auth/callback only.
+- No business API routes.
+- No Server Actions.
+
+ADMIN
+
+- None.
+
+
+E. DATABASE SCHEMA
+==================
+
+All findings describe the checked-in SQL. Deployment is NOT VERIFIED.
+
+profiles
+- Purpose: Customer profile linked to Supabase Auth.
+- Primary key: id.
+- Foreign key: id to auth.users.id, cascading on Auth-user deletion.
+- Important columns: first_name, last_name, email, phone, preferred_contact.
+- Ownership: auth.uid() = id.
+- RLS: Own select, insert and update.
+- Risk: Email duplicates Auth email; customers can update all profile columns.
+
+measurement_profiles
+- Purpose: Versioned current and historical measurements.
+- Primary key: UUID id.
+- Foreign key: customer_id to profiles.
+- Important columns: version, is_current, unit, fit_preference, verification_status, measurements JSONB, notes.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select, insert and update.
+- Risks: No unique customer/version constraint; no one-current constraint; verification is customer-writable; history is mutable.
+
+bespoke_requests
+- Purpose: Customer configuration and request lifecycle.
+- Primary key: UUID id.
+- Foreign key: nullable customer_id to profiles with ON DELETE SET NULL.
+- Important columns: request reference, style/configuration fields, measurement snapshot, confidence, appointment request, reference images, status, quoted price, clarification/admin notes.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select, insert and update.
+- Risk: Update covers all columns, including quote, approval status and administrative notes.
+
+orders
+- Purpose: Authoritative customer order and historical garment configuration.
+- Primary key: UUID id.
+- Foreign keys: customer_id to profiles; bespoke_request_id to requests.
+- Important columns: order reference, style/configuration snapshots, measurement snapshot, status, total amount.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select only.
+- Strength: No customer mutation.
+- Risk: No trusted creator or status-transition workflow exists.
+
+appointments
+- Purpose: Requested/confirmed fitting or consultation appointment.
+- Primary key: UUID id.
+- Foreign keys: customer, request and order.
+- Important columns: requested date/time, confirmed date/time, location, status.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select, insert and update.
+- Risk: Customer can update confirmation, location and operational status.
+
+saved_styles
+- Purpose: Persistent saved style IDs.
+- Primary key: UUID id.
+- Foreign key: customer_id to profiles.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select, insert and delete.
+- Strength: Unique customer/style constraint.
+
+notifications
+- Purpose: Customer events and read state.
+- Primary key: UUID id.
+- Foreign key: customer_id to profiles.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select and update.
+- Risk: Update is not restricted to read fields.
+
+payments
+- Purpose: Order payment history.
+- Primary key: UUID id.
+- Foreign keys: order_id and customer_id.
+- Important columns: amount, type, provider, status, provider_reference, internal_reference.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select only.
+- Strength: Internal reference is unique.
+- Risks: Provider reference is not unique; no customer/order ownership consistency constraint.
+
+wardrobe_items
+- Purpose: Completed garment history.
+- Primary key: UUID id.
+- Foreign keys: customer_id and order_id.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select only.
+- Strength: order_id is unique.
+- Risks: No completed-order constraint; no same-customer relationship constraint.
+
+concierge_requests
+- Purpose: Customer service thread header.
+- Primary key: UUID id.
+- Foreign key: customer_id.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select and insert.
+- Risks: Client-supplied status; related entities are unvalidated text IDs.
+
+concierge_messages
+- Purpose: Child messages in a concierge request.
+- Primary key: UUID id.
+- Foreign keys: request_id and optional sender_id.
+- Ownership: Parent request must belong to customer.
+- RLS: Own-thread select and customer-message insert.
+- Risks: sender_id does not have to equal auth.uid(); the “open request” policy does not check status.
+
+appointment_change_requests
+- Purpose: Reschedule/cancellation requests without directly rewriting the original appointment.
+- Primary key: UUID id.
+- Foreign keys: appointment_id and customer_id.
+- Ownership: auth.uid() = customer_id.
+- RLS: Own select and insert.
+- Risks: Parent appointment ownership is not checked; client can supply an approved/declined status.
+
+Missing application tables/concepts:
+- No separate persisted configuration table.
+- No reference-upload table or storage metadata.
+- No trusted lifecycle/audit-event table.
+
+Constraint and deletion observations:
+
+- Good constraints: Primary keys, most ownership foreign keys, status checks, unique request/order references, unique saved style, unique wardrobe order and unique internal payment reference.
+- Missing constraints: One current measurement per customer, unique measurement version, provider transaction idempotency, customer/order ownership consistency, completed-order requirement for wardrobe, related-entity ownership and measurement JSON/range validation.
+- Several dates are stored as text.
+- Deleting a profile is normally blocked by retained orders/payments using restrictive foreign keys; several other customer tables cascade.
+- Deleting a request nulls request links on orders/appointments, preserving their snapshots.
+- Payments and wardrobe records restrict order deletion.
+- Deleting an appointment cascades its change requests, removing change history.
+- Customers have no delete policies for requests, orders, measurements, appointments, payments, wardrobe or concierge data.
+
+
+F. AUTHENTICATION AND SESSION FINDINGS
+======================================
+
+Sign Up: IMPLEMENTED
+- Uses Supabase signUp when configured.
+- Creates a mock profile otherwise.
+
+Sign In: IMPLEMENTED / MOCKED
+- Uses Supabase password authentication when configured.
+- Arbitrary credentials succeed in mock mode.
+
+Sign Out: IMPLEMENTED
+- Supabase sign-out plus local cleanup.
+
+Persistent Session: IMPLEMENTED
+- Initial getSession() call.
+- Auth-state subscription.
+
+Session Refresh: IMPLEMENTED
+- Delegated to the Supabase SSR/auth client.
+
+Email Verification: PARTIAL
+- Signup detects absence of a session.
+- Email-link redirect/deployment configuration is NOT VERIFIED.
+
+Forgot Password: IMPLEMENTED
+- Calls resetPasswordForEmail.
+
+Password Reset: PARTIAL
+- Calls updateUser.
+- No explicit recovery-session state check.
+
+Expired Link Handling: PROBLEMATIC
+- Falls through to generic backend errors.
+
+Invalid Link Handling: PROBLEMATIC
+- Callback ignores code-exchange errors and redirects.
+
+Auth Callback: PROBLEMATIC
+- next is not allowlisted.
+- new URL(next, origin) permits an external protocol-relative target.
+
+Protected Routes: PARTIAL
+- Works with configured Supabase.
+- Middleware intentionally passes through when environment variables are absent.
+
+Error Disclosure: PROBLEMATIC
+- Several forms surface raw Supabase error messages.
+
+Identity model:
+
+auth.users.id -> profiles.id -> customer_id
+
+Authorization does not depend on email or phone. Weaknesses are duplicated Auth/profile email and the separate local mock identity system when Supabase is unavailable.
+
+
+G. RLS AND AUTHORIZATION FINDINGS
+================================
+
+Assuming the checked-in policies are deployed:
+
+Profiles
+- Customer A cannot read/update Customer B.
+- Mechanism: auth.uid() = id.
+
+Measurements
+- Customer A cannot read/update Customer B.
+- Mechanism: auth.uid() = customer_id.
+- Customer can still modify trusted fields on their own rows.
+
+Bespoke requests
+- Customer A cannot read/update Customer B.
+- Mechanism: owner predicate.
+- Customer can still modify their own quote, approval status and admin fields.
+
+Orders
+- Customer A cannot read Customer B.
+- Customer has no insert/update/delete policy.
+
+Appointments
+- Customer A cannot directly read/update Customer B’s row.
+- Customer can attach known foreign related IDs and update trusted fields on their own appointment.
+
+Saved styles
+- Customer A cannot access Customer B’s rows.
+- Ownership applies to select, insert and delete.
+
+Notifications
+- Customer A cannot access Customer B’s rows.
+- Customer can rewrite all fields in their own notifications.
+
+Reference uploads
+- NOT VERIFIED. No storage implementation exists.
+
+Payments
+- Customer A cannot read Customer B.
+- Customer has select only.
+
+Wardrobe
+- Customer A cannot read Customer B.
+- Customer has select only.
+
+Concierge
+- Request ownership and parent-request checks prevent other-thread reads.
+- Live behavior remains NOT VERIFIED.
+
+Appointment changes
+- The change row is customer-scoped.
+- The target appointment’s ownership is not validated during insert.
+
+PostgreSQL uses the USING predicate as the update check when a separate WITH CHECK is omitted. Changing customer_id to another owner is therefore not the central flaw. The central flaw is that policies grant updates to entire rows rather than limiting customers to safe columns/actions.
+
+Customer-writable trusted fields include:
+
+- measurement_profiles: version, is_current, verification_status, measurements and notes.
+- bespoke_requests: status, quoted_price, clarification_notes and admin_notes.
+- appointments: confirmed date/time, location, related IDs and operational status.
+- notifications: event type/content/related IDs, not only read state.
+- concierge_requests: status and related IDs.
+- appointment_change_requests: target appointment and initial status.
+
+Customers cannot, through the checked-in RLS:
+
+- Insert/update/delete orders.
+- Insert/update/delete payments.
+- Insert/update/delete wardrobe items.
+- Insert system notifications.
+- Insert a concierge message with sender_type = concierge.
+
+Real two-user testing against the deployed database was not possible. Deployed grants and policies are NOT VERIFIED.
+
+
+H. MEASUREMENT ARCHITECTURE
+===========================
+
+The intended architecture is versioned measurement profiles plus copied JSON snapshots.
+
+Positive elements:
+
+- measurement_profiles stores version, current state, unit, fit and verification.
+- Requests, orders and wardrobe items copy measurement values into JSON snapshots.
+- Later changes to the current profile do not automatically alter an order snapshot.
+
+Problems:
+
+- Saving first updates all current records to false, then inserts a new record. The operations are not transactional.
+- Returned Supabase errors are not inspected.
+- No database constraint ensures exactly one current profile.
+- No unique customer/version constraint exists.
+- Customers can rewrite prior measurement versions.
+- Customers can set verification_status to tsquare_verified.
+- Request snapshots remain customer-updateable because the whole request row is updateable.
+- Configurator measurementUnit and measurementMethod are not included in the request database snapshot.
+- Historical numbers can consequently become ambiguous.
+
+Conclusion:
+- Historical snapshot intent is present.
+- Reliable immutability, verification and version consistency are not present.
+- This is a high-priority repair before Phase 5.
+
+
+I. BESPOKE REQUEST ARCHITECTURE
+===============================
+
+The configurator provides:
+
+Style -> Fabric -> Colour -> Preferences -> Fit -> Measurements -> Occasion -> Required Date -> Appointment -> Customer Information -> Review
+
+Observed behavior:
+
+- Configuration is centralized in tcc_bespoke_config_v1.
+- Each update persists to localStorage.
+- Back navigation retains unrelated selections.
+- A stored configuration is resumed only when its style slug matches.
+- Start From An Idea works as a category-first journey.
+- Step validation covers required selections, email, phone, dates and manual measurement ranges.
+- Review displays selections and permits step editing.
+- There is no final trusted/server revalidation.
+
+Reference images:
+
+- Browser object URLs only.
+- Maximum six files and 10 MB each are enforced only in the client.
+- URLs are not durable after browser restart.
+- URLs are not revoked.
+- File bytes are never uploaded.
+- reference_images is not populated with real stored files.
+
+Submission flow:
+
+1. A local submission is created and configuration is cleared.
+2. addBespokeRequest(payload) is called without awaiting it.
+3. Browser navigates to confirmation.
+4. Authenticated direct browser insert is attempted.
+5. Returned Supabase error is not checked.
+6. Local state is updated regardless of database success.
+
+Guest behavior is explicitly local/development-only. It is acceptable as a demo but is not operational persistence.
+
+
+J. REQUEST TO ORDER LIFECYCLE
+=============================
+
+The database distinguishes requests and orders, so the conceptual BESPOKE REQUEST != ORDER rule is present. The actual conversion flow is unsafe.
+
+Current conversion behavior:
+
+1. Browser finds a request marked pricing_ready.
+2. Browser hardcodes N320,000 as an “authoritative” quote.
+3. Browser creates an order reference using time/random values.
+4. Browser updates the request to converted_to_order.
+5. Browser attempts to insert an order.
+6. Order RLS should reject that insert.
+7. Error is ignored.
+8. Local confirmed order and notification are displayed anyway.
+
+Consequences:
+
+- Customer cannot create a real database order under the checked-in order RLS.
+- Customer can create an order that looks real in the browser.
+- Customer can directly change their request to pricing_ready, confirmed or converted_to_order.
+- Customer can set their own quote.
+- Request can become converted in the database while no order exists.
+- Inserted order payload omits the request relationship, weakening traceability even if privileged insertion were used.
+
+This violates the trusted review -> pricing -> confirmation -> order boundary.
+
+
+K. ORDER ARCHITECTURE
+=====================
+
+Positive foundation:
+
+- UUID primary key and unique order reference.
+- Customer and optional bespoke-request relationships.
+- Copied style, fabric, colour, preferences and measurement snapshot.
+- Production-status enum.
+- Total amount.
+- Customer select-only RLS.
+- Customers cannot update database order total or production status.
+
+Missing trusted behavior:
+
+- No server action, API route, staff workflow or database function creates an order.
+- No trusted process links an approved request to an order.
+- No server process changes production status.
+- No event/audit table records status changes.
+- Only conversion implementation is the unsafe local/client flow.
+
+Order detail isolation is logically sound when live data is used: the client loads owner-scoped rows under RLS and then finds the requested ID. A different customer’s ID should resolve to not found if deployed RLS matches the repository.
+
+
+L. PAYMENT ARCHITECTURE AND SECURITY
+====================================
+
+Integration status: UI PLUS ARCHITECTURE ONLY. NO REAL PAYMENT PROVIDER.
+
+Provider: sandbox only.
+Initialization: No provider SDK or hosted checkout.
+Server boundary: None.
+Callback: None.
+Webhook: None.
+Verification: Sandbox verify() always returns successful.
+Secret handling: No payment secrets exist.
+Payment creation: Direct browser insert followed by unconditional local success.
+Idempotency: No external transaction uniqueness or retry handling.
+Receipt: Rendered from account-store data, including local records.
+
+The payment modal states that payments are securely verified and linked to an authoritative ledger, but then calls recordPayment() with provider = sandbox.
+
+Financial calculations:
+
+- Include only successful payments.
+- Support zero, partial, full and multiple payments.
+- Exclude pending/failed payments from amount paid.
+- Clamp outstanding balance at zero.
+- Clamp payment percentage at 100 percent.
+- Handle zero total safely.
+
+Limitations:
+
+- Overpayment is hidden by clamping.
+- Refund behavior is absent.
+- No currency column or explicit minor-unit convention.
+- JavaScript numbers are rounded to whole naira while database values permit two decimals.
+
+Database trust boundary:
+
+- Customer has select only on payments.
+- Amount, status, provider reference and owner cannot be customer-updated.
+- Internal reference is unique.
+
+However:
+
+- Browser attempts a prohibited payment insert.
+- Returned error is ignored.
+- Local store is updated as successful.
+- Receipt and balance trust the local record.
+- provider_reference is not unique.
+- No webhook/callback idempotency key exists.
+- Schema does not enforce payment customer matches order customer.
+
+Conclusion:
+- Database RLS should prevent a durable fake payment.
+- The customer interface still permits fake successful payment state and an authoritative-looking receipt.
+- Severity: CRITICAL.
+
+
+M. WARDROBE ARCHITECTURE
+========================
+
+Positive schema foundation:
+
+- Each wardrobe item belongs to a customer and order.
+- order_id is unique, preventing duplicate database items for one order.
+- Fabric, colour, preferences and measurements are copied as snapshots.
+- Customers have select-only RLS.
+
+Current creation behavior:
+
+- syncCompletedOrderToWardrobe() runs in the browser.
+- It does not independently require a completed order.
+- It attempts a browser insert that RLS should reject.
+- Returned error is ignored.
+- It always creates a local wardrobe item and notification.
+- No server/database workflow generates the authoritative record.
+- Database does not constrain the wardrobe customer to match the order customer or require a completed status.
+
+Order Similar:
+
+- Builds a route using a no-op string replacement.
+- Normally supplies a style ID instead of the valid style slug.
+- Destination therefore ordinarily resolves to not found.
+
+Use As Inspiration:
+
+- Adds reference_wardrobe to the idea URL.
+- Configurator never consumes the query parameter.
+- No prefill occurs.
+
+The original order and wardrobe item are not mutated, which is correct.
+
+
+N. APPOINTMENT ARCHITECTURE
+===========================
+
+There are three appointment behaviors:
+
+1. Public /book-a-fitting uses setTimeout and no persistence.
+2. Configurator requests an appointment through a direct browser insert, not transactionally linked to the request.
+3. Account reschedule/cancellation inserts a separate appointment_change_requests row and leaves the original appointment unchanged.
+
+The separate change-request concept is good because the original remains authoritative until approval.
+
+Problems:
+
+- Customers can update all columns on their own appointment.
+- Customers can change confirmation dates, location and trusted status.
+- Customers can turn a requested appointment into confirmed, completed or cancelled without staff approval.
+- Change-request insert policy does not prove target appointment ownership.
+- Customer can submit approved or declined as initial change status.
+- Change-request history is not loaded from Supabase.
+- Deleting an appointment cascades its change requests.
+- Public page says the submission is “verified and processed” although nothing is persisted.
+
+
+O. SAVED LOOKS
+===============
+
+Guest behavior:
+
+- Saved in localStorage.
+- Duplicate prevention is present.
+
+At authentication:
+
+- Guest style IDs are upserted into saved_styles.
+- Unique constraint prevents duplicate customer/style rows.
+- Guest local data is not erased.
+
+Incomplete behavior:
+
+- UI keeps using the local saved-store rather than hydrating from Supabase.
+- Removing a save updates localStorage only and does not delete the database row.
+- Migration errors are ignored.
+- Cross-device persistence is inconsistent.
+- Public saved page still says Phase 2 customer accounts are forthcoming.
+
+RLS ownership for saved_styles is appropriately based on customer_id.
+
+
+P. NOTIFICATIONS
+================
+
+Schema supports:
+
+- Event type.
+- Title and message.
+- Related entity IDs.
+- Read state and timestamps.
+
+Customers can read their own notifications.
+
+Actual event generation is mostly local:
+
+- Payment success.
+- Balance updates.
+- Order conversion.
+- Appointment change requests.
+- Wardrobe additions.
+- Concierge requests/responses.
+
+Security findings:
+
+- No customer insert policy, which prevents database impersonation of a system notification.
+- No trusted server producer exists.
+- Update policy permits customers to change all notification columns, not only read state.
+- Related IDs are not relationally validated.
+- Initial account data contains sample notifications.
+
+
+Q. CONCIERGE
+============
+
+Positive findings:
+
+- Request reads are owner-scoped.
+- Message reads require ownership of parent request.
+- Customers can insert only messages with sender_type = customer.
+- Customers cannot directly insert a staff/concierge message.
+
+Problems:
+
+- New request IDs are generated as conc-<timestamp>, but database ID is UUID.
+- Live request insert therefore fails.
+- Subsequent message insert also fails.
+- Both errors are ignored.
+- Local request and notification appear successful.
+- Request status is client-supplied.
+- Related entities are unvalidated text IDs.
+- sender_id is not required to equal authenticated user.
+- “Open request” message policy does not check request status.
+- Empty live accounts receive a sample concierge request and staff reply.
+
+Customer A should not be able to read Customer B’s thread if repository RLS is deployed. Live verification was not possible.
+
+
+R. STORAGE AND UPLOAD SECURITY
+==============================
+
+No Supabase Storage implementation was found.
+
+- Buckets: None defined.
+- Upload policies: None.
+- Read/update/delete policies: None.
+- Ownership path convention: None.
+- Signed URLs: None.
+- Server-side file validation: None.
+- Durable reference-image upload: None.
+
+Client controls only enforce:
+
+- Maximum six images.
+- Maximum 10 MB each.
+- Browser accept="image/*" hint.
+
+There is no actual content-type verification and no durable upload. Cross-customer private-image access is not presently exploitable because references are not stored. Future bucket privacy is NOT VERIFIED and must be designed before enabling uploads.
+
+
+S. MOCK / PLACEHOLDER FUNCTIONALITY
+===================================
+
+ACCEPTABLE TEMPORARY CONTENT
+
+- Static style, collection, occasion and editorial catalogue content.
+- A clearly identified sandbox payment adapter for development testing.
+- Local guest saved looks.
+- Local in-progress configurator drafts.
+
+SHOULD NOW BE PERSISTENT
+
+- Authenticated saved looks and removal sync.
+- Authenticated bespoke submissions.
+- Reference uploads.
+- Contact messages.
+- Public fitting bookings.
+- Appointment-change history.
+- Concierge requests/messages.
+- Notifications generated by real business events.
+
+DANGEROUSLY MISLEADING
+
+- Sample order, confirmed appointment, verified measurement, successful payments, wardrobe garments and concierge staff replies used as account data.
+- Live accounts with zero payments, wardrobe or concierge rows falling back to samples.
+- “Securely verified” payment copy followed by browser-only success.
+- Payment receipt generated from unverified local data.
+- Local confirmed order after database insert failure.
+- Local wardrobe item after database insert failure.
+- “Verified and processed” fitting booking with no backend.
+- Contact success with no backend.
+- TSquare-verified sample measurement displayed to empty/mock accounts.
+
+
+T. REGRESSION FINDINGS
+======================
+
+PHASE 1 REGRESSIONS
+
+- /styles is linked from the configurator layout and style step, but no /styles index exists. Runtime navigation produced the custom 404.
+- Two sample wardrobe images reference nonexistent files:
+  - /images/styles/tcc_senator_executive_1790045211676.jpg
+  - /images/styles/tcc_agbada_imperial_1790045070682.jpg
+- Contact and fitting forms still mimic successful submission.
+- /saved contains obsolete Phase 2 launch copy.
+- Homepage, navigation, collections, known style details, search, story, craftsmanship, legal pages and custom 404 otherwise rendered successfully.
+- No representative runtime console error, Next overlay or hydration error was observed.
+
+PHASE 2 REGRESSIONS
+
+- Configurator state persistence and navigation work, but uploads are session-only.
+- Authenticated submission can confirm before persistence finishes or after it fails.
+- Measurement unit/method are lost in request snapshot.
+- Order Similar and Use As Inspiration do not prefill a journey.
+- initStyleData() performs state initialization during render, an unsafe React pattern.
+
+PHASE 3 REGRESSIONS CAUSED BY PHASE 4
+
+- Phase 4 payment, wardrobe and concierge fallback data can masquerade as real Phase 3 account data.
+- Each useAccountData() invocation owns separate state and may refetch all tables.
+- Account screens often render seeded content rather than neutral loading state.
+- Appointment-change rows are not loaded from Supabase.
+- Local Phase 4 notifications do not represent trusted database events.
+
+RESPONSIVE, HYDRATION AND ACCESSIBILITY
+
+- Tested at 390x844, 768x1024 and 1440x900 on representative routes.
+- No horizontal overflow was found.
+- Account navigation intentionally scrolls horizontally on smaller screens.
+- No hydration mismatch was observed.
+- Automated accessibility checks found invalid footer heading order.
+- Three confirmed low-contrast “Not yet selected” labels were found in the idea configurator.
+- aria-label is used on colour-swatch div elements without a valid role.
+- Some image/gradient contrast requires manual confirmation.
+- Source inspection found unassociated labels, placeholder-only search labeling, inconsistent radio/pressed semantics, progress bars without progress semantics, and account modals without dialog/focus behavior.
+
+
+U. BUILD / TYPE / LINT FINDINGS
+================================
+
+Command: npx tsc --noEmit --incremental false --pretty false
+Result: PASS
+Notes: No TypeScript errors.
+
+Command: npm run build
+Result: PASS
+Notes: Production build completed in an isolated temporary copy. All routes compiled.
+
+Command: npm run lint
+Result: FAIL / NOT CONFIGURED
+Notes: next lint attempted interactive ESLint configuration and exited. The script is deprecated for the current Next setup.
+
+Tests
+Result: NOT AVAILABLE
+Notes: No test script or test suite found.
+
+Command: npm audit --json
+Result: PASS
+Notes: Zero known vulnerabilities reported.
+
+Command: npm audit --omit=dev --json
+Result: PASS
+Notes: Zero known production vulnerabilities reported.
+
+Runtime browser smoke test
+Result: PASS WITH FINDINGS
+Notes: No overlay/page errors. /styles 404 and missing wardrobe image confirmed.
+
+Responsive smoke test
+Result: PASS ON SAMPLED ROUTES
+Notes: No sampled horizontal overflow.
+
+Automated accessibility
+Result: PARTIAL
+Notes: Findings documented above.
+
+Build warnings:
+
+- Missing metadataBase caused social-image URLs to default to localhost.
+- Webpack cache emitted large serialized-string warnings.
+
+Dependency observations:
+
+- No unexpected payment SDK or secondary authentication package.
+- opentype.js appears unused.
+- No duplicate major state-management or validation libraries.
+- npm audit reported zero known vulnerabilities at audit time.
+
+
+V. ISSUES BY SEVERITY
+=====================
+
+CRITICAL
+--------
+
+1. Browser can produce successful payment state and a verified-looking receipt.
+
+Problem:
+- No provider or server verifies payment before the UI records success.
+
+Why it matters:
+- A customer can fake successful payment state merely by completing a client flow.
+
+Evidence:
+- src/lib/account-store.ts, recordPayment(), approximately line 727.
+- src/app/account/orders/[id]/page.tsx payment modal, approximately lines 148 and 649.
+
+Affected area:
+- Payment modal, account store, sandbox adapter and receipt UI.
+
+Recommended correction:
+- Move payment initialization and verification to a trusted server flow.
+- Derive successful records only from verified provider events.
+- Never update financial UI as successful after a rejected insert.
+
+
+HIGH
+----
+
+1. Customer can update request price, approval status and admin fields.
+
+Why it matters:
+- Customers can self-approve, self-price or mark requests converted.
+
+Evidence:
+- supabase/schema.sql, bespoke_requests update policy around line 116.
+
+Recommended correction:
+- Separate customer-editable fields from trusted transitions and expose trusted transitions only to server/admin procedures.
+
+2. Request-to-order conversion is client-controlled.
+
+Why it matters:
+- Request can be marked converted while real order creation fails; a local confirmed order still appears.
+
+Evidence:
+- src/lib/account-store.ts, acceptBespokeQuoteAndConvertToOrder(), around line 1107.
+
+Recommended correction:
+- Implement one transactional trusted conversion that validates approval/quote and inserts the linked order.
+
+3. Measurement verification and history are customer-writable.
+
+Why it matters:
+- Customer can forge TSquare verification, edit history and create inconsistent current state.
+
+Evidence:
+- supabase/schema.sql, measurement_profiles policies around lines 42–71.
+- src/lib/account-store.ts measurement save around line 595.
+
+Recommended correction:
+- Restrict verified/staff fields, make versions immutable, and transactionally enforce one current version.
+
+4. Appointment confirmation and operational status are customer-writable.
+
+Why it matters:
+- Customer can bypass staff approval and rewrite trusted scheduling/status.
+
+Evidence:
+- supabase/schema.sql, appointment update policy around line 193.
+
+Recommended correction:
+- Permit only narrow customer actions and process confirmation/status through trusted workflows.
+
+5. Persistence errors are ignored while UI reports success.
+
+Why it matters:
+- Requests, orders, payments, wardrobe and concierge can look complete with no database record.
+
+Evidence:
+- src/lib/account-store.ts mutation functions beginning around line 570.
+
+Recommended correction:
+- Inspect every Supabase result, stop on error, use transactions where appropriate and show truthful failure state.
+
+6. Sample financial and operational data is injected into real empty accounts.
+
+Why it matters:
+- Customers can see fictional payments, garments and staff conversations as though they were real.
+
+Evidence:
+- src/lib/account-store.ts fallback mapping around lines 473–539.
+
+Recommended correction:
+- Put fixtures behind an explicit development/demo flag. Real empty accounts must display empty states.
+
+7. Wardrobe generation has no trusted completed-order path.
+
+Why it matters:
+- Local garments can be forged and database creation does not enforce completion/customer consistency.
+
+Evidence:
+- src/lib/account-store.ts, syncCompletedOrderToWardrobe(), around line 797.
+
+Recommended correction:
+- Generate wardrobe items from a trusted completed-order transition and retain the unique order constraint.
+
+
+MEDIUM
+------
+
+1. Concierge creation uses an invalid UUID.
+- Live request and message inserts fail while UI claims success.
+- Evidence: src/lib/account-store.ts around line 992.
+- Correction: Let database generate UUID, use returned ID and validate status/related ownership.
+
+2. Reference uploads do not upload files.
+- References disappear and no private ownership boundary exists.
+- Evidence: src/components/bespoke/steps/DetailsStep.tsx around line 83.
+- Correction: Introduce private bucket, owner-scoped policies, signed reads and server-side size/MIME validation.
+
+3. Saved-look synchronization is one-way.
+- Removed saves can return and cross-device state is incomplete.
+- Evidence: src/lib/auth-context.tsx around line 44.
+- Correction: Make Supabase authoritative for authenticated users and synchronize insert/delete.
+
+4. Auth callback accepts an unvalidated redirect.
+- Crafted authentication links can redirect outside the site.
+- Evidence: src/app/auth/callback/route.ts line 15.
+- Correction: Restrict redirects to normalized same-origin application paths and handle exchange errors.
+
+5. Middleware fails open when Supabase configuration is absent.
+- A misconfigured deployment exposes account UI under mock authentication.
+- Evidence: src/middleware.ts around line 9.
+- Correction: Fail closed outside explicit development mode.
+
+6. Appointment-change target ownership is not checked.
+- A known foreign appointment UUID can be referenced and supplied with a forged status.
+- Evidence: supabase/schema.sql around lines 413–436.
+- Correction: Validate parent ownership and force initial status.
+
+7. Notification rows are fully customer-updateable.
+- Trusted event content and related links can be rewritten.
+- Evidence: supabase/schema.sql around line 250.
+- Correction: Limit customer mutation to read state.
+
+8. Provider idempotency is absent.
+- Retries or double-clicks could create/double-count successful transactions after integration.
+- Evidence: payments constraints in supabase/schema.sql around line 282.
+- Correction: Add unique provider transaction identity and idempotent event processing.
+
+9. Snapshot unit/method is lost.
+- Historical measurement values can become ambiguous.
+- Evidence: src/lib/account-store.ts request insert around line 641.
+- Correction: Store unit, method and version/verification context in immutable snapshots.
+
+10. Contact and fitting forms falsely claim processing.
+- Customer enquiries can be silently lost.
+- Evidence: ContactClient.tsx around line 31 and BookFittingClient.tsx around line 102.
+- Correction: Persist through a server endpoint or clearly label as non-operational.
+
+11. Relational integrity is incomplete.
+- Future privileged code can create customer/order mismatches.
+- Affected: payments, wardrobe, appointments and concierge.
+- Correction: Validate or constrain related entity/customer consistency.
+
+12. No trusted audit trail exists.
+- Pricing, order, payment and production changes cannot be attributed reliably.
+- Correction: Add append-only operational events/change history with trusted mutations.
+
+
+LOW
+---
+
+1. Links point to nonexistent /styles index.
+- Breaks configurator navigation.
+- Evidence: src/components/bespoke/ConfiguratorLayout.tsx line 28 and StyleStep.tsx line 158.
+- Correction: Point to an existing collection/search route or later add the intended index.
+
+2. Sample wardrobe images are missing.
+- Broken imagery appears in account experience.
+- Evidence: src/lib/account-store.ts around lines 183 and 813.
+- Correction: Use valid assets or remove fixtures.
+
+3. Accessibility gaps exist in labels, modals, progress and contrast.
+- Keyboard and assistive-technology use is impaired.
+- Correction: Associate labels, implement dialog/focus behavior and expose progress/control states semantically.
+
+4. Lint/tests and private-route SEO controls are absent.
+- Regressions have fewer automated gates and private routes lack explicit noindex intent.
+- Correction: Configure current ESLint tooling, add tests and explicit private-route robots metadata.
+
+5. opentype.js appears unused.
+- Unnecessary dependency and maintenance surface.
+- Correction: Confirm usage and remove in a future maintenance change if genuinely unused.
+
+No evidence was found of cross-customer private-data reads, an exposed service-role key or a public private-file bucket in the repository.
+
+
+W. REQUIRED REPAIRS BEFORE PHASE 5
+==================================
+
+MUST FIX BEFORE PHASE 5
+
+- Replace browser-created payment success with trusted provider initiation, callback/webhook verification and idempotent database recording.
+- Remove fake “verified,” “authoritative” and receipt behavior for unverified local payments.
+- Restrict bespoke-request pricing, approval, conversion and admin fields from customer updates.
+- Implement transactional trusted request-to-order conversion.
+- Restrict measurement verification and make historical versions immutable.
+- Enforce one current measurement profile and preserve unit/method/version in snapshots.
+- Restrict appointment confirmation, confirmed schedule and operational status to trusted workflows.
+- Remove sample financial, order, wardrobe and staff data from live empty-account fallbacks.
+- Stop reporting success when Supabase operations return errors.
+- Add trusted wardrobe generation from completed orders.
+- Make middleware fail closed in production.
+- Verify deployed schema, RLS policies, grants and Auth configuration against the repository.
+- Establish server-side authority boundaries before adding admin mutation capabilities.
+
+SHOULD FIX BEFORE PHASE 5
+
+- Repair concierge UUID creation and related-entity authorization.
+- Implement authenticated saved-look hydration and deletion sync.
+- Implement private reference-image storage and policies.
+- Narrow notification updates to read state.
+- Validate appointment-change parent ownership and initial status.
+- Add payment provider-reference uniqueness/idempotency.
+- Add customer/order consistency enforcement for payments and wardrobe.
+- Make contact and fitting booking genuinely persistent.
+- Add structured validation shared across client, server and database.
+- Add explicit error/loading/empty states.
+- Add auditable lifecycle-event records.
+- Correct auth callback redirects and recovery error handling.
+- Configure linting and automated tests.
+
+CAN SAFELY DEFER
+
+- Full Phase 5 admin UI and staff roles.
+- CMS/style management.
+- Advanced production dashboards.
+- Minor stale copy and dependency cleanup.
+- Cosmetic responsive refinements after critical workflows are safe.
+- Expanded SEO beyond private-route noindex and metadataBase.
+- Non-blocking accessibility polish, provided core form/modal keyboard barriers are addressed earlier.
+
+
+X. PHASE 5 READINESS CHECKLIST
+==============================
+
+Legend:
+[x] Satisfactory foundation
+[-] Partial or not verified
+[ ] Blocking work remains
+
+[-] Authentication — Core Supabase auth exists; callback, recovery and fail-open behavior require repair.
+[-] Customer isolation — Repository policies logically isolate direct reads, but live deployment is not verified.
+[ ] RLS — Several policies expose trusted fields to customer mutation.
+[ ] Measurements — Verification, immutability, current/version constraints and snapshot units are unsafe.
+[ ] Bespoke requests — Customer can control pricing and trusted statuses.
+[ ] Request-to-order conversion — No trusted transactional path.
+[-] Orders — Customer read-only model is good; authoritative creation/transitions are missing.
+[ ] Payments — No provider, server verification, webhook or idempotency.
+[ ] Wardrobe — No trusted completed-order generator.
+[ ] Appointments — Confirmation/status fields are customer-writable.
+[-] Saved looks — RLS/uniqueness are good; synchronization is incomplete.
+[ ] Notifications — No trusted event producer and updates are too broad.
+[ ] Concierge — Persistence is broken and related-entity validation is weak.
+[ ] Storage — No bucket or policy architecture.
+[ ] Server/client boundaries — Sensitive lifecycle operations remain browser-driven.
+[ ] Database integrity — Relational, versioning and idempotency constraints are absent.
+[ ] Audit trail readiness — Trusted changes are not recorded as attributable events.
+[-] Error/loading behavior — Failures can appear as successes and samples can replace empty states.
+[-] Accessibility — Core experience works visually, but form/modal/contrast issues remain.
+[-] SEO/private routes — Public foundation exists; metadataBase and explicit account noindex handling are absent.
+[x] TypeScript compilation — Passes.
+[x] Production build — Passes.
+[ ] Lint gate — Not configured for the current Next setup.
+[ ] Automated tests — Absent.
+[x] Admin platform — Correctly not started.
+
+
+FINAL DETERMINATION
+===================
+
+TCC has enough UI and domain structure to preserve and repair, but its trusted business boundary is not ready for Phase 5. Payment handling, request approval/conversion, measurement verification, appointment authority, mock-data separation and server-side operational workflows must be corrected before administrative capabilities are introduced.
+
+END OF AUDIT

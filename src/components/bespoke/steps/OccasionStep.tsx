@@ -43,6 +43,8 @@ export function OccasionStep({
           return (
             <button
               key={occ.id}
+              type="button"
+              aria-pressed={isSelected}
               onClick={() => onOccasionSelect(occ.id)}
               className={cn(
                 "px-4 py-3.5 rounded-xl border text-left text-xs transition-all duration-200",
@@ -59,7 +61,7 @@ export function OccasionStep({
 
       {/* Optional event details */}
       {config.occasion && (
-        <div className="space-y-4 mb-8 p-5 bg-[#141412] border border-stone-800/50 rounded-2xl animate-in fade-in duration-200">
+        <div className="space-y-4 mb-8 p-5 bg-stone-950 border border-stone-800/50 rounded-2xl animate-in fade-in duration-200">
           <p className="text-[10px] uppercase tracking-widest text-stone-500 font-mono">
             Event Details (Optional)
           </p>
@@ -100,6 +102,7 @@ export function OccasionStep({
 
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -107,6 +110,7 @@ export function OccasionStep({
           Back
         </button>
         <button
+          type="button"
           onClick={onContinue}
           disabled={!config.occasion}
           className={cn(

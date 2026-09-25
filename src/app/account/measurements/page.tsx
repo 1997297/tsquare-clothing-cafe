@@ -16,6 +16,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ReturnLink } from "@/components/common/ReturnLink";
 
 type Section = "upper" | "torso" | "lower";
 
@@ -72,6 +73,7 @@ export default function AccountMeasurementsPage() {
   const [formNotes, setFormNotes] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   const displayedProfile = selectedHistoryId
     ? measurementHistory.find((m) => m.id === selectedHistoryId) || currentMeasurement
@@ -89,11 +91,17 @@ export default function AccountMeasurementsPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    await saveMeasurementProfile(formMeasurements, formUnit, formFit, formNotes);
-    setIsSaving(false);
-    setIsEditing(false);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 4000);
+    setSaveError("");
+    try {
+      await saveMeasurementProfile(formMeasurements, formUnit, formFit, formNotes);
+      setIsEditing(false);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 4000);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "The new measurement version could not be saved.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleFieldChange = (key: string, val: string) => {
@@ -109,6 +117,7 @@ export default function AccountMeasurementsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
+      <ReturnLink href="/account" label="Return to Dashboard" />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800/60 pb-6">
         <div>
@@ -140,10 +149,11 @@ export default function AccountMeasurementsPage() {
           <span>New measurement version created and activated. Previous versions remain archived in your history.</span>
         </div>
       )}
+      {saveError && <p role="alert" className="p-4 rounded-2xl bg-red-950/30 border border-red-800/50 text-xs text-red-300">{saveError}</p>}
 
       {/* Editing Form */}
       {isEditing ? (
-        <form onSubmit={handleSave} className="p-6 sm:p-8 rounded-3xl bg-[#141412] fine-border space-y-6">
+        <form onSubmit={handleSave} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-stone-800">
             <div>
               <h2 className="font-display text-xl text-warm-ivory">
@@ -242,7 +252,7 @@ export default function AccountMeasurementsPage() {
                             value={formMeasurements[field.key] ?? ""}
                             onChange={(e) => handleFieldChange(field.key, e.target.value)}
                             placeholder="—"
-                            className="w-full bg-[#141412] border border-stone-800 rounded-xl text-xs text-warm-ivory px-3.5 py-2.5 focus:outline-none focus:border-champagne"
+                            className="w-full bg-stone-950 border border-stone-800 rounded-xl text-xs text-warm-ivory px-3.5 py-2.5 focus:outline-none focus:border-champagne"
                           />
                           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-stone-600 uppercase">
                             {formUnit}
@@ -293,7 +303,7 @@ export default function AccountMeasurementsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Profile View (3 cols) */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#141412] fine-border space-y-6">
+            <div className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
               {/* Profile Meta Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-stone-800/60">
                 <div>
@@ -340,7 +350,7 @@ export default function AccountMeasurementsPage() {
                               {f.label}
                             </span>
                             <span className="text-sm font-mono font-bold text-warm-ivory mt-0.5 block">
-                              {val !== undefined ? `${val} ${displayedProfile.unit}` : "—"}
+                              {val !== undefined ? `${val} ${displayedProfile?.unit ?? ""}` : "—"}
                             </span>
                           </div>
                         );

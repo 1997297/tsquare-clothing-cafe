@@ -61,7 +61,7 @@ export function StyleSummary({ config, className, compact }: StyleSummaryProps) 
             {colour && (
               <span className="inline-flex items-center gap-1 text-[9px] text-stone-400">
                 <span
-                  className="w-2.5 h-2.5 rounded-full border border-white/20 inline-block"
+                  className="w-2.5 h-2.5 rounded-full border border-warm-ivory/20 inline-block"
                   style={{ background: colour.hex }}
                 />
                 {colour.name}
@@ -132,7 +132,7 @@ export function StyleSummary({ config, className, compact }: StyleSummaryProps) 
               <span className="text-[10px] uppercase tracking-widest text-stone-500">Colour</span>
               <span className="flex items-center gap-1.5 text-xs text-stone-300">
                 <span
-                  className="w-3 h-3 rounded-full border border-white/20"
+                  className="w-3 h-3 rounded-full border border-warm-ivory/20"
                   style={{ background: colour.hex }}
                 />
                 {colour.name}

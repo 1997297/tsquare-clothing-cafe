@@ -118,6 +118,7 @@ export function MeasurementsStep({
         {user || profile ? (
           <button
             type="button"
+            aria-pressed={measurementMethod === "saved"}
             onClick={() => {
               onMethodSelect("saved");
               if (currentMeasurement?.measurements) {
@@ -179,6 +180,8 @@ export function MeasurementsStep({
 
         {/* Manual entry */}
         <button
+          type="button"
+          aria-pressed={measurementMethod === "manual"}
           onClick={() => onMethodSelect("manual")}
           className={cn(
             "w-full flex items-start gap-4 p-5 rounded-2xl border text-left transition-all duration-200",
@@ -208,6 +211,8 @@ export function MeasurementsStep({
 
         {/* Schedule */}
         <button
+          type="button"
+          aria-pressed={measurementMethod === "schedule"}
           onClick={() => onMethodSelect("schedule")}
           className={cn(
             "w-full flex items-start gap-4 p-5 rounded-2xl border text-left transition-all duration-200",
@@ -247,6 +252,8 @@ export function MeasurementsStep({
               {(["cm", "inches"] as MeasurementUnit[]).map((u) => (
                 <button
                   key={u}
+                  type="button"
+                  aria-pressed={measurementUnit === u}
                   onClick={() => onUnitChange(u)}
                   className={cn(
                     "px-4 py-2 text-xs uppercase tracking-widest transition-colors",
@@ -266,6 +273,9 @@ export function MeasurementsStep({
             {SECTIONS.map((section) => (
               <div key={section.id} className="border border-stone-800/60 rounded-2xl overflow-hidden">
                 <button
+                  type="button"
+                  aria-expanded={openSection === section.id}
+                  aria-controls={`measurement-section-${section.id}`}
                   onClick={() => setOpenSection(openSection === section.id ? "upper" : section.id)}
                   className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-stone-900/30 transition-colors"
                 >
@@ -280,7 +290,7 @@ export function MeasurementsStep({
                 </button>
 
                 {openSection === section.id && (
-                  <div className="px-5 pb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div id={`measurement-section-${section.id}`} className="px-5 pb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {section.fields.map((field) => (
                       <div key={field.key}>
                         <label
@@ -300,7 +310,7 @@ export function MeasurementsStep({
                             onChange={(e) => handleMeasurementChange(field.key, e.target.value)}
                             placeholder="—"
                             className={cn(
-                              "w-full bg-[#141412] border rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 pr-12 focus:outline-none transition-colors",
+                              "w-full bg-stone-950 border rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 pr-12 focus:outline-none transition-colors",
                               errors[field.key]
                                 ? "border-amber-700/60 focus:border-amber-500"
                                 : "border-stone-800 focus:border-champagne/50"
@@ -325,27 +335,16 @@ export function MeasurementsStep({
 
           {/* Confidence checkbox */}
           <div className="mt-6 flex items-start gap-3">
-            <button
-              onClick={() => onConfidenceChange(!measurementConfidence)}
-              className={cn(
-                "flex-shrink-0 w-5 h-5 rounded border-2 transition-all mt-0.5",
-                measurementConfidence
-                  ? "border-champagne/60 bg-champagne/20"
-                  : "border-stone-700"
-              )}
-              aria-pressed={measurementConfidence}
-              role="checkbox"
-              aria-checked={measurementConfidence}
-            >
-              {measurementConfidence && (
-                <svg viewBox="0 0 10 10" className="w-full h-full p-0.5">
-                  <path d="M1.5 5l2.5 2.5L8.5 2.5" stroke="#B79A68" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              )}
-            </button>
+            <input
+              id="measurement-confidence"
+              type="checkbox"
+              checked={measurementConfidence}
+              onChange={(event) => onConfidenceChange(event.target.checked)}
+              className="mt-0.5 h-5 w-5 shrink-0 rounded border-2 border-stone-700 bg-transparent text-champagne focus:ring-champagne"
+            />
             <label
+              htmlFor="measurement-confidence"
               className="text-xs text-stone-400 leading-relaxed cursor-pointer"
-              onClick={() => onConfidenceChange(!measurementConfidence)}
             >
               I am not completely sure about some of these measurements.
               <span className="text-stone-600 block mt-0.5 text-[10px]">
@@ -375,6 +374,7 @@ export function MeasurementsStep({
 
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -382,6 +382,7 @@ export function MeasurementsStep({
           Back
         </button>
         <button
+          type="button"
           onClick={onContinue}
           disabled={!canContinue}
           className={cn(

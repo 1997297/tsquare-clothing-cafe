@@ -3,6 +3,9 @@ import { Cinzel, Montserrat } from "next/font/google";
 import "./globals.css";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { AuthProvider } from "@/lib/auth-context";
+import { AccountDataProvider } from "@/lib/account-store";
+import { SavedStylesProvider } from "@/lib/saved-store";
+import { ThemeProvider } from "@/lib/theme-context";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -25,6 +28,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
     default: "TSquare Clothing Cafe | Contemporary African Luxury Menswear",
     template: "%s | TSquare Clothing Cafe",
@@ -46,7 +50,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_NG",
-    url: "https://tsquareclothingcafe.com",
+    url: "/",
     title: "TSquare Clothing Cafe | Contemporary African Luxury Menswear",
     description:
       "Crafted for the man who commands presence. Bespoke menswear shaped by craftsmanship, character and individuality in Abeokuta, Nigeria.",
@@ -69,11 +73,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${montserrat.variable}`}>
+    <html
+      lang="en"
+      data-theme="dark"
+      suppressHydrationWarning
+      className={`${cinzel.variable} ${montserrat.variable}`}
+    >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('tcc-theme');t=t==='light'?'light':'dark';var d=document.documentElement;d.dataset.theme=t;d.style.colorScheme=t;}catch(e){}})();",
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black font-sans">
-        <AuthProvider>
-          <SiteLayout>{children}</SiteLayout>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <SavedStylesProvider>
+              <AccountDataProvider>
+                <SiteLayout>{children}</SiteLayout>
+              </AccountDataProvider>
+            </SavedStylesProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

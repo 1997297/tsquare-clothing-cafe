@@ -50,7 +50,7 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
       {/* Modal Dialog Content with Rounded-3xl */}
       <div
         ref={modalRef}
-        className="relative z-10 w-full max-w-2xl bg-[#171614] border border-stone-800 shadow-2xl p-6 sm:p-10 text-warm-ivory rounded-3xl animate-in zoom-in-95 duration-200 my-8"
+        className="relative z-10 w-full max-w-2xl bg-stone-950 border border-stone-800 shadow-2xl p-6 sm:p-10 text-warm-ivory rounded-3xl animate-in zoom-in-95 duration-200 my-8"
       >
         {/* Close Button with Rounded-full */}
         <button

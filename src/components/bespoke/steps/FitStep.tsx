@@ -64,6 +64,8 @@ export function FitStep({
           return (
             <button
               key={fit.id}
+              type="button"
+              aria-pressed={isSelected}
               onClick={() => onSelect(fit.id)}
               className={cn(
                 "relative flex flex-col items-center text-center p-6 rounded-2xl border transition-all duration-200 group",
@@ -112,6 +114,7 @@ export function FitStep({
 
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -119,6 +122,7 @@ export function FitStep({
           Back
         </button>
         <button
+          type="button"
           onClick={onContinue}
           disabled={!config.fitPreference}
           className={cn(

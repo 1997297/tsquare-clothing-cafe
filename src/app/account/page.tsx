@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { useAccountData } from "@/lib/account-store";
+import { useSavedStyles } from "@/lib/saved-store";
 import { getStyleById } from "@/data/styles";
 import {
   Sparkles,
@@ -44,8 +45,8 @@ export default function AccountOverviewPage() {
     notifications,
     payments,
     wardrobe,
-    data: { savedStyleIds },
   } = useAccountData();
+  const { savedIds: savedStyleIds } = useSavedStyles();
 
   const [greeting, setGreeting] = useState("Welcome");
 
@@ -121,7 +122,7 @@ export default function AccountOverviewPage() {
 
       {/* ── Commercial Position Highlight (When balance is due) ── */}
       {totalOutstanding > 0 && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#141412] border border-amber-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 rounded-2xl bg-stone-950 border border-amber-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-amber-950/40 border border-amber-800/40 flex items-center justify-center text-amber-400 shrink-0">
               <CreditCard className="w-4 h-4" />
@@ -147,7 +148,7 @@ export default function AccountOverviewPage() {
 
       {/* ── Section 1: Priority Active Garment Focus ── */}
       {activeOrder ? (
-        <div className="p-6 sm:p-8 bg-[#141412] fine-border rounded-3xl space-y-6">
+        <div className="p-6 sm:p-8 bg-stone-950 fine-border rounded-3xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-stone-800/60">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
@@ -235,7 +236,7 @@ export default function AccountOverviewPage() {
           </div>
         </div>
       ) : recentRequest ? (
-        <div className="p-6 sm:p-8 bg-[#141412] fine-border rounded-3xl space-y-4">
+        <div className="p-6 sm:p-8 bg-stone-950 fine-border rounded-3xl space-y-4">
           <div className="flex items-center justify-between">
             <span className="px-2.5 py-0.5 rounded-full bg-champagne/15 text-champagne border border-champagne/30 text-[10px] font-mono uppercase tracking-widest">
               Latest Bespoke Request
@@ -264,7 +265,7 @@ export default function AccountOverviewPage() {
           </div>
         </div>
       ) : (
-        <div className="p-8 bg-[#141412] fine-border rounded-3xl text-center space-y-4">
+        <div className="p-8 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
           <Scissors className="w-8 h-8 text-champagne/60 mx-auto" />
           <h2 className="font-display text-2xl text-warm-ivory">
             No Active Orders Yet
@@ -287,7 +288,7 @@ export default function AccountOverviewPage() {
       {/* ── Section 2: Two-Column Priority Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Measurements Vault Snapshot */}
-        <div className="p-6 bg-[#141412] fine-border rounded-3xl space-y-5">
+        <div className="p-6 bg-stone-950 fine-border rounded-3xl space-y-5">
           <div className="flex items-center justify-between pb-3 border-b border-stone-800/60">
             <div className="flex items-center gap-2.5">
               <Ruler className="w-4 h-4 text-champagne" />
@@ -363,7 +364,7 @@ export default function AccountOverviewPage() {
         </div>
 
         {/* Upcoming Appointment */}
-        <div className="p-6 bg-[#141412] fine-border rounded-3xl space-y-5">
+        <div className="p-6 bg-stone-950 fine-border rounded-3xl space-y-5">
           <div className="flex items-center justify-between pb-3 border-b border-stone-800/60">
             <div className="flex items-center gap-2.5">
               <Calendar className="w-4 h-4 text-champagne" />
@@ -449,7 +450,7 @@ export default function AccountOverviewPage() {
               <Link
                 key={w.id}
                 href={`/account/wardrobe/${w.id}`}
-                className="group p-4 rounded-2xl bg-[#141412] fine-border hover:border-champagne/40 transition-colors flex items-center gap-4"
+                className="group p-4 rounded-2xl bg-stone-950 fine-border hover:border-champagne/40 transition-colors flex items-center gap-4"
               >
                 <div className="relative w-14 h-16 rounded-xl overflow-hidden bg-stone-900 shrink-0">
                   <Image

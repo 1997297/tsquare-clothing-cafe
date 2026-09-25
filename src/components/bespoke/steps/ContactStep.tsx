@@ -132,6 +132,7 @@ export function ContactStep({
         </label>
         <input
           id={id}
+          name={fieldKey}
           type={type}
           value={value}
           autoComplete={autoComplete}
@@ -139,7 +140,7 @@ export function ContactStep({
           onChange={(e) => set(fieldKey, e.target.value as ContactInfo[typeof fieldKey])}
           onBlur={() => touch(fieldKey)}
           className={cn(
-            "w-full bg-[#141412] border rounded-xl text-sm text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none transition-colors",
+            "w-full bg-stone-950 border rounded-xl text-sm text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none transition-colors",
             err
               ? "border-amber-700/60 focus:border-amber-500/60"
               : "border-stone-800 focus:border-champagne/50"
@@ -226,16 +227,18 @@ export function ContactStep({
         />
 
         {/* Preferred contact */}
-        <div>
-          <p className="text-[10px] uppercase tracking-widest text-stone-500 mb-3">
+        <fieldset>
+          <legend className="text-[10px] uppercase tracking-widest text-stone-500 mb-3">
             Preferred Contact Method
-          </p>
+          </legend>
           <div className="flex flex-wrap gap-3">
             {CONTACT_METHODS.map((m) => {
               const isSelected = contact.preferredContact === m.id;
               return (
                 <button
                   key={m.id}
+                  type="button"
+                  aria-pressed={isSelected}
                   onClick={() => { set("preferredContact", m.id); touch("preferredContact"); }}
                   className={cn(
                     "px-5 py-2.5 rounded-xl border text-xs transition-all duration-150",
@@ -252,7 +255,7 @@ export function ContactStep({
           {touched.preferredContact && errors.preferredContact && (
             <p className="text-[10px] text-amber-500 mt-2">{errors.preferredContact}</p>
           )}
-        </div>
+        </fieldset>
       </div>
 
       <p className="text-[10px] text-stone-600 mb-8 leading-relaxed">
@@ -261,6 +264,7 @@ export function ContactStep({
 
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -268,6 +272,7 @@ export function ContactStep({
           Back
         </button>
         <button
+          type="button"
           onClick={handleContinue}
           className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-champagne text-near-black hover:bg-champagne-light transition-all duration-200"
         >

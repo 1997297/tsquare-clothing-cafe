@@ -2,24 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
 import {
   Calendar as CalendarIcon,
-  Clock,
-  User,
-  Phone,
-  Mail,
-  FileText,
   CheckCircle2,
-  AlertCircle,
   ShieldCheck,
-  ArrowRight,
 } from "lucide-react";
 import { AppointmentType } from "@/types";
 import { Button } from "@/components/common/Button";
+import { ReturnLink } from "@/components/common/ReturnLink";
+import { useAuth } from "@/lib/auth-context";
+import { submitPublicFittingAction } from "./actions";
 
 export default function BookFittingClient() {
   const searchParams = useSearchParams();
+  const { profile, user } = useAuth();
   const prefilledStyle = searchParams.get("style") || "";
 
   const [formData, setFormData] = useState({
@@ -41,8 +37,21 @@ export default function BookFittingClient() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (!profile) return;
+    setFormData((current) => ({
+      ...current,
+      customerName: current.customerName || `${profile.firstName} ${profile.lastName}`.trim(),
+      email: current.email || profile.email,
+      phone: current.phone || profile.phone,
+      isExistingCustomer: true,
+    }));
+  }, [profile]);
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [appointmentId, setAppointmentId] = useState<string | null>(null);
 
   const appointmentTypes: {
     type: AppointmentType;
@@ -96,19 +105,27 @@ export default function BookFittingClient() {
     "05:00 PM",
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setSubmitError("");
+    const result = await submitPublicFittingAction(formData);
+    if (result.ok) {
+      setAppointmentId(result.appointmentId);
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 600);
+    } else {
+      setSubmitError(result.error);
+    }
+    setIsSubmitting(false);
   };
 
   return (
     <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-champagne selection:text-near-black font-sans">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8 sm:mb-10">
+          <ReturnLink href="/account" label="Return to Dashboard" />
+        </div>
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
           <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
@@ -123,7 +140,7 @@ export default function BookFittingClient() {
         </div>
 
         {isSubmitted ? (
-          <div className="p-8 sm:p-14 bg-[#151513] fine-border rounded-3xl text-center space-y-6 animate-in fade-in duration-300 shadow-xl">
+          <div className="p-8 sm:p-14 bg-stone-950 fine-border rounded-3xl text-center space-y-6 animate-in fade-in duration-300 shadow-xl">
             <CheckCircle2 className="h-16 w-16 text-champagne mx-auto" />
             <h2 className="font-display text-3xl sm:text-4xl text-warm-ivory">
               Fitting Request Logged
@@ -154,27 +171,33 @@ export default function BookFittingClient() {
               )}
             </div>
 
-            {/* Architecture note for Phase 1 */}
+            {/* Confirmation boundary */}
             <div className="p-4 bg-stone-900/60 fine-border rounded-2xl max-w-lg mx-auto text-stone-400 text-xs leading-relaxed text-left flex items-start gap-3">
               <ShieldCheck className="h-5 w-5 text-champagne shrink-0 mt-0.5" />
               <div>
                 <strong className="text-warm-ivory block uppercase tracking-wider text-[10px] mb-0.5">
-                  Phase 1 Confirmation Notice
+                  Confirmation Notice
                 </strong>
-                This booking submission is verified and processed through the Phase 1 interface foundation. Our TCC concierge will reach out to{" "}
+                This is a fitting request, not a reserved slot. Our TCC concierge will reach out to{" "}
                 <span className="text-warm-ivory font-mono">{formData.phone}</span> via WhatsApp/phone to confirm slot availability.
               </div>
             </div>
 
             <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
-              <Button href="/collections" variant="champagne" size="md" className="rounded-xl">
-                Explore Collections
+              <Button href="/account" variant="champagne" size="md" className="rounded-xl">
+                Return to Dashboard
               </Button>
+              {user && appointmentId && (
+                <Button href="/account/appointments" variant="outline" size="md" className="rounded-xl">
+                  View Appointment
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="md"
                 onClick={() => {
                   setIsSubmitted(false);
+                  setAppointmentId(null);
                   setFormData({
                     customerName: "",
                     email: "",
@@ -194,7 +217,7 @@ export default function BookFittingClient() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-6 sm:p-12 bg-[#151513] fine-border rounded-3xl space-y-10 shadow-xl">
+          <form onSubmit={handleSubmit} className="p-6 sm:p-12 bg-stone-950 fine-border rounded-3xl space-y-10 shadow-xl">
             {/* 1. Appointment Type Selection */}
             <div>
               <div className="flex items-center gap-2 mb-4">
@@ -208,8 +231,10 @@ export default function BookFittingClient() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {appointmentTypes.map((apt) => (
-                  <label
+                  <button
                     key={apt.type}
+                    type="button"
+                    aria-pressed={formData.appointmentType === apt.type}
                     onClick={() =>
                       setFormData({ ...formData, appointmentType: apt.type })
                     }
@@ -236,7 +261,7 @@ export default function BookFittingClient() {
                     <div className="mt-3 flex items-center gap-1.5 text-[10px] font-mono tracking-widest text-champagne">
                       {formData.appointmentType === apt.type ? "● Selected" : "○ Select"}
                     </div>
-                  </label>
+                  </button>
                 ))}
               </div>
             </div>
@@ -254,10 +279,12 @@ export default function BookFittingClient() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-2 font-medium">
+                  <label htmlFor="fitting-date" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-2 font-medium">
                     Requested Date
                   </label>
                   <input
+                    id="fitting-date"
+                    name="date"
                     type="date"
                     required
                     value={formData.date}
@@ -272,10 +299,12 @@ export default function BookFittingClient() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-2 font-medium">
+                  <label htmlFor="fitting-time" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-2 font-medium">
                     Preferred Time of Day
                   </label>
                   <select
+                    id="fitting-time"
+                    name="time"
                     value={formData.time}
                     onChange={(e) =>
                       setFormData({ ...formData, time: e.target.value })
@@ -305,11 +334,14 @@ export default function BookFittingClient() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                  <label htmlFor="fitting-name" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                     Full Name *
                   </label>
                   <input
+                    id="fitting-name"
+                    name="customerName"
                     type="text"
+                    autoComplete="name"
                     required
                     value={formData.customerName}
                     onChange={(e) =>
@@ -321,11 +353,14 @@ export default function BookFittingClient() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                  <label htmlFor="fitting-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                     Email Address *
                   </label>
                   <input
+                    id="fitting-email"
+                    name="email"
                     type="email"
+                    autoComplete="email"
                     required
                     value={formData.email}
                     onChange={(e) =>
@@ -339,11 +374,14 @@ export default function BookFittingClient() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                  <label htmlFor="fitting-phone" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                     Phone / WhatsApp Number *
                   </label>
                   <input
+                    id="fitting-phone"
+                    name="phone"
                     type="tel"
+                    autoComplete="tel"
                     required
                     value={formData.phone}
                     onChange={(e) =>
@@ -355,10 +393,12 @@ export default function BookFittingClient() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                  <label htmlFor="fitting-style-reference" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                     Style Code / Reference (Optional)
                   </label>
                   <input
+                    id="fitting-style-reference"
+                    name="styleReference"
                     type="text"
                     value={formData.styleReference}
                     onChange={(e) =>
@@ -387,10 +427,12 @@ export default function BookFittingClient() {
               </div>
 
               <div className="mt-5">
-                <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
+                <label htmlFor="fitting-notes" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                   Occasion, Target Date & Notes (Optional)
                 </label>
                 <textarea
+                  id="fitting-notes"
+                  name="notes"
                   rows={3}
                   value={formData.notes}
                   onChange={(e) =>
@@ -404,6 +446,7 @@ export default function BookFittingClient() {
 
             {/* Submit with Rounded-2xl */}
             <div className="pt-4 border-t border-stone-800/80">
+              {submitError && <p role="alert" className="mb-3 text-xs text-red-300 text-center">{submitError}</p>}
               <Button
                 type="submit"
                 variant="champagne"
@@ -416,7 +459,7 @@ export default function BookFittingClient() {
                 ) : (
                   <>
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    Confirm Fitting Reservation
+                    Submit Fitting Request
                   </>
                 )}
               </Button>

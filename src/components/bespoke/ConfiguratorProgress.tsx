@@ -30,7 +30,15 @@ export function ConfiguratorProgress({
 }: ConfiguratorProgressProps) {
   if (compact) {
     return (
-      <div className="flex items-center gap-2">
+      <div
+        className="flex items-center gap-2"
+        role="progressbar"
+        aria-label="Bespoke configuration progress"
+        aria-valuemin={1}
+        aria-valuemax={STEPS.length}
+        aria-valuenow={currentStep + 1}
+        aria-valuetext={`${STEPS[currentStep]?.label}, step ${currentStep + 1} of ${STEPS.length}`}
+      >
         <span className="text-[10px] font-mono text-champagne tracking-widest">
           {STEPS[currentStep]?.num}
         </span>
@@ -61,7 +69,7 @@ export function ConfiguratorProgress({
   }
 
   return (
-    <nav aria-label="Configuration progress" className="space-y-1">
+    <nav aria-label={`Configuration progress: step ${currentStep + 1} of ${STEPS.length}`} className="space-y-1">
       {STEPS.map((step, i) => {
         const isCompleted = i < currentStep;
         const isActive = i === currentStep;

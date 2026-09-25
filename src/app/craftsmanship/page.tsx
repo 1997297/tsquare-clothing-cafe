@@ -14,7 +14,7 @@ export default function CraftsmanshipPage() {
     {
       step: "01",
       title: "Prestigious Fabric Selection",
-      image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1000&auto=format&fit=crop",
+      image: "/images/atelier/tailoring-craft.jpg",
       tagline: "Natural Fibers & Historic Weaves",
       description:
         "Every garment begins with natural fiber integrity. We source Super 140s to 180s virgin wools from Biella, Italy and Yorkshire, England for year-round breathability. For traditional ceremonial ensembles, we commission authentic hand-loomed Nigerian Aso-Oke woven with heritage strip-cloth looms.",
@@ -28,7 +28,7 @@ export default function CraftsmanshipPage() {
     {
       step: "02",
       title: "28-Point Anatomical Measurement",
-      image: "https://images.unsplash.com/photo-1618886614638-80e3c103d31a?q=80&w=1000&auto=format&fit=crop",
+      image: "/images/atelier/precision-suiting.jpg",
       tagline: "Precision Beyond Standard Sizing",
       description:
         "We capture more than chest and waist circumference. Our master cutters evaluate shoulder slope, spinal curvature, neck pitch, and stride dynamics. These nuances are mapped onto individual card patterns stored permanently in our atelier archives.",
@@ -42,7 +42,7 @@ export default function CraftsmanshipPage() {
     {
       step: "03",
       title: "Pattern Cutting & Chalk Drafting",
-      image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000&auto=format&fit=crop",
+      image: "/images/atelier/bespoke-heritage.jpg",
       tagline: "Sculpting Cloth by Hand",
       description:
         "Our head cutters mark every line directly onto the wool or damask using tailor's chalk and heavy brass shears. Patterns are manipulated to balance stripe or check alignments across pocket welts, lapel rolls, and shoulder seams.",

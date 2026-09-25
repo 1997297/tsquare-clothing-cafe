@@ -131,6 +131,7 @@ export interface CustomerOrder {
   styleId: string;
   styleCode: string;
   styleName: string;
+  styleImage?: string;
   garmentCategory?: ProductCategory;
   fabricDetails?: {
     name: string;
@@ -141,8 +142,8 @@ export interface CustomerOrder {
     name: string;
     hex: string;
   };
-  preferences?: Record<string, any>;
-  measurementsSnapshot: Record<string, any>;
+  preferences?: Record<string, unknown>;
+  measurementsSnapshot: Record<string, unknown>;
   status: CustomerOrderStatus;
   totalAmount?: number;
   targetCompletionDate?: string;
@@ -227,12 +228,12 @@ export interface PaymentRecord {
   amount: number;
   currency: string;
   type: PaymentType;
-  provider: "paystack" | "flutterwave" | "manual_transfer" | "atelier_terminal" | "sandbox";
+  provider: "paystack" | "flutterwave" | "manual_transfer" | "atelier_terminal";
   providerReference?: string;
   internalReference: string;
   status: PaymentStatus;
   paidAt?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt?: string;
 }
@@ -269,8 +270,9 @@ export interface WardrobeItem {
     name: string;
     hex: string;
   };
-  preferencesSnapshot: Record<string, any>;
+  preferencesSnapshot: Record<string, unknown>;
   measurementsSnapshot: Record<string, number>;
+  measurementContext?: Record<string, unknown>;
   occasion?: string;
   completionDate: string;
   craftsmanshipNotes?: string;
@@ -335,4 +337,3 @@ export interface AppointmentChangeRequest {
   createdAt: string;
   reviewedAt?: string;
 }
-

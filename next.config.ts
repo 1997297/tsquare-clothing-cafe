@@ -1,19 +1,20 @@
 import type { NextConfig } from "next";
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseHost = supabaseUrl ? new URL(supabaseUrl) : null;
+
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "upload.wikimedia.org",
-        pathname: "/**",
-      },
-    ],
+    remotePatterns: supabaseHost
+      ? [
+          {
+            protocol: supabaseHost.protocol === "http:" ? "http" : "https",
+            hostname: supabaseHost.hostname,
+            port: supabaseHost.port,
+            pathname: "/storage/v1/object/public/profile-avatars/**",
+          },
+        ]
+      : [],
   },
 };
 

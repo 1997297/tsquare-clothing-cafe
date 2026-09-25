@@ -75,8 +75,11 @@ export type MeasurementMethod = "saved" | "manual" | "schedule";
 export interface ReferenceImage {
   id: string;          // uuid for removal
   filename: string;
-  localUrl: string;    // URL.createObjectURL result
+  localUrl?: string;   // URL.createObjectURL result for an in-session preview
   sizeBytes: number;
+  mimeType?: string;
+  storagePath?: string;
+  uploadStatus?: "local" | "uploading" | "stored";
 }
 
 // ─────────────────────────────────────────────
@@ -133,6 +136,7 @@ export interface ContactInfo {
 
 export interface BespokeConfiguration {
   // Journey origin
+  draftId?: string;
   styleSlug: string;            // "idea" for start-from-scratch path
   styleId?: string;
   styleCode?: string;
@@ -204,6 +208,7 @@ export interface BespokeRequestPayload {
   styleId?: string;
   styleCode?: string;
   styleName?: string;
+  styleImage?: string;
   garmentCategory?: ProductCategory;
   isIdeaPath: boolean;
 
@@ -230,4 +235,6 @@ export interface BespokeRequestPayload {
 
   // Customer
   contact: ContactInfo;
+  quotedPrice?: number;
+  persistence?: "local" | "database";
 }

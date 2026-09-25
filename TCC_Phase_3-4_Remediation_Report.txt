@@ -1,0 +1,357 @@
+TCC - TSQUARE CLOTHING CAFE
+PHASE 3 & 4 REMEDIATION REPORT
+Security, Persistence, Supabase, Trusted Workflows & Production Integrity
+
+Report date: 24 September 2026
+Scope: Phase 3-4 remediation only. No Phase 5 admin interface was built.
+
+EXECUTIVE OUTCOME
+
+The repository has been moved from browser-authoritative demo behavior toward a customer application with explicit server/database authority. Customer-facing visuals and established routes were preserved. The browser can no longer create authoritative orders, payments, verified measurements, confirmed appointments, wardrobe records, operational notifications, or trusted lifecycle state.
+
+Repository implementation and application verification are complete. The Supabase changes have NOT been deployed to, or tested against, a live project from this workspace. Phase 5 must not begin against a production environment until the migrations, grants, RLS policies, storage policies, and pgTAP tests are applied and verified on the intended Supabase project.
+
+
+A. FILES CHANGED
+
+Important configuration and foundation files:
+- .env.example - server-only service-role key, site URL, and explicit development demo flag.
+- eslint.config.mjs and package.json - non-interactive ESLint 9 configuration and test/typecheck scripts.
+- src/middleware.ts - fail-closed protected routing and safe authentication redirects.
+- src/app/layout.tsx - environment-aware metadataBase and shared account data provider.
+- src/lib/validation.ts - shared server-safe validation for important domain inputs.
+- src/lib/business-rules.ts - pure critical-domain rules used by automated tests.
+- src/lib/a11y.ts - reusable focus-trapping support.
+
+Trusted server boundary:
+- src/lib/server/supabase-admin.ts
+- src/lib/server/auth.ts
+- src/lib/server/requests.ts
+- src/lib/server/measurements.ts
+- src/lib/server/appointments.ts
+- src/lib/server/payments.ts
+- src/lib/server/wardrobe.ts
+- src/lib/server/notifications.ts
+- src/lib/server/concierge.ts
+- src/lib/server/public-intake.ts
+- src/app/account/actions.ts
+- src/app/contact/actions.ts
+- src/app/book-a-fitting/actions.ts
+
+Customer data and workflow repairs:
+- src/lib/account-store.ts - shared account provider, database-backed reads, trusted server actions, real loading/empty/error states.
+- src/lib/auth-context.tsx - database profile authority and explicit demo-only behavior.
+- src/lib/saved-store.ts - guest/local and authenticated/database authority with merge, deduplication, rollback, and error handling.
+- src/lib/bespoke-store.ts and src/app/bespoke/create/[styleSlug]/BespokeConfigurator.tsx - awaited submission, safe initialization, and inspiration handling.
+- src/components/bespoke/steps/* - validation, durable uploads, pressed semantics, labels, and truthful submission behavior.
+- src/app/account/orders/[id]/page.tsx, requests/[id]/page.tsx, payments/[id]/page.tsx, and wardrobe/[id]/page.tsx - removal of customer-authoritative business mutations and repair of historical presentation.
+- src/app/contact/ContactClient.tsx and src/app/book-a-fitting/BookFittingClient.tsx - real server submissions and truthful failure states.
+- src/components/features/search/SearchModal.tsx, StyleCard.tsx, Footer.tsx, and ConfiguratorProgress.tsx - core accessibility repairs.
+
+Verification and database handoff:
+- tests/remediation.test.mts
+- supabase/tests/remediation_security.test.sql
+- supabase/README.md
+- supabase/migrations/*
+
+
+B. DATABASE MIGRATIONS ADDED
+
+1. 20260923130313_harden_customer_authority.sql
+- Repairs existing measurement version/current flags before adding constraints.
+- Adds unique Customer + Version and one-current-measurement indexes.
+- Adds integer minor-unit money columns and safe backfill from existing numeric NGN values.
+- Adds Provider + Provider Reference payment uniqueness.
+- Removes the sandbox provider default and adds a production provider constraint.
+- Fails safely if existing sandbox payments, duplicate provider references, or duplicate request-to-order records require human review.
+- Adds unique request-to-order conversion identity.
+- Changes appointment-change history deletion behavior to RESTRICT.
+- Replaces the exposed signup trigger function with a private, pinned-search-path SECURITY DEFINER trigger.
+- Revokes legacy broad privileges/policies and installs least-privilege grants and ownership policies.
+
+2. 20260923130321_trusted_workflows_and_public_intake.sql
+- Adds lifecycle_events, contact_enquiries, and public_fitting_requests.
+- Adds payment/order, wardrobe/order, and appointment relationship guard triggers.
+- Adds atomic service-role-only SECURITY INVOKER operations for measurements, bespoke submission plus appointment creation, appointment changes, concierge, request-to-order conversion, wardrobe creation, and verified payment recording.
+- Adds authoritative reference generation and lifecycle events.
+- Adds payment replay locking, identity-conflict checks, order ownership derivation, outstanding-balance enforcement, and verified timestamp requirements.
+- Makes request conversion and wardrobe creation idempotent.
+- Explicitly grants required access to service_role and revokes RPC execution from PUBLIC, anon, and authenticated.
+
+3. 20260923130330_private_reference_storage.sql
+- Creates/updates a private bespoke-references bucket.
+- Enforces a 10 MB object limit and JPEG/PNG/WebP MIME allowlist.
+- Adds authenticated owner/folder policies for select, insert, update, and delete.
+
+The original supabase/schema.sql snapshot was preserved. The incremental migrations assume that baseline exists. A fresh local database must apply schema.sql before applying migrations; the exact commands are in supabase/README.md.
+
+
+C. RLS CHANGES
+
+Authenticated customers may now:
+- Read only their own profile, measurement history, bespoke requests, orders, appointments, payments, wardrobe, concierge threads/messages, appointment-change requests, notifications, lifecycle events, and saved styles.
+- Update only permitted profile columns.
+- Insert/delete only their own saved style links.
+- Update only notification read state fields.
+
+Authenticated customers may not directly:
+- Insert or update bespoke requests.
+- Set quote, approval, operational status, conversion state, or staff/internal notes.
+- Insert/update measurement history or verification state.
+- Create/update orders, payments, wardrobe items, appointment operational state, lifecycle events, or system notifications.
+- Create concierge messages with a staff identity.
+- Execute the trusted conversion, verified-payment, wardrobe, or other service-role RPCs.
+
+The migration combines table grants with row ownership policies; policies are explicitly scoped TO authenticated. Public intake tables have RLS enabled and no anon/authenticated table privileges. Customer A versus Customer B isolation is encoded through auth.uid() ownership predicates and relational guards. Practical cross-user verification remains part of the live pgTAP/deployment step.
+
+
+D. SERVER AUTHORITY LAYER
+
+Introduced server-only Supabase administration and domain services. SUPABASE_SERVICE_ROLE_KEY is read only by src/lib/server/supabase-admin.ts and is not a NEXT_PUBLIC variable or imported by Client Components.
+
+Trusted operations introduced:
+- Create a new measurement version transactionally.
+- Submit a bespoke request and optional appointment request atomically.
+- Create an appointment reschedule/cancellation request.
+- Create concierge threads and customer replies after ownership/status checks.
+- Create system notifications from trusted workflows.
+- Persist contact enquiries and public fitting requests.
+- Initialize a future payment only after trusted order/ownership/balance checks.
+- Convert an eligible trusted-price request into an order atomically for future Phase 5 use.
+- Record provider-verified payments idempotently for future integration.
+- Create or return a wardrobe item only for a completed order.
+
+The future staff operations are not exposed to customers and remain unused until a real Phase 5 staff authorization layer exists.
+
+
+E. BESPOKE REQUEST REPAIR
+
+- The browser no longer creates orders, sets quotes, or marks requests converted.
+- Submitted requests are persisted through an authenticated Server Action and a service-role-only transactional database function.
+- The server validates and normalizes customer contact, garment, fabric, colour, fit, measurements, dates, appointment details, and durable upload metadata.
+- A selected appointment is created in the same transaction as the request.
+- The configurator awaits authoritative persistence, reports errors, and clears/navigates only after success.
+- A failed submission preserves the draft and remains retryable.
+- Pricing Ready may display a trusted stored quote, but customer-side conversion is unavailable.
+- Draft editing remains local before submission. Submitted/under-review records are read-only to customers.
+- Guest bespoke configuration remains explicitly local/non-authoritative; it cannot create an order, payment, trusted status, or verified record.
+
+
+F. MEASUREMENT REPAIR
+
+- Customers cannot update historical rows or self-assign TSquare verification.
+- A change creates a new version, advances the version number, marks the prior current row inactive, and sets the new row current in one transaction protected by an advisory lock.
+- Database indexes enforce one current record and unique Customer + Version.
+- Saved/manual/scheduled submission snapshots include values, unit, method, source measurement ID/version, verification state, fit preference, and snapshot timestamp.
+- Order and wardrobe views use their stored historical snapshots instead of dynamically reading the current customer profile.
+
+
+G. APPOINTMENT REPAIR
+
+- Customers cannot directly update confirmed date/time, location, completion, or operational status.
+- Initial appointment requests are created by the trusted request transaction with status requested.
+- Reschedule/cancellation requests verify appointment ownership server-side and force pending_review.
+- The original appointment remains unchanged until a future trusted staff decision.
+- Change-history foreign keys now use RESTRICT instead of cascading away history.
+
+
+H. PAYMENT REPAIR
+
+REAL PAYMENT PROVIDER ACTIVE: NO.
+
+- The fake sandbox success adapter and browser-created successful payments were removed.
+- Online payment initialization uses an explicit unavailable provider that always fails closed with truthful customer wording.
+- A click cannot create a successful Payment, alter Amount Paid/Balance, or generate a verified receipt.
+- Receipts render only for stored successful payment records.
+- Financial calculations use integer minor units (kobo); compatibility numeric NGN fields are converted deliberately at trusted boundaries.
+- The future verified-payment RPC derives customer ownership from the order, checks the trusted order total/outstanding balance, requires a verified provider timestamp, locks on Provider + Reference, detects conflicting replay data, and emits notification/lifecycle records atomically.
+- No Paystack, Flutterwave, or other provider was selected.
+
+Future provider boundary: implement a deliberate adapter, server-side initialization, signature-verified webhook, provider verification, reconciliation/refunds, and only then call record_verified_payment.
+
+
+I. WARDROBE REPAIR
+
+- Browser/customer wardrobe creation was removed.
+- A service-role-only operation accepts only Completed orders.
+- Customer identity and garment/configuration/measurement history are copied from the trusted order.
+- Order ID uniqueness and relationship guards prevent duplicates and customer mismatch.
+- Repeated completion calls return the existing item safely.
+- Wardrobe creation produces a trusted notification and lifecycle event.
+- Order Similar now uses the valid style slug; Use as Inspiration validates and loads only a wardrobe item already returned through the authenticated customer's RLS-scoped dataset.
+
+
+J. SAVED LOOKS REPAIR
+
+- Guests continue to use localStorage.
+- Authenticated customers hydrate from Supabase as the authority.
+- Guest saves merge once after login, deduplicate through Customer + Style uniqueness/upsert, and clear locally only after successful persistence.
+- New saves/removals await the database and rollback optimistic UI on failure.
+- Deleted authenticated saves are not rebuilt from stale local guest state.
+
+
+K. CONCIERGE REPAIR
+
+- Database-generated UUIDs replace timestamp/string IDs.
+- Creation waits for the database result and uses the returned request ID.
+- Category, subject, message, and related identifiers are server-validated.
+- Related request/order/appointment ownership is verified in the database operation.
+- Sender ID is the authenticated customer; sender type is forced to customer.
+- Replies require an owned thread in an allowed open state.
+- Seeded staff conversations are no longer substituted for real empty accounts.
+
+
+L. STORAGE
+
+- bespoke-references is private.
+- Authenticated paths use <customer-id>/<draft-id>/<uuid>.<approved-extension>.
+- Storage policies enforce bucket, first-folder customer identity, and owner_id for reads/updates/deletes.
+- Client and server validation enforce JPEG/PNG/WebP, 10 MB per file, six-file maximum, durable storage path, valid UUID metadata, and authenticated ownership prefix.
+- Uploads and removals inspect errors; failed batches attempt cleanup; temporary object URLs are revoked.
+- Request rows store durable path/filename/size/MIME metadata, not blob URLs.
+
+
+M. MOCK DATA REMOVAL
+
+Removed normal-production fallbacks for:
+- Orders and financial balances.
+- Successful/pending payments and receipts.
+- Verified measurement profiles.
+- Confirmed appointments.
+- Wardrobe garments.
+- Operational notifications.
+- Concierge requests and staff replies.
+- Bespoke conversion success.
+
+Demo behavior is available only when NEXT_PUBLIC_TCC_DEMO_MODE=true in a non-production process, and its account datasets are empty rather than authoritative-looking business fixtures.
+
+
+N. CONTACT / FITTING PERSISTENCE
+
+- Contact submissions are server-validated and inserted into private contact_enquiries.
+- Public fitting submissions are server-validated and inserted into private public_fitting_requests.
+- Authenticated fitting requests associate the authenticated customer when available; guest requests remain safe intake records.
+- Fitting status is requested, not confirmed.
+- No setTimeout success remains.
+- Database/configuration errors produce a user-safe error and do not switch the UI to success.
+
+
+O. AUTH / MIDDLEWARE REPAIRS
+
+- Protected account routes fail closed when Supabase configuration is absent.
+- Missing configuration no longer silently enables mock authentication.
+- Demo mode requires an explicit development-only flag.
+- Auth callback and authenticated redirects accept only safe same-origin internal paths.
+- Code exchange/recovery errors map to safe customer-facing states.
+- Password recovery distinguishes valid session, missing/expired link, update failure, and success without exposing raw backend messages.
+- Account routes include noindex/nofollow/noarchive handling.
+- metadataBase uses NEXT_PUBLIC_SITE_URL with a localhost development fallback; no unconfirmed production domain was invented.
+
+
+P. BUILD & TESTS
+
+Final checks:
+- TypeScript: PASS - npm run typecheck, zero errors.
+- Production build: PASS - Next.js 15.5.25, 53/53 static pages generated, all dynamic routes compiled.
+- Lint: PASS WITH WARNINGS - npm run lint exits 0 with no errors. Remaining warnings are legacy unused imports plus two broad database-row mapper types; they do not block build/runtime but should be cleaned incrementally.
+- Tests: PASS - 9/9 Node tests. Covered money/minor units, verified-payment totals, conversion eligibility, measurement version progression, wardrobe duplicate prevention, payment identity normalization, redirect sanitization, shared validation, and durable bespoke upload validation.
+- Database policy tests: AUTHORED - 12 pgTAP assertions in supabase/tests/remediation_security.test.sql; not executed because no local/live database was available.
+- Production browser smoke: PASS - home, contact, public fitting, Saved Looks, protected account redirect, and bespoke configurator.
+- Runtime integrity: PASS - meaningful rendered content, no Next error overlay, and no captured console errors on tested routes.
+- Truthful failure: PASS - an unconfigured contact submission displayed service unavailable and did not show success.
+- Protected routing: PASS - /account redirected to /auth/sign-in?next=%2Faccount&error=service_unavailable.
+- Guest Saved Looks: PASS - save persisted across navigation and count changed from 0 to 1.
+- Modal keyboard behavior: PASS after a test-discovered fix - accessible dialog name, input focus entry, Escape close, and focus return to Search collections.
+- Responsive smoke: PASS - home and fitting pages tested at 390x844 with zero horizontal overflow, no overlay, and no captured console errors. Desktop home screenshot was also visually checked.
+- git diff --check: PASS; only Windows LF-to-CRLF notices were emitted.
+
+
+Q. LIVE SUPABASE VERIFICATION
+
+LIVE SUPABASE DEPLOYMENT NOT VERIFIED.
+
+Evidence:
+- No .env or .env.local with project configuration exists in this workspace.
+- No Supabase project is linked.
+- supabase/config.toml is currently absent.
+- Supabase CLI 2.117.0 was available, but local status failed because Docker and Podman are not installed/on PATH.
+- No production deployment was attempted.
+
+Exact existing-project deployment/verification sequence:
+1. Confirm the target project already contains the supabase/schema.sql baseline.
+2. Review/resolve any sandbox payment rows, duplicate Provider + Reference values, or duplicate orders per bespoke request; migrations intentionally stop rather than invent a repair.
+3. If config.toml is absent: npx supabase init
+4. npx supabase login
+5. npx supabase link --project-ref <project-ref>
+6. npx supabase db push --dry-run --linked
+7. Review the dry run.
+8. npx supabase db push --linked
+9. npx supabase db lint --linked --fail-on error
+10. npx supabase test db --linked
+11. Verify grants, RLS, policies, functions, indexes, Auth trigger, and the private bucket in the Supabase dashboard/advisors.
+12. Run practical Customer A/Customer B read/write denial tests with two test accounts.
+
+Fresh local sequence with Docker:
+1. npx supabase init
+2. npx supabase start
+3. npx supabase db query --local --file supabase/schema.sql
+4. npx supabase db push --local
+5. npx supabase db lint --local --fail-on error
+6. npx supabase test db --local
+
+Do not place SUPABASE_SERVICE_ROLE_KEY in a NEXT_PUBLIC variable. Do not deploy to production without reviewing the dry run and safety-stop data findings.
+
+
+R. REMAINING ISSUES
+
+BLOCKING PHASE 5
+- Apply and verify all migrations on the intended Supabase environment.
+- Resolve any data-quality stop raised for sandbox payments or duplicate identities.
+- Run linked/local pgTAP, database lint/advisors, and two-user isolation tests.
+- Define and implement the real staff identity/role authorization model before wiring any Phase 5 UI to service-role operations. The repository RPCs are customer-inaccessible, but future server endpoints must authenticate staff rather than trusting UI state or caller-supplied actor labels.
+
+NON-BLOCKING
+- Clean the remaining ESLint warnings (mostly legacy unused imports and two broad row-mapper types).
+- Remove the Node test runner's MODULE_TYPELESS_PACKAGE_JSON performance warning when package/module strategy is deliberately chosen.
+- Add an authenticated archived-reference preview/download service using short-lived signed URLs if customers or staff need to reopen stored images in the UI.
+- Define abandoned-draft upload retention/cleanup so private orphaned reference objects do not accumulate.
+- Generate project-specific Supabase database TypeScript types after the live schema is applied.
+- Add broader browser automation and practical RLS tests after a test database is available.
+
+FUTURE PAYMENT PROVIDER WORK
+- Select a provider deliberately.
+- Implement provider credentials/configuration and an adapter.
+- Add server initialization and signature-verified webhook handling.
+- Verify amount, currency, order, provider status, replay identity, and timestamps before persistence.
+- Implement reconciliation, refund/dispute behavior, observability, and provider-specific tests.
+- Only then activate customer checkout and verified receipt wording.
+
+
+S. PHASE 5 READINESS
+
+Evidence-based checklist:
+- Browser authority removed from trusted business events: RESOLVED IN REPOSITORY.
+- Customer request/quote/order escalation blocked: RESOLVED IN REPOSITORY.
+- Atomic request-to-order operation prepared: RESOLVED; intentionally not connected to a staff UI.
+- Measurement history, uniqueness, and snapshots: RESOLVED IN MIGRATIONS/SERVER CODE; live verification pending.
+- Appointment operational authority and change history: RESOLVED IN MIGRATIONS/SERVER CODE; live verification pending.
+- Fake payment success and receipts: RESOLVED.
+- Payment idempotency/customer consistency/minor units: RESOLVED IN MIGRATIONS/SERVER CODE; live verification pending.
+- Wardrobe trusted origin and idempotency: RESOLVED IN MIGRATIONS/SERVER CODE; live verification pending.
+- Saved Looks database authority: RESOLVED IN APPLICATION CODE; live integration pending.
+- Concierge identity/ownership/status controls: RESOLVED IN MIGRATIONS/SERVER CODE; live verification pending.
+- Private durable uploads: RESOLVED IN MIGRATION/APPLICATION CODE; live storage verification pending.
+- Real contact/fitting intake and truthful errors: RESOLVED IN APPLICATION/MIGRATION CODE; live persistence pending.
+- Fail-closed auth and redirect sanitization: RESOLVED AND RUNTIME-VERIFIED WITHOUT CONFIGURATION.
+- Loading/empty/error/success separation: RESOLVED FOR SHARED ACCOUNT DATA.
+- Accessibility core fixes: RESOLVED FOR IDENTIFIED FINDINGS; representative runtime verification passed.
+- TypeScript/build/tests: PASS.
+- Live database/RLS/storage deployment: NOT VERIFIED.
+- Staff authorization model: NOT IMPLEMENTED BY DESIGN; required before Phase 5 mutations are exposed.
+- Real payment provider: NOT ACTIVE BY DESIGN.
+
+READINESS DECISION
+
+The codebase foundation is ready for review and for a controlled database deployment/verification pass. It is not yet safe to begin Phase 5 implementation against a live environment until Section Q is completed and the staff authorization model is defined. After those gates pass, Phase 5 can consume the prepared trusted operations without restoring browser authority.
+
+Phase 5 was not started.

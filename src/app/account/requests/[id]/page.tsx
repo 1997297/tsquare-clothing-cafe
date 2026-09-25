@@ -1,23 +1,16 @@
 "use client";
 
-import { use, useState } from "react";
+import { use } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { notFound, useRouter } from "next/navigation";
 import { useAccountData } from "@/lib/account-store";
 import {
   ArrowLeft,
-  Calendar,
-  Clock,
   Sparkles,
-  Scissors,
-  CheckCircle2,
   AlertCircle,
-  FileText,
-  User,
   MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatNaira } from "@/lib/payments/service";
 
 export default function RequestDetailPage({
   params,
@@ -25,9 +18,7 @@ export default function RequestDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const router = useRouter();
-  const { requests, acceptBespokeQuoteAndConvertToOrder } = useAccountData();
-  const [isConverting, setIsConverting] = useState(false);
+  const { requests } = useAccountData();
 
   const request = requests.find((r) => r.requestId === id);
 
@@ -113,7 +104,7 @@ export default function RequestDetailPage({
           </p>
           <div className="pt-2 flex items-center gap-3">
             <Link
-              href="/contact"
+              href="/account/concierge"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs font-bold uppercase tracking-wider hover:bg-champagne-light transition-all"
             >
               <MessageSquare className="w-3.5 h-3.5" />
@@ -125,7 +116,7 @@ export default function RequestDetailPage({
 
       {/* ── Contextual Action Callout: Pricing Ready ── */}
       {isPricingReady && (
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#171614] border border-champagne/50 space-y-4">
+        <div className="p-6 sm:p-8 rounded-3xl bg-stone-950 border border-champagne/50 space-y-4">
           <div className="flex items-center gap-2 text-champagne font-display text-xl">
             <Sparkles className="w-5 h-5" />
             <span>Atelier Pricing Ready for Review</span>
@@ -138,27 +129,13 @@ export default function RequestDetailPage({
               Quoted Atelier Total
             </span>
             <span className="font-display text-2xl text-champagne font-bold">
-              ₦320,000
+              {request.quotedPrice == null ? "Awaiting confirmed amount" : formatNaira(request.quotedPrice)}
             </span>
           </div>
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={async () => {
-                setIsConverting(true);
-                try {
-                  const newOrder = await acceptBespokeQuoteAndConvertToOrder(request.requestId);
-                  if (newOrder) {
-                    router.push(`/account/orders/${newOrder.id}`);
-                  }
-                } finally {
-                  setIsConverting(false);
-                }
-              }}
-              disabled={isConverting}
-              className="px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light disabled:opacity-50 transition-all shadow-md"
-            >
-              {isConverting ? "Establishing Order..." : "Accept Quote & Convert to Order"}
-            </button>
+            <span className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-stone-700 text-stone-400 text-xs uppercase tracking-widest font-semibold">
+              Pending staff order confirmation
+            </span>
             <Link
               href="/account/concierge"
               className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-stone-700 text-stone-300 hover:text-warm-ivory hover:border-champagne/40 text-xs uppercase tracking-widest font-semibold transition-all"
@@ -174,7 +151,7 @@ export default function RequestDetailPage({
         {/* Left Column: Garment Specs */}
         <div className="md:col-span-2 space-y-8">
           {/* Fabric & Colour */}
-          <div className="p-6 rounded-3xl bg-[#141412] fine-border space-y-5">
+          <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-5">
             <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
               Fabric & Colour Specifications
             </h3>
@@ -199,7 +176,7 @@ export default function RequestDetailPage({
                 <div className="flex items-center gap-2 mt-1">
                   {request.colour?.hex && (
                     <span
-                      className="w-4 h-4 rounded-full border border-white/20 shrink-0"
+                      className="w-4 h-4 rounded-full border border-warm-ivory/20 shrink-0"
                       style={{ background: request.colour.hex }}
                     />
                   )}
@@ -213,7 +190,7 @@ export default function RequestDetailPage({
           </div>
 
           {/* Design Preferences */}
-          <div className="p-6 rounded-3xl bg-[#141412] fine-border space-y-4">
+          <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4">
             <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
               Tailoring Preferences
             </h3>
@@ -270,7 +247,7 @@ export default function RequestDetailPage({
 
           {/* Measurements Snapshot Used */}
           {request.measurements && Object.keys(request.measurements).length > 0 && (
-            <div className="p-6 rounded-3xl bg-[#141412] fine-border space-y-4">
+            <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4">
               <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
                 Physiological Measurements Snapshot
               </h3>
@@ -292,7 +269,7 @@ export default function RequestDetailPage({
 
         {/* Right Column: Occasion & Appointments Summary */}
         <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-[#141412] fine-border space-y-4 text-xs">
+          <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4 text-xs">
             <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
               Occasion & Schedule
             </h3>
@@ -318,7 +295,7 @@ export default function RequestDetailPage({
 
           {/* Appointment Request Snapshot */}
           {request.appointmentRequest?.type && request.appointmentRequest.type !== "none" && (
-            <div className="p-6 rounded-3xl bg-[#141412] fine-border space-y-3 text-xs">
+            <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-3 text-xs">
               <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
                 Requested Fitting Visit
               </h3>

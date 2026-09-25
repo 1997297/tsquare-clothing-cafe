@@ -115,7 +115,7 @@ export default function WardrobePage() {
             <Link
               key={item.id}
               href={`/account/wardrobe/${item.id}`}
-              className="group rounded-3xl bg-[#141412] fine-border overflow-hidden hover:border-champagne/40 transition-all duration-300 flex flex-col justify-between"
+              className="group rounded-3xl bg-stone-950 fine-border overflow-hidden hover:border-champagne/40 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 {/* Hero Editorial Photography */}
@@ -143,7 +143,7 @@ export default function WardrobePage() {
                   {/* Occasion Pill */}
                   {item.occasion && (
                     <div className="absolute bottom-4 left-4">
-                      <span className="px-3 py-1 rounded-full bg-[#11110F]/90 backdrop-blur-md border border-stone-700/60 text-[10px] text-warm-ivory font-mono">
+                      <span className="px-3 py-1 rounded-full bg-near-black/90 backdrop-blur-md border border-stone-700/60 text-[10px] text-warm-ivory font-mono">
                         {item.occasion}
                       </span>
                     </div>
@@ -189,7 +189,7 @@ export default function WardrobePage() {
         </div>
       ) : (
         /* ── Empty State ── */
-        <div className="py-20 px-6 rounded-3xl bg-[#141412] fine-border text-center space-y-6 max-w-2xl mx-auto">
+        <div className="py-20 px-6 rounded-3xl bg-stone-950 fine-border text-center space-y-6 max-w-2xl mx-auto">
           <div className="w-16 h-16 rounded-full bg-champagne/10 border border-champagne/25 flex items-center justify-center mx-auto text-champagne">
             <Sparkles className="w-8 h-8" />
           </div>

@@ -146,7 +146,7 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* 3. SIGNATURE COLLECTIONS (Asymmetric & Rounded)              */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-24 sm:py-32 bg-[#0E0E0C]">
+      <section className="py-24 sm:py-32 bg-near-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div>
@@ -366,7 +366,7 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* 5. BESPOKE HOMEPAGE INTRODUCTION                             */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-24 sm:py-32 bg-[#141412] relative overflow-hidden">
+      <section className="py-24 sm:py-32 bg-stone-950 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
             <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block mb-3">
@@ -531,7 +531,7 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* 7. OCCASION DISCOVERY (Rounded-2xl)                           */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-24 sm:py-32 bg-[#0C0C0B]">
+      <section className="py-24 sm:py-32 bg-near-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block mb-2">

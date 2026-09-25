@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, ArrowLeft, Upload, X, ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BespokeConfiguration, DesignPreferences, ReferenceImage } from "@/types/bespoke";
@@ -14,6 +14,9 @@ import {
   TROUSER_BREAK_OPTIONS,
   AGBADA_LENGTH_OPTIONS,
 } from "@/data/bespoke-data";
+import { useAuth } from "@/lib/auth-context";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
+import { validateReferenceFile } from "@/lib/validation";
 
 interface DetailsStepProps {
   config: BespokeConfiguration;
@@ -37,14 +40,16 @@ function SelectField({
     typeof o === "string" ? { id: o, label: o } : o
   );
   return (
-    <div>
-      <label className="block text-[10px] uppercase tracking-widest text-stone-500 mb-2 font-medium">
+    <fieldset>
+      <legend className="block text-[10px] uppercase tracking-widest text-stone-500 mb-2 font-medium">
         {label}
-      </label>
+      </legend>
       <div className="flex flex-wrap gap-2">
         {normalised.map((opt) => (
           <button
             key={opt.id}
+            type="button"
+            aria-pressed={value === opt.id}
             onClick={() => onChange(opt.id)}
             className={cn(
               "px-3.5 py-2 rounded-xl text-xs border transition-all duration-150",
@@ -57,7 +62,7 @@ function SelectField({
           </button>
         ))}
       </div>
-    </div>
+    </fieldset>
   );
 }
 
@@ -70,14 +75,22 @@ export function DetailsStep({
   const category = config.garmentCategory ?? "senator";
   const prefs = config.preferences;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const localUrls = useRef(new Set<string>());
   const [uploadError, setUploadError] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const urls = localUrls.current;
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, []);
 
   function set<K extends keyof DesignPreferences>(key: K, value: DesignPreferences[K]) {
     onUpdate({ ...prefs, [key]: value });
   }
 
   // ── Reference image upload ────────────────────
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setUploadError("");
     const files = Array.from(e.target.files ?? []);
     const existing = prefs.referenceImages ?? [];
@@ -85,23 +98,77 @@ export function DetailsStep({
       setUploadError("Maximum 6 reference images allowed.");
       return;
     }
-    const tooBig = files.find((f) => f.size > 10 * 1024 * 1024);
-    if (tooBig) {
-      setUploadError("Each image must be under 10 MB.");
+    const invalid = files.map(validateReferenceFile).find((result) => !result.success);
+    if (invalid && !invalid.success) {
+      setUploadError(invalid.error);
       return;
     }
-    const newImages: ReferenceImage[] = files.map((f) => ({
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      filename: f.name,
-      localUrl: URL.createObjectURL(f),
-      sizeBytes: f.size,
-    }));
-    onUpdate({ ...prefs, referenceImages: [...existing, ...newImages] });
+    setIsUploading(true);
+    const newImages: ReferenceImage[] = [];
+    try {
+      for (const file of files) {
+        const id = crypto.randomUUID();
+        const localUrl = URL.createObjectURL(file);
+        localUrls.current.add(localUrl);
+        let storagePath: string | undefined;
+
+        if (user && isSupabaseConfigured) {
+          const extension = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+          storagePath = `${user.id}/${config.draftId ?? "draft"}/${id}.${extension}`;
+          const { error } = await supabase.storage
+            .from("bespoke-references")
+            .upload(storagePath, file, { contentType: file.type, upsert: false });
+          if (error) {
+            URL.revokeObjectURL(localUrl);
+            localUrls.current.delete(localUrl);
+            throw new Error("A reference image could not be uploaded securely. Please try again.");
+          }
+        }
+
+        newImages.push({
+          id,
+          filename: file.name,
+          localUrl,
+          sizeBytes: file.size,
+          mimeType: file.type,
+          storagePath,
+          uploadStatus: storagePath ? "stored" : "local",
+        });
+      }
+      onUpdate({ ...prefs, referenceImages: [...existing, ...newImages] });
+    } catch (error) {
+      const storedPaths = newImages.flatMap((image) => image.storagePath ? [image.storagePath] : []);
+      if (storedPaths.length > 0) {
+        const { error: cleanupError } = await supabase.storage.from("bespoke-references").remove(storedPaths);
+        if (cleanupError) console.error("Reference upload cleanup failed", cleanupError);
+      }
+      newImages.forEach((image) => {
+        if (image.localUrl) {
+          URL.revokeObjectURL(image.localUrl);
+          localUrls.current.delete(image.localUrl);
+        }
+      });
+      setUploadError(error instanceof Error ? error.message : "The upload could not be completed.");
+    } finally {
+      setIsUploading(false);
+    }
     // Reset input so same file can be re-added after removal
     e.target.value = "";
   }
 
-  function removeImage(id: string) {
+  async function removeImage(id: string) {
+    const image = (prefs.referenceImages ?? []).find((item) => item.id === id);
+    if (image?.storagePath && user && isSupabaseConfigured) {
+      const { error } = await supabase.storage.from("bespoke-references").remove([image.storagePath]);
+      if (error) {
+        setUploadError("That uploaded reference could not be removed. Please try again.");
+        return;
+      }
+    }
+    if (image?.localUrl) {
+      URL.revokeObjectURL(image.localUrl);
+      localUrls.current.delete(image.localUrl);
+    }
     const updated = (prefs.referenceImages ?? []).filter((img) => img.id !== id);
     onUpdate({ ...prefs, referenceImages: updated });
   }
@@ -138,10 +205,10 @@ export function DetailsStep({
               options={AGBADA_LENGTH_OPTIONS}
               onChange={(v) => set("agbadaLength", v as DesignPreferences["agbadaLength"])}
             />
-            <div>
-              <label className="block text-[10px] uppercase tracking-widest text-stone-500 mb-3 font-medium">
+            <fieldset>
+              <legend className="block text-[10px] uppercase tracking-widest text-stone-500 mb-3 font-medium">
                 Cap Included
-              </label>
+              </legend>
               <div className="flex gap-3">
                 {["Yes, include matching cap", "No cap required"].map((opt) => {
                   const val = opt.startsWith("Yes");
@@ -149,6 +216,8 @@ export function DetailsStep({
                   return (
                     <button
                       key={opt}
+                      type="button"
+                      aria-pressed={isSelected}
                       onClick={() => set("capIncluded", val)}
                       className={cn(
                         "px-4 py-2 rounded-xl text-xs border transition-all duration-150",
@@ -162,7 +231,7 @@ export function DetailsStep({
                   );
                 })}
               </div>
-            </div>
+            </fieldset>
           </>
         )}
 
@@ -228,17 +297,17 @@ export function DetailsStep({
             value={prefs.specialInstructions ?? ""}
             onChange={(e) => set("specialInstructions", e.target.value)}
             placeholder="Tell us anything you would like your stylist to know, such as a specific detail, family motif, occasion detail, or personal note."
-            className="w-full bg-[#141412] border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none focus:border-champagne/50 resize-none leading-relaxed"
+            className="w-full bg-stone-950 border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none focus:border-champagne/50 resize-none leading-relaxed"
           />
         </div>
 
         {/* Reference images */}
         <div>
-          <label className="block text-[10px] uppercase tracking-widest text-stone-500 mb-1 font-medium">
+          <h3 className="block text-[10px] uppercase tracking-widest text-stone-500 mb-1 font-medium">
             Add Inspiration
-          </label>
+          </h3>
           <p className="text-[11px] text-stone-600 mb-4 leading-relaxed">
-            Upload images that inspire you, such as embroidery ideas, fit references, colour swatches, or details. These are saved locally for your session only.
+            Upload embroidery ideas, fit references, colour swatches, or details. Signed-in uploads are stored privately; guest previews remain in this browser session.
           </p>
 
           {/* Existing previews */}
@@ -249,13 +318,15 @@ export function DetailsStep({
                   key={img.id}
                   className="relative w-20 h-20 rounded-xl overflow-hidden bg-stone-900 border border-stone-800 group"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={img.localUrl}
-                    alt={img.filename}
-                    className="w-full h-full object-cover"
-                  />
+                  {img.localUrl ? (
+                    // Blob URLs are session-local previews and cannot use the Next image optimizer.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={img.localUrl} alt={img.filename} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="w-full h-full flex items-center justify-center text-stone-500"><ImageIcon /></span>
+                  )}
                   <button
+                    type="button"
                     onClick={() => removeImage(img.id)}
                     className="absolute inset-0 bg-near-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                     aria-label={`Remove ${img.filename}`}
@@ -270,11 +341,13 @@ export function DetailsStep({
           {/* Upload button */}
           {(prefs.referenceImages ?? []).length < 6 && (
             <button
+              type="button"
               onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
               className="inline-flex items-center gap-2.5 px-5 py-3 border border-dashed border-stone-700 hover:border-stone-500 rounded-xl text-xs text-stone-400 hover:text-stone-300 transition-all duration-200"
             >
               <Upload className="w-4 h-4" />
-              Upload Reference Images
+              {isUploading ? "Uploading Securely…" : "Upload Reference Images"}
               <span className="text-stone-700">
                 ({(prefs.referenceImages ?? []).length}/6)
               </span>
@@ -283,7 +356,7 @@ export function DetailsStep({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             multiple
             className="sr-only"
             aria-label="Upload reference images"
@@ -294,13 +367,14 @@ export function DetailsStep({
           )}
           <p className="mt-2 text-[10px] text-stone-700 flex items-center gap-1.5">
             <ImageIcon className="w-3 h-3" />
-            Images are stored in your browser only and are not transmitted until your request is reviewed by TSquare.
+            JPEG, PNG or WebP only, up to 10 MB each. Signed-in files use private account storage.
           </p>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -308,7 +382,9 @@ export function DetailsStep({
           Back
         </button>
         <button
+          type="button"
           onClick={onContinue}
+          disabled={isUploading}
           className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-champagne text-near-black hover:bg-champagne-light transition-all duration-200"
         >
           Continue

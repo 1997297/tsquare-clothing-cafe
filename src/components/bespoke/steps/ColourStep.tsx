@@ -55,6 +55,9 @@ export function ColourStep({
                   return (
                     <button
                       key={colour.id}
+                      type="button"
+                      aria-pressed={isSelected}
+                      aria-label={`${colour.name} colour`}
                       onClick={() => onSelect(colour)}
                       className={cn(
                         "flex items-center gap-3 p-3.5 rounded-xl border transition-all duration-200 text-left group",
@@ -68,7 +71,7 @@ export function ColourStep({
                         className={cn(
                           "w-8 h-8 rounded-full flex-shrink-0 border transition-all duration-200",
                           isSelected ? "scale-110" : "group-hover:scale-105",
-                          isLight ? "border-stone-600" : "border-white/10"
+                          isLight ? "border-stone-600" : "border-warm-ivory/10"
                         )}
                         style={{ background: colour.hex }}
                       />
@@ -92,7 +95,7 @@ export function ColourStep({
       {config.colour && (
         <div className="flex items-center gap-3 px-4 py-3 mb-8 rounded-xl bg-stone-900/60 border border-stone-800/60">
           <div
-            className="w-6 h-6 rounded-full border border-white/15 flex-shrink-0"
+            className="w-6 h-6 rounded-full border border-warm-ivory/15 flex-shrink-0"
             style={{ background: config.colour.hex }}
           />
           <div>
@@ -108,6 +111,7 @@ export function ColourStep({
 
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -115,6 +119,7 @@ export function ColourStep({
           Back
         </button>
         <button
+          type="button"
           onClick={onContinue}
           disabled={!config.colour}
           className={cn(

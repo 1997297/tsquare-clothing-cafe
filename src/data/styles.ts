@@ -15,8 +15,8 @@ export const STYLES: Style[] = [
       "Designed for dignitaries and momentous occasions, the TSQ AGBADA 024 embodies contemporary regal power. Sculpted shoulders and a deliberate draped fall ensure maximum fluidity in movement while preserving an architectural silhouette. Complete with matching inner buba, tailored sokoto trousers, and a hand-folded fila cap.",
     images: [
       "/images/styles/agbada-imperial.jpg",
-      "https://images.unsplash.com/photo-1788035963223-06abb95a1289?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1788035962791-b12a5b5c59dd?q=80&w=1200&auto=format&fit=crop",
+      "/images/styles/agbada-imperial-detail-front.jpg",
+      "/images/styles/agbada-imperial-detail-back.jpg",
     ],
     availableColours: [
       { name: "Obsidian Black", hex: "#11110F" },

@@ -1,14 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { Heart, Trash2, Sparkles, Calendar, ArrowRight } from "lucide-react";
+import { Heart, Trash2, Sparkles, Calendar } from "lucide-react";
 import { useSavedStyles } from "@/lib/saved-store";
 import { Button } from "@/components/common/Button";
 import { StyleCard } from "@/components/features/styles/StyleCard";
+import { useAuth } from "@/lib/auth-context";
 
 export default function SavedClient() {
-  const { savedStyles, count, isLoaded, remove } = useSavedStyles();
+  const { savedStyles, count, isLoaded, remove, error } = useSavedStyles();
+  const { user } = useAuth();
 
   if (!isLoaded) {
     return (
@@ -37,21 +38,24 @@ export default function SavedClient() {
           </div>
         </div>
 
-        {/* Phase 1 Architecture Notice */}
+        {/* Persistence notice */}
         <div className="mb-12 p-4 bg-stone-950 fine-border rounded-2xl text-xs text-stone-400 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-champagne shrink-0" />
             <span>
-              Your saved looks are temporarily preserved for this session. When Phase 2 customer accounts launch, your saved looks will automatically synchronize with your permanent digital wardrobe.
+              {user
+                ? "Your saved looks are synchronized with your private client account."
+                : "Guest saves stay in this browser. Sign in to synchronize them with your private client account."}
             </span>
           </div>
-          <Link
-            href="/auth/create-account"
-            className="text-[10px] uppercase font-mono tracking-widest text-champagne hover:underline shrink-0"
-          >
-            Create Account →
-          </Link>
+          {!user && (
+            <Link href="/auth/create-account" className="text-[10px] uppercase font-mono tracking-widest text-champagne hover:underline shrink-0">
+              Create Account →
+            </Link>
+          )}
         </div>
+
+        {error && <p role="alert" className="mb-8 p-4 rounded-2xl bg-red-950/30 border border-red-800/50 text-xs text-red-300">{error}</p>}
 
         {/* Content */}
         {savedStyles.length === 0 ? (
@@ -97,7 +101,7 @@ export default function SavedClient() {
             </div>
 
             {/* Bottom Group Action */}
-            <div className="mt-20 p-8 bg-[#151513] fine-border rounded-2xl sm:rounded-3xl text-center max-w-2xl mx-auto">
+            <div className="mt-20 p-8 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl text-center max-w-2xl mx-auto">
               <h3 className="font-display text-2xl text-warm-ivory">
                 Ready to review these pieces with a master tailor?
               </h3>

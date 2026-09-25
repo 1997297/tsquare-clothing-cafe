@@ -6,6 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useAccountData } from "@/lib/account-store";
 import { BrandLogo } from "@/components/common/BrandLogo";
+import { ProfileAvatar } from "@/components/common/ProfileAvatar";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 import {
   Compass,
   FileText,
@@ -45,7 +47,12 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   const pathname = usePathname();
   const router = useRouter();
   const { user, profile, isLoading, signOut } = useAuth();
-  const { unreadNotificationsCount } = useAccountData();
+  const {
+    unreadNotificationsCount,
+    isLoading: isAccountLoading,
+    error: accountError,
+    reloadData,
+  } = useAccountData();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -58,7 +65,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     }
   }, [user, profile, isLoading, router, pathname]);
 
-  if (!mounted || isLoading) {
+  if (!mounted || isLoading || (user && isAccountLoading)) {
     return (
       <div className="min-h-screen bg-near-black flex flex-col items-center justify-center space-y-4">
         <BrandLogo variant="light" size="md" />
@@ -74,13 +81,14 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     return null; // Will redirect in useEffect
   }
 
-  const clientInitials = `${profile?.firstName?.charAt(0) || "P"}${profile?.lastName?.charAt(0) || "C"}`;
   const clientFullName = `${profile?.firstName || "Private"} ${profile?.lastName || "Client"}`;
 
   return (
     <div className="min-h-screen bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black flex flex-col">
+      <meta name="robots" content="noindex, nofollow, noarchive" />
+      <meta name="googlebot" content="noindex, nofollow, noarchive" />
       {/* ── Top Concierge Banner ── */}
-      <header aria-label="Private client header" className="border-b border-stone-800/80 bg-[#11110F]/95 backdrop-blur-2xl sticky top-0 z-40 shadow-[0_4px_30px_rgba(0,0,0,0.35)]">
+      <header aria-label="Private client header" className="border-b border-stone-800/80 bg-near-black/95 backdrop-blur-2xl sticky top-0 z-40 shadow-[0_4px_30px_rgba(0,0,0,0.35)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
           {/* Brand Anchor & Boutique Navigation */}
           <div className="flex min-w-0 items-center gap-3 sm:gap-6">
@@ -117,6 +125,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
           {/* Client Profile, Notifications & Sign Out */}
           <div className="flex shrink-0 items-center gap-1 sm:gap-4">
+            <ThemeToggle />
             {/* Quick Notification Bell */}
             <Link
               href="/account/notifications"
@@ -126,7 +135,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             >
               <Bell className="w-4 h-4" />
               {unreadNotificationsCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-champagne text-[9px] font-bold text-near-black ring-2 ring-[#11110F]">
+                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-champagne text-[9px] font-bold text-near-black ring-2 ring-near-black">
                   {unreadNotificationsCount}
                 </span>
               )}
@@ -140,9 +149,11 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
               className="flex items-center gap-3 text-left group hover:opacity-90 transition-opacity focus:outline-none"
               title="View Client Profile"
             >
-              <div className="w-9 h-9 rounded-xl bg-champagne/15 border border-champagne/40 flex items-center justify-center font-display text-xs text-champagne font-bold tracking-wider shadow-inner group-hover:border-champagne transition-colors">
-                {clientInitials}
-              </div>
+              <ProfileAvatar
+                profile={profile}
+                className="h-9 w-9 transition-colors group-hover:border-champagne"
+                priority
+              />
               <div className="hidden md:block">
                 <p className="max-w-40 truncate text-xs text-warm-ivory font-medium leading-none group-hover:text-champagne transition-colors">
                   {clientFullName}
@@ -169,7 +180,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         </div>
 
         {/* ── Sub Navigation Tabs ── */}
-        <div className="border-t border-stone-800/60 bg-[#0F0F0D]/60 backdrop-blur-md">
+        <div className="border-t border-stone-800/60 bg-near-black/60 backdrop-blur-md">
           <nav
             aria-label="Private Client Navigation"
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2"
@@ -211,7 +222,14 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
       {/* ── Main Content Area ── */}
       <main id="account-content" className="flex-1 min-w-0 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {children}
+        {accountError ? (
+          <div className="max-w-xl mx-auto py-20 text-center space-y-4" role="alert">
+            <ShieldCheck className="w-9 h-9 text-amber-400 mx-auto" />
+            <h1 className="font-display text-2xl">Private account data is unavailable</h1>
+            <p className="text-sm text-stone-400">{accountError}</p>
+            <button onClick={() => void reloadData()} className="px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-wider font-bold">Try Again</button>
+          </div>
+        ) : children}
       </main>
     </div>
   );

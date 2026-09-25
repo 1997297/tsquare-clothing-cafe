@@ -11,7 +11,6 @@ import {
   Ruler,
   Clock,
   ArrowRight,
-  ArrowLeft,
   Check,
 } from "lucide-react";
 import { Style } from "@/types";
@@ -19,6 +18,7 @@ import { Button } from "@/components/common/Button";
 import { StyleCard } from "@/components/features/styles/StyleCard";
 import { useSavedStyles } from "@/lib/saved-store";
 import { cn } from "@/lib/utils";
+import { ReturnLink } from "@/components/common/ReturnLink";
 
 interface StyleDetailClientProps {
   style: Style;
@@ -36,6 +36,9 @@ export default function StyleDetailClient({
   return (
     <div className="bg-near-black min-h-screen text-warm-ivory pt-24 sm:pt-32 pb-24 selection:bg-champagne selection:text-near-black font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-5">
+          <ReturnLink href={`/collections/${style.category}`} label={`Back to ${style.categoryLabel}`} />
+        </div>
         {/* Breadcrumb Navigation */}
         <div className="flex items-center gap-2 text-[10px] uppercase font-mono tracking-[0.22em] text-stone-500 mb-8 sm:mb-12">
           <Link href="/collections" className="hover:text-warm-ivory transition-colors">

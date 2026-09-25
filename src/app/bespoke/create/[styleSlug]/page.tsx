@@ -5,6 +5,7 @@ import { BespokeConfigurator } from "./BespokeConfigurator";
 
 interface Props {
   params: Promise<{ styleSlug: string }>;
+  searchParams: Promise<{ inspiration?: string; reference_wardrobe?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -27,8 +28,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function BespokeCreatePage({ params }: Props) {
+export default async function BespokeCreatePage({ params, searchParams }: Props) {
   const { styleSlug } = await params;
+  const query = await searchParams;
   const isIdeaPath = styleSlug === "idea";
 
   let style = null;
@@ -37,5 +39,12 @@ export default async function BespokeCreatePage({ params }: Props) {
     if (!style) notFound();
   }
 
-  return <BespokeConfigurator styleSlug={styleSlug} style={style} isIdeaPath={isIdeaPath} />;
+  return (
+    <BespokeConfigurator
+      styleSlug={styleSlug}
+      style={style}
+      isIdeaPath={isIdeaPath}
+      inspirationWardrobeId={query.inspiration ?? query.reference_wardrobe}
+    />
+  );
 }

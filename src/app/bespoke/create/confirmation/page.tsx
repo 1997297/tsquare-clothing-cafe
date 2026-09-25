@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Check, ArrowRight, Home, Layers } from "lucide-react";
 import { getLastSubmission } from "@/lib/bespoke-store";
 import { BespokeRequestPayload } from "@/types/bespoke";
@@ -69,7 +68,7 @@ export default function ConfirmationPage() {
           </div>
 
           {/* Request details card */}
-          <div className="bg-[#141412] border border-stone-800/50 rounded-2xl p-6 sm:p-8 text-left space-y-5">
+          <div className="bg-stone-950 border border-stone-800/50 rounded-2xl p-6 sm:p-8 text-left space-y-5">
             {/* Reference */}
             <div>
               <p className="text-[10px] uppercase tracking-[0.25em] text-stone-500 font-mono mb-1">
@@ -129,12 +128,13 @@ export default function ConfirmationPage() {
             )}
           </div>
 
-          {/* Dev notice */}
-          <div className="p-3.5 bg-stone-900/40 border border-stone-800/40 rounded-xl">
-            <p className="text-[10px] text-stone-600 leading-relaxed">
-              Development Mode: This request has been saved locally in your browser. In production, it will be transmitted securely to the TSquare team.
-            </p>
-          </div>
+          {submission.persistence === "local" && (
+            <div className="p-3.5 bg-amber-950/20 border border-amber-800/40 rounded-xl">
+              <p className="text-[10px] text-amber-200/80 leading-relaxed">
+                This request is saved only in this browser. Sign in with configured account services to transmit it to TSquare.
+              </p>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">

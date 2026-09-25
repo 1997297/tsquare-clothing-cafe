@@ -1,10 +1,17 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { User as SupabaseUser, Session } from "@supabase/supabase-js";
-import { supabase, isSupabaseConfigured } from "./supabase/client";
-import { CustomerProfile } from "@/types";
-import { getSavedLookIds } from "./saved-store";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
+import type { CustomerProfile } from "@/types";
+import { isDemoMode, isSupabaseConfigured, supabase } from "./supabase/client";
 
 interface SignUpData {
   email: string;
@@ -31,341 +38,247 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const DEMO_CLIENT_KEY = "tcc_explicit_demo_client_v1";
+const unavailableError = () => new Error("Account services are temporarily unavailable. Please try again later.");
 
-const LOCAL_CLIENT_KEY = "tcc_authenticated_client_v1";
+function safeAuthError(error: { message?: string; status?: number } | null): Error | null {
+  if (!error) return null;
+  const message = (error.message ?? "").toLowerCase();
+  if (message.includes("invalid login")) return new Error("The email or password is incorrect.");
+  if (message.includes("email not confirmed")) return new Error("Please verify your email before signing in.");
+  if (message.includes("already registered")) return new Error("An account already exists for this email.");
+  if (message.includes("password")) return new Error("The password could not be accepted. Check the requirements and try again.");
+  if (error.status === 429) return new Error("Too many attempts. Please wait a moment and try again.");
+  return new Error("We could not complete that account request. Please try again.");
+}
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+function mapProfile(row: Record<string, any>): CustomerProfile {
+  return {
+    id: row.id,
+    firstName: row.first_name,
+    lastName: row.last_name,
+    email: row.email,
+    phone: row.phone,
+    preferredContact: row.preferred_contact,
+    avatarUrl: row.avatar_url ?? undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at ?? undefined,
+  };
+}
+
+function demoUser(profile: CustomerProfile): SupabaseUser {
+  return {
+    id: profile.id,
+    email: profile.email,
+    user_metadata: { first_name: profile.firstName, last_name: profile.lastName },
+    app_metadata: {},
+    aud: "authenticated",
+    created_at: profile.createdAt,
+  } as SupabaseUser;
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<CustomerProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const profileRequestRef = useRef<{ userId: string; request: Promise<void> } | null>(null);
 
-  // Migrate guest saved styles on authentication
-  const migrateGuestSavedLooks = useCallback(async (customerId: string) => {
-    try {
-      const guestLookIds = getSavedLookIds();
-      if (guestLookIds.length === 0) return;
+  const fetchProfile = useCallback((userId: string) => {
+    if (!isSupabaseConfigured) return;
+    if (profileRequestRef.current?.userId === userId) return profileRequestRef.current.request;
 
-      if (isSupabaseConfigured) {
-        for (const styleId of guestLookIds) {
-          await supabase.from("saved_styles").upsert(
-            { customer_id: customerId, style_id: styleId },
-            { onConflict: "customer_id,style_id" }
-          );
-        }
+    const request = (async () => {
+      const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
+      if (error || !data) {
+        console.error("Profile query failed", error);
+        setProfile(null);
+        return;
       }
-    } catch (err) {
-      console.error("Error migrating guest saved looks:", err);
-    }
+      setProfile(mapProfile(data));
+    })().finally(() => {
+      if (profileRequestRef.current?.userId === userId) profileRequestRef.current = null;
+    });
+
+    profileRequestRef.current = { userId, request };
+    return request;
   }, []);
 
-  // Fetch or load profile
-  const fetchProfile = useCallback(async (userId: string, userEmail?: string, userMeta?: any) => {
-    if (isSupabaseConfigured) {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", userId)
-          .single();
-
-        if (data && !error) {
-          setProfile({
-            id: data.id,
-            firstName: data.first_name,
-            lastName: data.last_name,
-            email: data.email,
-            phone: data.phone,
-            preferredContact: data.preferred_contact,
-            avatarUrl: data.avatar_url,
-            createdAt: data.created_at,
-            updatedAt: data.updated_at,
-          });
-          return;
-        }
-      } catch (err) {
-        console.error("Failed to fetch profile from Supabase:", err);
-      }
-    }
-
-    // Fallback or demo profile from metadata / local storage
-    try {
-      const local = localStorage.getItem(LOCAL_CLIENT_KEY);
-      if (local) {
-        const parsed = JSON.parse(local);
-        if (parsed.id === userId || !isSupabaseConfigured) {
-          setProfile(parsed);
-          return;
-        }
-      }
-    } catch {
-      // ignore
-    }
-
-    // Build default profile if none exists
-    const fallbackProfile: CustomerProfile = {
-      id: userId,
-      firstName: userMeta?.first_name || "Valued",
-      lastName: userMeta?.last_name || "Client",
-      email: userEmail || "",
-      phone: userMeta?.phone || "",
-      preferredContact: userMeta?.preferred_contact || "whatsapp",
-      createdAt: new Date().toISOString(),
-    };
-    setProfile(fallbackProfile);
-  }, []);
-
-  // Initial session hydration
   useEffect(() => {
-    async function initAuth() {
+    let active = true;
+
+    const initialize = async () => {
       if (isSupabaseConfigured) {
-        try {
-          const { data: { session } } = await supabase.auth.getSession();
-          setSession(session);
-          setUser(session?.user ?? null);
-          if (session?.user) {
-            await fetchProfile(session.user.id, session.user.email, session.user.user_metadata);
-            await migrateGuestSavedLooks(session.user.id);
-          }
-        } catch (err) {
-          console.error("Supabase auth session initialization error:", err);
+        const { data, error } = await supabase.auth.getSession();
+        if (!active) return;
+        if (error) {
+          console.error("Session initialization failed", error);
+        } else {
+          setSession(data.session);
+          setUser(data.session?.user ?? null);
+          if (data.session?.user) void fetchProfile(data.session.user.id);
         }
-      } else {
-        // Local prototype session
+      } else if (isDemoMode) {
         try {
-          const local = localStorage.getItem(LOCAL_CLIENT_KEY);
-          if (local) {
-            const parsed = JSON.parse(local);
-            setProfile(parsed);
-            setUser({
-              id: parsed.id,
-              email: parsed.email,
-              user_metadata: { first_name: parsed.firstName, last_name: parsed.lastName },
-              app_metadata: {},
-              aud: "authenticated",
-              created_at: parsed.createdAt,
-            } as SupabaseUser);
+          const stored = localStorage.getItem(DEMO_CLIENT_KEY);
+          if (stored) {
+            const nextProfile = JSON.parse(stored) as CustomerProfile;
+            setProfile(nextProfile);
+            setUser(demoUser(nextProfile));
           }
         } catch {
-          // ignore
+          localStorage.removeItem(DEMO_CLIENT_KEY);
         }
       }
-      setIsLoading(false);
-    }
+      if (active) setIsLoading(false);
+    };
 
-    initAuth();
+    void initialize();
 
-    if (isSupabaseConfigured) {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (_event, newSession) => {
-          setSession(newSession);
-          setUser(newSession?.user ?? null);
-          if (newSession?.user) {
-            await fetchProfile(newSession.user.id, newSession.user.email, newSession.user.user_metadata);
-            await migrateGuestSavedLooks(newSession.user.id);
-          } else {
-            setProfile(null);
-          }
-        }
-      );
-
-      return () => {
-        subscription.unsubscribe();
-      };
-    }
-  }, [fetchProfile, migrateGuestSavedLooks]);
-
-  // Sign In
-  const signIn = async (email: string, password: string): Promise<{ error: Error | null }> => {
-    if (isSupabaseConfigured) {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) return { error };
-      if (data.user) {
-        await fetchProfile(data.user.id, data.user.email, data.user.user_metadata);
-        await migrateGuestSavedLooks(data.user.id);
+    if (!isSupabaseConfigured) return () => void (active = false);
+    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+      if (nextSession?.user) {
+        void fetchProfile(nextSession.user.id);
+      } else {
+        setProfile(null);
       }
-      return { error: null };
-    }
+    });
 
-    // Local / Prototype sign in
-    const mockUser: CustomerProfile = {
-      id: "usr_" + Math.random().toString(36).substring(2, 9),
-      firstName: email.split("@")[0].charAt(0).toUpperCase() + email.split("@")[0].slice(1),
-      lastName: "Client",
-      email,
-      phone: "+234 800 000 0000",
-      preferredContact: "whatsapp",
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
+  }, [fetchProfile]);
+
+  const createDemoAccount = (input: SignUpData | { email: string }) => {
+    const emailName = input.email.split("@")[0] || "Client";
+    const hasDetails = "firstName" in input;
+    const nextProfile: CustomerProfile = {
+      id: crypto.randomUUID(),
+      firstName: hasDetails ? input.firstName : emailName[0].toUpperCase() + emailName.slice(1),
+      lastName: hasDetails ? input.lastName : "Client",
+      email: input.email,
+      phone: hasDetails ? input.phone : "",
+      preferredContact: hasDetails ? input.preferredContact ?? "whatsapp" : "whatsapp",
       createdAt: new Date().toISOString(),
     };
-    try {
-      localStorage.setItem(LOCAL_CLIENT_KEY, JSON.stringify(mockUser));
-      setProfile(mockUser);
-      setUser({
-        id: mockUser.id,
-        email: mockUser.email,
-        user_metadata: { first_name: mockUser.firstName, last_name: mockUser.lastName },
-        aud: "authenticated",
-        created_at: mockUser.createdAt,
-      } as unknown as SupabaseUser);
-      await migrateGuestSavedLooks(mockUser.id);
-      return { error: null };
-    } catch (err: any) {
-      return { error: err };
-    }
+    localStorage.setItem(DEMO_CLIENT_KEY, JSON.stringify(nextProfile));
+    setProfile(nextProfile);
+    setUser(demoUser(nextProfile));
   };
 
-  // Sign Up
-  const signUp = async (data: SignUpData): Promise<{ error: Error | null; requiresVerification?: boolean }> => {
+  const signIn = async (email: string, password: string) => {
     if (isSupabaseConfigured) {
-      const { data: authData, error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      return { error: safeAuthError(error) };
+    }
+    if (!isDemoMode) return { error: unavailableError() };
+    createDemoAccount({ email });
+    return { error: null };
+  };
+
+  const signUp = async (input: SignUpData) => {
+    if (isSupabaseConfigured) {
+      const { data, error } = await supabase.auth.signUp({
+        email: input.email,
+        password: input.password,
         options: {
           data: {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            phone: data.phone,
-            preferred_contact: data.preferredContact || "whatsapp",
+            first_name: input.firstName,
+            last_name: input.lastName,
+            phone: input.phone,
+            preferred_contact: input.preferredContact ?? "whatsapp",
           },
         },
       });
-      if (error) return { error };
-
-      const requiresVerification = !authData.session;
-      if (authData.user && authData.session) {
-        await fetchProfile(authData.user.id, authData.user.email, authData.user.user_metadata);
-        await migrateGuestSavedLooks(authData.user.id);
-      }
-      return { error: null, requiresVerification };
+      return { error: safeAuthError(error), requiresVerification: !error && !data.session };
     }
-
-    // Prototype registration
-    const newClient: CustomerProfile = {
-      id: "usr_" + Math.random().toString(36).substring(2, 9),
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phone: data.phone,
-      preferredContact: data.preferredContact || "whatsapp",
-      createdAt: new Date().toISOString(),
-    };
-    try {
-      localStorage.setItem(LOCAL_CLIENT_KEY, JSON.stringify(newClient));
-      setProfile(newClient);
-      setUser({
-        id: newClient.id,
-        email: newClient.email,
-        user_metadata: { first_name: newClient.firstName, last_name: newClient.lastName },
-        aud: "authenticated",
-        created_at: newClient.createdAt,
-      } as unknown as SupabaseUser);
-      await migrateGuestSavedLooks(newClient.id);
-      return { error: null, requiresVerification: false };
-    } catch (err: any) {
-      return { error: err };
-    }
+    if (!isDemoMode) return { error: unavailableError(), requiresVerification: false };
+    createDemoAccount(input);
+    return { error: null, requiresVerification: false };
   };
 
-  // Sign Out
   const signOut = async () => {
     if (isSupabaseConfigured) {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) console.error("Sign-out failed", error);
     }
-    try {
-      localStorage.removeItem(LOCAL_CLIENT_KEY);
-    } catch {
-      // ignore
-    }
-    setUser(null);
+    if (isDemoMode) localStorage.removeItem(DEMO_CLIENT_KEY);
     setSession(null);
+    setUser(null);
     setProfile(null);
   };
 
-  // Reset Password
-  const resetPassword = async (email: string): Promise<{ error: Error | null }> => {
-    if (isSupabaseConfigured) {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      });
-      return { error };
-    }
-    return { error: null };
+  const resetPassword = async (email: string) => {
+    if (!isSupabaseConfigured) return { error: unavailableError() };
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`,
+    });
+    return { error: safeAuthError(error) };
   };
 
-  // Update Password
-  const updatePassword = async (password: string): Promise<{ error: Error | null }> => {
-    if (isSupabaseConfigured) {
-      const { error } = await supabase.auth.updateUser({ password });
-      return { error };
-    }
-    return { error: null };
+  const updatePassword = async (password: string) => {
+    if (!isSupabaseConfigured) return { error: unavailableError() };
+    if (!session) return { error: new Error("This recovery link is invalid or has expired.") };
+    const { error } = await supabase.auth.updateUser({ password });
+    return { error: safeAuthError(error) };
   };
 
-  // Update Profile
-  const updateProfile = async (updates: Partial<CustomerProfile>): Promise<{ error: Error | null }> => {
-    if (!profile) return { error: new Error("No active profile") };
+  const updateProfile = async (updates: Partial<CustomerProfile>) => {
+    if (!profile || !user) return { error: new Error("Sign in to update your profile.") };
+    const updated: CustomerProfile = { ...profile, ...updates, updatedAt: new Date().toISOString() };
 
-    const updated = { ...profile, ...updates, updatedAt: new Date().toISOString() };
-
-    if (isSupabaseConfigured && user) {
-      const { error } = await supabase
+    if (isSupabaseConfigured) {
+      const { data, error } = await supabase
         .from("profiles")
         .update({
           first_name: updated.firstName,
           last_name: updated.lastName,
           phone: updated.phone,
           preferred_contact: updated.preferredContact,
+          avatar_url: updated.avatarUrl ?? null,
           updated_at: updated.updatedAt,
         })
-        .eq("id", user.id);
-
-      if (error) return { error };
+        .eq("id", user.id)
+        .select("*")
+        .single();
+      if (error || !data) return { error: new Error("We could not update your profile. Please try again.") };
+      setProfile(mapProfile(data));
+    } else if (isDemoMode) {
+      localStorage.setItem(DEMO_CLIENT_KEY, JSON.stringify(updated));
+    } else {
+      return { error: unavailableError() };
     }
-
-    try {
-      localStorage.setItem(LOCAL_CLIENT_KEY, JSON.stringify(updated));
-    } catch {
-      // ignore
-    }
-    setProfile(updated);
+    if (!isSupabaseConfigured) setProfile(updated);
     return { error: null };
   };
 
   const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id, user.email, user.user_metadata);
-    }
+    if (user && isSupabaseConfigured) await fetchProfile(user.id);
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        profile,
-        session,
-        isLoading,
-        isConfigured: isSupabaseConfigured,
-        signIn,
-        signUp,
-        signOut,
-        resetPassword,
-        updatePassword,
-        updateProfile,
-        refreshProfile,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const value: AuthContextType = {
+      user,
+      profile,
+      session,
+      isLoading,
+      isConfigured: isSupabaseConfigured,
+      signIn,
+      signUp,
+      signOut,
+      resetPassword,
+      updatePassword,
+      updateProfile,
+      refreshProfile,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 }

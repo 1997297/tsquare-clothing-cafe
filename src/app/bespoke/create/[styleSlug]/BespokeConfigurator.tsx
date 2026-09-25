@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { Style } from "@/types";
 import { ProductCategory } from "@/types";
-import { useBespokeConfig } from "@/lib/bespoke-store";
+import { completeSubmission, useBespokeConfig } from "@/lib/bespoke-store";
 import { useAccountData } from "@/lib/account-store";
+import { useAuth } from "@/lib/auth-context";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { ConfiguratorLayout } from "@/components/bespoke/ConfiguratorLayout";
 import { StyleStep } from "@/components/bespoke/steps/StyleStep";
 import { FabricStep } from "@/components/bespoke/steps/FabricStep";
@@ -22,12 +24,14 @@ interface BespokeConfiguratorProps {
   styleSlug: string;
   style: Style | null;
   isIdeaPath: boolean;
+  inspirationWardrobeId?: string;
 }
 
 export function BespokeConfigurator({
   styleSlug,
   style,
   isIdeaPath,
+  inspirationWardrobeId,
 }: BespokeConfiguratorProps) {
   const {
     config,
@@ -47,17 +51,23 @@ export function BespokeConfigurator({
     setGarmentCategory,
     submitRequest,
   } = useBespokeConfig(styleSlug, isIdeaPath);
-  const { addBespokeRequest } = useAccountData();
+  const { addBespokeRequest, wardrobe } = useAccountData();
+  const { user } = useAuth();
+  const inspirationApplied = useRef(false);
 
-  const handleBespokeSubmit = () => {
+  const handleBespokeSubmit = async () => {
     const payload = submitRequest();
-    addBespokeRequest(payload);
-    return payload;
+    const saved = user && isSupabaseConfigured
+      ? await addBespokeRequest(payload)
+      : { ...payload, persistence: "local" as const };
+    completeSubmission(saved);
+    return saved;
   };
 
   // ── Initialize style data into config on first render ────
   // (Only for style path, not idea path)
-  const initStyleData = useCallback(() => {
+  useEffect(() => {
+    if (!isLoaded) return;
     if (style && !config.styleId) {
       update("styleId", style.id);
       update("styleCode", style.code);
@@ -65,12 +75,32 @@ export function BespokeConfigurator({
       update("styleImage", style.images[0]);
       update("garmentCategory", style.category);
     }
-  }, [style, config.styleId, update]);
+  }, [config.styleId, isLoaded, style, update]);
 
-  // Run init once config is loaded
-  if (isLoaded && style && !config.styleId) {
-    initStyleData();
-  }
+  useEffect(() => {
+    if (!isLoaded || !inspirationWardrobeId || inspirationApplied.current) return;
+    const inspiration = wardrobe.find((item) => item.id === inspirationWardrobeId);
+    if (!inspiration) return;
+    inspirationApplied.current = true;
+    update("garmentCategory", inspiration.category);
+    update("fabric", {
+      id: `wardrobe-${inspiration.id}`,
+      name: inspiration.fabricSnapshot.name,
+      description: inspiration.fabricSnapshot.description ?? "Inspired by a completed TSquare garment.",
+      finish: inspiration.fabricSnapshot.finish,
+      weight: inspiration.fabricSnapshot.weight,
+      categories: [inspiration.category],
+    });
+    update("colour", {
+      id: `wardrobe-${inspiration.id}`,
+      name: inspiration.colourSnapshot.name,
+      hex: inspiration.colourSnapshot.hex,
+    });
+    update("preferences", {
+      ...inspiration.preferencesSnapshot,
+      specialInstructions: `Inspired by wardrobe piece ${inspiration.styleCode}. Please confirm all measurements before cutting.`,
+    });
+  }, [inspirationWardrobeId, isLoaded, update, wardrobe]);
 
   if (!isLoaded) {
     return (

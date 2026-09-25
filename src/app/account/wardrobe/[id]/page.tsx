@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAccountData } from "@/lib/account-store";
+import { getStyleById } from "@/data/styles";
 import {
   ArrowLeft,
   Sparkles,
@@ -51,9 +52,9 @@ export default function WardrobeItemDetailPage({
 
   // "Order Similar" begins a new bespoke journey with pre-filled configuration
   const handleOrderSimilar = () => {
-    // Navigate to configurator with style slug
-    const slug = item.styleId.replace("tsq-", "tsq-");
-    router.push(`/bespoke/create/${slug}?inspiration=${item.id}&action=order_similar`);
+    const style = getStyleById(item.styleId);
+    const destination = style ? `/bespoke/create/${style.slug}` : "/bespoke/create/idea";
+    router.push(`${destination}?inspiration=${encodeURIComponent(item.id)}&action=order_similar`);
   };
 
   // "Use As Inspiration" allows selecting this piece as reference material for a custom vision
@@ -143,7 +144,7 @@ export default function WardrobeItemDetailPage({
           </div>
 
           {/* Archival Authenticity Seal */}
-          <div className="p-4 rounded-2xl bg-[#141412] fine-border flex items-center gap-3 text-xs text-stone-400">
+          <div className="p-4 rounded-2xl bg-stone-950 fine-border flex items-center gap-3 text-xs text-stone-400">
             <ShieldCheck className="w-5 h-5 text-champagne shrink-0" />
             <p className="font-light">
               Master paper pattern permanently archived in TSquare Abeokuta atelier vault.
@@ -154,7 +155,7 @@ export default function WardrobeItemDetailPage({
         {/* Right Column: Tailoring Anatomy & Historical Snapshots */}
         <div className="lg:col-span-7 space-y-6">
           {/* Textile & Colour Specifications */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#141412] fine-border space-y-5">
+          <div className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-5">
             <h2 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
               Textile & Hardware Snapshot
             </h2>
@@ -219,7 +220,7 @@ export default function WardrobeItemDetailPage({
           </div>
 
           {/* Historical Locked Measurements */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#141412] fine-border space-y-4">
+          <div className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
@@ -250,7 +251,7 @@ export default function WardrobeItemDetailPage({
           </div>
 
           {/* Master Tailor Finish Notes & Provenance */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#141412] fine-border space-y-4">
+          <div className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-4">
             <h2 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
               Craftsmanship Notes & Provenance
             </h2>

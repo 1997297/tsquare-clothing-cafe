@@ -1,4 +1,4 @@
-import { PaymentRecord, PaymentType } from "@/types";
+import { PaymentType } from "@/types";
 
 export interface PaymentInitiationRequest {
   orderId: string;
@@ -8,13 +8,13 @@ export interface PaymentInitiationRequest {
   customerEmail: string;
   customerName: string;
   callbackUrl?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface PaymentInitiationResult {
   success: boolean;
   internalReference: string;
-  provider: "paystack" | "flutterwave" | "manual_transfer" | "atelier_terminal" | "sandbox";
+  provider: "paystack" | "flutterwave" | "manual_transfer" | "atelier_terminal";
   providerReference?: string;
   checkoutUrl?: string;
   requiresRedirect: boolean;
@@ -33,7 +33,7 @@ export interface PaymentVerificationResult {
 }
 
 export interface PaymentProviderAdapter {
-  name: "paystack" | "flutterwave" | "manual_transfer" | "atelier_terminal" | "sandbox";
+  name: "paystack" | "flutterwave" | "manual_transfer" | "atelier_terminal";
   isConfigured: boolean;
   initiate(req: PaymentInitiationRequest, internalRef: string): Promise<PaymentInitiationResult>;
   verify(reference: string): Promise<PaymentVerificationResult>;

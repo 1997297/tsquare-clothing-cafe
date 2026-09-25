@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
           Privacy Policy
         </h1>
 
-        <div className="p-8 bg-[#151513] fine-border space-y-8 text-xs sm:text-sm text-stone-300 font-sans font-light leading-relaxed">
+        <div className="p-8 bg-stone-950 fine-border space-y-8 text-xs sm:text-sm text-stone-300 font-sans font-light leading-relaxed">
           <section className="space-y-3">
             <h2 className="font-display text-lg text-warm-ivory uppercase tracking-wider">
               1. Introduction & House Commitment

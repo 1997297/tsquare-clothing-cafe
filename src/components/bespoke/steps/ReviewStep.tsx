@@ -1,15 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { ArrowLeft, Pencil } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { BespokeConfiguration, BespokeRequestPayload } from "@/types/bespoke";
 import { OCCASIONS, APPOINTMENT_TYPES } from "@/data/bespoke-data";
 
 interface ReviewStepProps {
   config: BespokeConfiguration;
   onEdit: (step: number) => void;
-  onSubmit: () => BespokeRequestPayload;
+  onSubmit: () => Promise<BespokeRequestPayload>;
   onBack: () => void;
 }
 
@@ -31,6 +31,7 @@ function Section({
           {title}
         </h3>
         <button
+          type="button"
           onClick={() => onEdit(step)}
           className="inline-flex items-center gap-1.5 text-[10px] text-champagne hover:text-champagne-light uppercase tracking-widest transition-colors"
         >
@@ -55,6 +56,8 @@ function Row({ label, value }: { label: string; value?: string | null }) {
 
 export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps) {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const occasionLabel =
     OCCASIONS.find((o) => o.id === config.occasion)?.label ?? config.occasion;
@@ -66,9 +69,16 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
     config.measurementMethod === "manual" &&
     Object.values(config.measurements).some((v) => v !== undefined);
 
-  function handleSubmit() {
-    onSubmit();
-    router.push("/bespoke/create/confirmation");
+  async function handleSubmit() {
+    setIsSubmitting(true);
+    setSubmitError("");
+    try {
+      await onSubmit();
+      router.push("/bespoke/create/confirmation");
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Your request could not be submitted.");
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -83,7 +93,7 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
         Review your selections below. Tap Edit on any section to make changes.
       </p>
 
-      <div className="bg-[#141412] border border-stone-800/50 rounded-2xl px-5 sm:px-6 divide-y-0 mb-8">
+      <div className="bg-stone-950 border border-stone-800/50 rounded-2xl px-5 sm:px-6 divide-y-0 mb-8">
         {/* Style */}
         <Section title="Style" step={0} onEdit={onEdit}>
           <Row label="Style Code" value={config.isIdeaPath ? "Custom Vision" : config.styleCode} />
@@ -115,7 +125,7 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
           {config.colour ? (
             <div className="flex items-center gap-2.5">
               <div
-                className="w-5 h-5 rounded-full border border-white/15 shrink-0"
+                className="w-5 h-5 rounded-full border border-warm-ivory/15 shrink-0"
                 style={{ background: config.colour.hex }}
               />
               <span className="text-xs text-stone-300">{config.colour.name}</span>
@@ -291,8 +301,12 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
       </div>
 
       {/* CTAs */}
+      {submitError && (
+        <p role="alert" className="mb-4 text-xs text-red-300">{submitError}</p>
+      )}
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="inline-flex items-center gap-2 px-5 py-3.5 text-xs uppercase tracking-widest text-stone-400 hover:text-warm-ivory border border-stone-800 hover:border-stone-600 rounded-2xl transition-all duration-200"
         >
@@ -300,10 +314,12 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
           Back
         </button>
         <button
+          type="button"
           onClick={handleSubmit}
+          disabled={isSubmitting}
           className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-4 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-champagne text-near-black hover:bg-champagne-light transition-all duration-200 shadow-lg shadow-champagne/20"
         >
-          Submit Bespoke Request
+          {isSubmitting ? "Submitting Request…" : "Submit Bespoke Request"}
         </button>
       </div>
     </div>
