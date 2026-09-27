@@ -6,12 +6,9 @@ import { useAccountData } from "@/lib/account-store";
 import {
   Bell,
   CheckCheck,
-  CheckCircle2,
-  Clock,
   Sparkles,
   Package,
   Calendar,
-  AlertCircle,
   ArrowRight,
   CreditCard,
   MessageSquare,

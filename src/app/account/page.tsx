@@ -10,18 +10,13 @@ import { getStyleById } from "@/data/styles";
 import {
   Sparkles,
   ArrowRight,
-  Package,
   Ruler,
   Calendar,
   Heart,
-  Bell,
   Clock,
-  CheckCircle2,
-  AlertTriangle,
   Scissors,
   Check,
   CreditCard,
-  MessageSquare,
 } from "lucide-react";
 import { cn, formatOfficeLocation } from "@/lib/utils";
 import { formatNaira } from "@/lib/payments/service";
@@ -42,7 +37,6 @@ export default function AccountOverviewPage() {
     requests,
     appointments,
     currentMeasurement,
-    notifications,
     payments,
     wardrobe,
   } = useAccountData();
@@ -66,8 +60,6 @@ export default function AccountOverviewPage() {
   const upcomingAppointment = appointments.find(
     (a) => a.status === "confirmed" || a.status === "scheduled" || a.status === "requested"
   );
-  const unreadNotifications = notifications.filter((n) => !n.isRead);
-
   // Stage index for progress bar
   const currentStageIndex = activeOrder
     ? CRAFTSMANSHIP_STAGES.findIndex((s) => s.id === activeOrder.status)
@@ -384,7 +376,7 @@ export default function AccountOverviewPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-warm-ivory uppercase tracking-wider">
-                  {upcomingAppointment.type.replace(/-/g, " ")}
+                  {(upcomingAppointment.type || "Appointment").replace(/[-_]/g, " ")}
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-champagne/15 text-champagne border border-champagne/30 text-[10px] font-mono capitalize">
                   {upcomingAppointment.status}

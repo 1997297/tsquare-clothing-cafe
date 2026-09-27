@@ -1,0 +1,196 @@
+TCC CLIENT AREA — REPAIR & UX STABILIZATION REPORT
+Completed: 27 September 2026
+
+OUTCOME
+
+The client-area stabilization pass is complete. Booking persistence, appointments,
+Saved Looks, favourites, profile persistence, avatar storage, navigation, theme
+support, local imagery, loading feedback, and the identified route-performance
+issues were repaired without replacing the existing TCC architecture or visual
+identity.
+
+ROOT CAUSES AND REPAIRS
+
+1. Book-a-fitting navigation
+   Root cause: the public booking screen and its success state had no explicit
+   authenticated return route.
+   Repair: introduced one reusable ReturnLink component and added explicit dashboard,
+   appointment, and contextual parent links throughout the affected client and detail
+   screens.
+
+2. Fitting requests missing from Atelier Appointments
+   Root cause: the form wrote only to public_fitting_requests while the client portal
+   reads appointments. The two records were not atomically linked to the authenticated
+   profile.
+   Repair: added a service-role-only submit_public_fitting_request RPC. It writes the
+   intake row, canonical appointment, lifecycle event, and relationship in one database
+   transaction. The server action passes the authenticated profile ID and returns the
+   new appointment ID. Requested sessions now open by default and display date, time,
+   location, and status.
+
+3. Favourites and Saved Looks
+   Root cause: saved state was fragmented and could hydrate from guest localStorage even
+   when Supabase was configured. This caused a successful database save to disappear
+   after refresh. Duplicate Saved Looks fetching also existed.
+   Repair: installed one global SavedStylesProvider backed by saved_styles for signed-in
+   clients. It supports optimistic add/remove, rollback, guest-to-account migration,
+   deduplication, loading, empty, and visible error states. Demo mode is now impossible
+   when a real Supabase project is configured.
+
+4. Profile persistence
+   Root cause: the profile form could initialize before the asynchronous profile query
+   finished and did not rehydrate. Updates also did not replace client state with the
+   canonical returned database row.
+   Repair: profile queries are deduplicated, profile/session loading is coordinated, the
+   form rehydrates when profile data arrives, and updates return and install the saved
+   row. Booking contact fields also prefill from the authenticated profile.
+
+5. Profile avatar
+   Root cause: no storage bucket, owner-scoped policies, upload workflow, or reusable
+   avatar display existed.
+   Repair: added a public profile-avatars bucket with a 5 MB limit and JPEG/PNG/WebP
+   allow-list. SELECT/INSERT/UPDATE/DELETE policies enforce the authenticated user's
+   top-level folder and ownership. Upload, replacement, cleanup, validation, error and
+   loading states, persistent profile URL, and initials fallback are implemented.
+
+6. Navigation delay
+   Root cause: the account provider could load the full private-account dataset on
+   public routes, Saved Looks was queried twice, profile work was repeated, and remote
+   image requests added another dependency. Several routes also lacked an intentional
+   loading state.
+   Repair: private account data is loaded only for account and bespoke-create routes;
+   independent work is parallelized; profile queries are deduplicated; Saved Looks has
+   one source of truth; Next Link/router navigation is retained; public routes no longer
+   trigger the private multi-table load; and the account area has a lightweight loading
+   skeleton.
+
+7. Theme and date picker
+   Root cause: the interface was effectively hard-coded to dark surface colours and had
+   no persistent theme owner. The native date indicator did not receive an appropriate
+   browser colour scheme.
+   Repair: added a global ThemeProvider, accessible desktop/mobile toggles, persisted
+   preference, a pre-hydration theme script, shared RGB theme tokens, and light-theme
+   coverage for surfaces, forms, navigation, drawers, cards, statuses, buttons, and
+   account screens. The date input uses the active colour-scheme and theme-aware icon
+   treatment.
+
+8. External imagery and image warnings
+   Root cause: five active images still depended on Unsplash/Wikimedia, and some fill
+   images lacked a positioned parent or sizes metadata.
+   Repair: downloaded the exact active assets into public/images/styles and
+   public/images/atelier, replaced every external image reference, removed obsolete
+   Next Image host configuration, and corrected fill parents/sizes. Normal site image
+   rendering now uses local assets (apart from the authenticated Supabase avatar URL).
+
+DATABASE / RLS / STORAGE
+
+Migration:
+  supabase/migrations/20260925060816_client_area_stabilization.sql
+
+Changes:
+  - public_fitting_requests.appointment_id UUID foreign key to appointments.id
+  - partial unique index preventing duplicate appointment linkage
+  - atomic public.submit_public_fitting_request(uuid, jsonb) RPC
+  - RPC execution revoked from public, anon, and authenticated; granted to service_role
+  - profile-avatars storage bucket, public read URL, 5 MB limit, image MIME allow-list
+  - owner-folder SELECT/INSERT/UPDATE/DELETE storage policies
+
+The migration was pushed to the linked Supabase project. No manual SQL remains for the
+currently linked project. A different environment must run the committed migrations in
+order (for example, with supabase db push).
+
+ENVIRONMENT
+
+Required existing variables:
+  NEXT_PUBLIC_SUPABASE_URL
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY)
+  NEXT_PUBLIC_SITE_URL
+
+For the real configured project:
+  NEXT_PUBLIC_TCC_DEMO_MODE=false
+
+No new secret was added to source control.
+
+KEY FILES
+
+Theme and global composition:
+  src/app/layout.tsx
+  src/app/globals.css
+  src/lib/theme-context.tsx
+  src/components/common/ThemeToggle.tsx
+
+Navigation:
+  src/components/common/ReturnLink.tsx
+  src/app/book-a-fitting/BookFittingClient.tsx
+  src/app/account/appointments/page.tsx
+  src/app/account/profile/page.tsx
+  src/app/account/saved/page.tsx
+  src/app/account/measurements/page.tsx
+  src/app/styles/[slug]/StyleDetailClient.tsx
+  nested request/order/payment/wardrobe detail pages
+
+Persistence and account data:
+  src/app/book-a-fitting/actions.ts
+  src/lib/account-store.ts
+  src/lib/auth-context.tsx
+  src/lib/saved-store.tsx
+  src/lib/supabase/client.ts
+
+Profile avatar:
+  src/lib/profile-avatar.ts
+  src/components/common/ProfileAvatar.tsx
+  src/app/account/profile/page.tsx
+
+Performance and loading:
+  src/app/account/loading.tsx
+  src/lib/account-store.ts
+
+Images:
+  public/images/styles/agbada-imperial-detail-front.jpg
+  public/images/styles/agbada-imperial-detail-back.jpg
+  public/images/atelier/tailoring-craft.jpg
+  public/images/atelier/precision-suiting.jpg
+  public/images/atelier/bespoke-heritage.jpg
+  plus the public/style, collection, craftsmanship, bespoke, story, search, and card
+  components that now reference them and provide correct responsive sizes.
+
+VERIFICATION RESULTS
+
+Authenticated browser sequence completed on localhost:3001:
+  - signed in with a temporary confirmed Supabase user
+  - edited profile; refresh retained name, phone, and preferred contact
+  - uploaded avatar; refresh retained and rendered it
+  - verified Saved Looks empty state
+  - favourited a look; immediate state, navigation, Saved Looks, and refresh persisted
+  - unfavourited it; Saved Looks and refresh reflected removal
+  - booked a consultation for 2026-10-15 at 02:30 PM
+  - success state exposed Return to Dashboard and View Appointment
+  - requested appointment appeared in Atelier Appointments and survived refresh
+  - database check confirmed one-to-one atomic intake/appointment linkage
+  - cross-user avatar-folder upload was rejected by RLS
+  - contextual Return/Back controls were exercised
+  - light and dark themes both persisted through reload
+  - date input reported the correct light/dark browser colour-scheme
+  - desktop and 390 px mobile layouts had no horizontal document overflow
+  - rendered images had no broken or third-party-hosted sources
+  - browser runtime-error log was empty; image position/sizes warnings were fixed
+
+Automated checks:
+  - npm run lint: pass, zero warnings/errors
+  - npm run typecheck: pass
+  - npm test: 9/9 pass
+  - Next.js production build: pass, 53 static pages generated
+  - git diff --check: pass
+
+The temporary Supabase auth user, profile, fitting request, appointment, lifecycle data,
+Saved Looks rows, avatar object, credentials, screenshots, and test scripts were deleted
+after verification. No E2E test records remain.
+
+REMAINING MANUAL ADVISORY
+
+Supabase Security Advisor still reports that leaked-password protection is disabled.
+This is a project-level Authentication dashboard setting rather than an application-code
+or migration defect. Enable leaked-password protection in the Supabase dashboard when
+appropriate for production. No RLS policies were weakened and no global RLS bypass was
+introduced.

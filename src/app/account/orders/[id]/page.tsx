@@ -4,7 +4,6 @@ import { use } from "react";
 import Link from "next/link";
 import {
   AlertCircle,
-  ArrowLeft,
   CheckCircle2,
   ChevronRight,
   CreditCard,
@@ -14,6 +13,7 @@ import {
 import { useAccountData } from "@/lib/account-store";
 import { calculateOrderPaymentPosition, formatNaira } from "@/lib/payments/service";
 import { cn, formatOfficeLocation } from "@/lib/utils";
+import { ReturnLink } from "@/components/common/ReturnLink";
 
 const STAGES = [
   ["order_confirmed", "Order Confirmed"],
@@ -35,9 +35,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         <AlertCircle className="w-8 h-8 text-stone-600 mx-auto" />
         <h1 className="font-display text-2xl text-warm-ivory">Order Record Not Located</h1>
         <p className="text-xs text-stone-400">This order is not present in your private account.</p>
-        <Link href="/account/orders" className="inline-flex items-center gap-2 text-xs text-champagne uppercase font-mono tracking-widest">
-          <ArrowLeft className="w-3.5 h-3.5" /> Return to Orders
-        </Link>
+        <ReturnLink href="/account/orders" label="Return to Orders" />
       </div>
     );
   }
@@ -52,9 +50,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       <div>
-        <Link href="/account/orders" className="inline-flex items-center gap-2 text-xs text-stone-400 hover:text-champagne uppercase font-mono tracking-wider mb-4">
-          <ArrowLeft className="w-3.5 h-3.5" /> Back to All Orders
-        </Link>
+        <ReturnLink href="/account/orders" label="Back to All Orders" className="mb-4" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800/60 pb-6">
           <div>
             <p className="text-xs font-mono font-bold text-champagne tracking-wider">{order.orderReference}</p>

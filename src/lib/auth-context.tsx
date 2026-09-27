@@ -52,7 +52,19 @@ function safeAuthError(error: { message?: string; status?: number } | null): Err
   return new Error("We could not complete that account request. Please try again.");
 }
 
-function mapProfile(row: Record<string, any>): CustomerProfile {
+interface ProfileRow {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  preferred_contact: "whatsapp" | "phone" | "email";
+  avatar_url?: string | null;
+  created_at: string;
+  updated_at?: string | null;
+}
+
+function mapProfile(row: ProfileRow): CustomerProfile {
   return {
     id: row.id,
     firstName: row.first_name,
@@ -113,10 +125,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!active) return;
         if (error) {
           console.error("Session initialization failed", error);
-        } else {
+        } else if (data.session?.user) {
           setSession(data.session);
-          setUser(data.session?.user ?? null);
-          if (data.session?.user) void fetchProfile(data.session.user.id);
+          setUser(data.session.user);
+          void fetchProfile(data.session.user.id);
         }
       } else if (isDemoMode) {
         try {

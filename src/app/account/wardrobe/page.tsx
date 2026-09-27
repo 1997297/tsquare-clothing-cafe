@@ -6,10 +6,6 @@ import Image from "next/image";
 import { useAccountData } from "@/lib/account-store";
 import {
   Sparkles,
-  ArrowRight,
-  Filter,
-  Calendar,
-  Layers,
   ArrowUpRight,
   Plus,
 } from "lucide-react";

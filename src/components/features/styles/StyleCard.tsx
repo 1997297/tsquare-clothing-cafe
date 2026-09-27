@@ -34,7 +34,7 @@ export function StyleCard({ style, priority = false, className }: StyleCardProps
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-espresso/40 shadow-sm">
         <Link
           href={`/styles/${style.slug}`}
-          className="block h-full w-full focus:outline-none"
+          className="relative block h-full w-full focus:outline-none"
           tabIndex={-1}
         >
           <Image
@@ -46,12 +46,12 @@ export function StyleCard({ style, priority = false, className }: StyleCardProps
             className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
           />
           {/* Subtle vignette gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-near-black/75 via-transparent to-transparent opacity-50 group-hover:opacity-70 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
         </Link>
 
         {/* Category Badge with Rounded-Full */}
         <div className="absolute top-3.5 left-3.5 z-10">
-          <span className="bg-near-black/85 backdrop-blur-md text-warm-ivory text-[9px] uppercase tracking-[0.22em] font-medium px-3 py-1 rounded-full border border-stone-700/60 shadow-sm">
+          <span className="bg-black/75 backdrop-blur-md text-[#FAF8F5] text-[9px] uppercase tracking-[0.22em] font-medium px-3 py-1 rounded-full border border-white/15 shadow-sm">
             {style.categoryLabel}
           </span>
         </div>
@@ -63,14 +63,14 @@ export function StyleCard({ style, priority = false, className }: StyleCardProps
           className={cn(
             "absolute top-3.5 right-3.5 z-10 flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-champagne shadow-sm",
             saved
-              ? "bg-warm-ivory text-near-black shadow-md"
-              : "bg-near-black/70 text-warm-ivory hover:bg-near-black hover:text-champagne border border-stone-700/60"
+              ? "bg-champagne text-near-black shadow-md border border-champagne"
+              : "bg-black/65 text-[#FAF8F5] hover:bg-black/90 hover:text-champagne border border-white/15"
           )}
         >
           <Heart
             className={cn(
               "h-4 w-4 transition-transform duration-200",
-              saved ? "fill-near-black scale-110" : "stroke-[1.5]"
+              saved ? "fill-near-black scale-110" : "stroke-[1.5] text-[#FAF8F5]"
             )}
           />
         </button>

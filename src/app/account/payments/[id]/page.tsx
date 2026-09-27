@@ -7,15 +7,13 @@ import { useAuth } from "@/lib/auth-context";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { formatNaira } from "@/lib/payments/service";
 import {
-  ArrowLeft,
   Printer,
   ShieldCheck,
   CheckCircle2,
   AlertCircle,
-  CreditCard,
-  Calendar,
   ExternalLink,
 } from "lucide-react";
+import { ReturnLink } from "@/components/common/ReturnLink";
 
 export default function PaymentReceiptPage({
   params,
@@ -37,13 +35,7 @@ export default function PaymentReceiptPage({
         <p className="text-xs text-stone-400">
           An official receipt is available only for a verified successful payment in your private archive.
         </p>
-        <Link
-          href="/account/payments"
-          className="inline-flex items-center gap-2 text-xs text-champagne uppercase font-mono tracking-widest"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Return to Payments</span>
-        </Link>
+        <ReturnLink href="/account/payments" label="Return to Payments" />
       </div>
     );
   }
@@ -62,13 +54,7 @@ export default function PaymentReceiptPage({
     <div className="space-y-8 animate-in fade-in duration-300 max-w-3xl mx-auto">
       {/* Top Action Bar (Hidden when printing) */}
       <div className="flex items-center justify-between print:hidden">
-        <Link
-          href="/account/payments"
-          className="inline-flex items-center gap-2 text-xs text-stone-400 hover:text-champagne transition-colors uppercase font-mono tracking-wider"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to All Payments</span>
-        </Link>
+        <ReturnLink href="/account/payments" label="Back to All Payments" />
 
         <button
           onClick={handlePrint}

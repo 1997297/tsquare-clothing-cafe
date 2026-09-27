@@ -34,7 +34,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       outline:
         "bg-transparent text-current border border-current hover:bg-stone-500/10",
       champagne:
-        "bg-champagne text-near-black hover:bg-champagne-light border border-champagne shadow-md font-bold",
+        "bg-champagne text-[#141311] hover:bg-champagne-light border border-champagne shadow-md font-bold",
       ghost:
         "bg-transparent text-current hover:text-champagne border-transparent hover:bg-stone-500/10",
     };

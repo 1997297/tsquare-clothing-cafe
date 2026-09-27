@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAccountData } from "@/lib/account-store";
-import { Package, ArrowRight, Clock, Scissors, CheckCircle2 } from "lucide-react";
+import { Package, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const CRAFTSMANSHIP_STAGES = [

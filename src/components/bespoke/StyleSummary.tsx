@@ -90,14 +90,14 @@ export function StyleSummary({ config, className, compact }: StyleSummaryProps) 
             className="object-cover object-top"
             sizes="(max-width: 1024px) 0px, 400px"
           />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-near-black/80 via-transparent to-transparent" />
+          {/* Photographic dark scrim overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
           {/* Code badge */}
           <div className="absolute bottom-4 left-4 right-4">
-            <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-champagne mb-1">
+            <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-champagne-light mb-1">
               {displayCode}
             </p>
-            <p className="text-sm font-display text-warm-ivory leading-tight">
+            <p className="text-sm font-display text-white leading-tight">
               {displayName}
             </p>
           </div>
@@ -156,7 +156,7 @@ export function StyleSummary({ config, className, compact }: StyleSummaryProps) 
 
       {/* Atelier note */}
       <div className="border-t border-stone-800/60 pt-4">
-        <p className="text-[10px] text-stone-600 leading-relaxed">
+        <p className="text-[10px] text-stone-400 leading-relaxed">
           No price is set at this stage. Your request will be reviewed by the TSquare team before any pricing is shared.
         </p>
       </div>
@@ -178,7 +178,7 @@ function SummaryRow({
       </span>
       <span className="text-xs text-stone-300">
         {value ?? (
-          <span className="text-stone-700 italic">Not yet selected</span>
+          <span className="text-stone-400 italic">Not yet selected</span>
         )}
       </span>
     </div>

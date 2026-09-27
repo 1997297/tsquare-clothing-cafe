@@ -7,10 +7,6 @@ import { useRouter } from "next/navigation";
 import { useAccountData } from "@/lib/account-store";
 import { getStyleById } from "@/data/styles";
 import {
-  ArrowLeft,
-  Sparkles,
-  Calendar,
-  Layers,
   Scissors,
   Repeat,
   Lightbulb,
@@ -18,6 +14,7 @@ import {
   AlertCircle,
   ExternalLink,
 } from "lucide-react";
+import { ReturnLink } from "@/components/common/ReturnLink";
 
 export default function WardrobeItemDetailPage({
   params,
@@ -39,13 +36,7 @@ export default function WardrobeItemDetailPage({
         <p className="text-xs text-stone-400">
           The requested wardrobe piece could not be found in your private client archives.
         </p>
-        <Link
-          href="/account/wardrobe"
-          className="inline-flex items-center gap-2 text-xs text-champagne uppercase font-mono tracking-widest"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Return to Wardrobe</span>
-        </Link>
+        <ReturnLink href="/account/wardrobe" label="Return to Wardrobe" />
       </div>
     );
   }
@@ -66,13 +57,7 @@ export default function WardrobeItemDetailPage({
     <div className="space-y-10 animate-in fade-in duration-300">
       {/* Back Link */}
       <div>
-        <Link
-          href="/account/wardrobe"
-          className="inline-flex items-center gap-2 text-xs text-stone-400 hover:text-champagne transition-colors uppercase font-mono tracking-wider mb-4"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to All Wardrobe Pieces</span>
-        </Link>
+        <ReturnLink href="/account/wardrobe" label="Back to All Wardrobe Pieces" className="mb-4" />
 
         {/* Header Banner */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800/60 pb-6">

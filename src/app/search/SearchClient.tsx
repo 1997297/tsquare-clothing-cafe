@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import { Search, SlidersHorizontal, ArrowRight } from "lucide-react";
+import { Search } from "lucide-react";
 import { searchStyles, getAllStyles } from "@/data/styles";
 import { StyleCard } from "@/components/features/styles/StyleCard";
 import { Style } from "@/types";

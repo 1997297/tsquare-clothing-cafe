@@ -57,10 +57,10 @@ export function Navbar() {
         aria-label="Main site header"
         className={cn(
           "fixed top-0 inset-x-0 z-40 transition-colors duration-300 transform-gpu",
-          "h-20 flex flex-col justify-center border-b",
+          "h-20 flex flex-col justify-center border-b transition-all duration-300",
           isScrolled || !isHomepage || isMobileMenuOpen
-            ? "bg-near-black/85 backdrop-blur-2xl backdrop-saturate-150 border-warm-ivory/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.06)]"
-            : "bg-near-black/60 backdrop-blur-xl backdrop-saturate-150 border-warm-ivory/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2),inset_0_1px_0_0_rgba(255,255,255,0.04)]"
+            ? "bg-near-black/90 backdrop-blur-2xl backdrop-saturate-150 border-stone-700/60 shadow-[0_4px_20px_-4px_rgba(20,18,15,0.06)]"
+            : "bg-near-black/75 backdrop-blur-xl backdrop-saturate-150 border-stone-700/40"
         )}
       >
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
@@ -110,7 +110,7 @@ export function Navbar() {
               {/* Collections Dropdown Menu with Rounded Corners */}
               <div
                 className={cn(
-                  "absolute top-full -left-4 w-64 bg-near-black/85 backdrop-blur-2xl backdrop-saturate-150 border border-warm-ivory/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.35),inset_0_1px_0_0_rgba(255,255,255,0.06)] py-3 rounded-2xl transition-all duration-200 z-50 mt-2",
+                  "absolute top-full -left-4 w-64 bg-near-black/95 backdrop-blur-2xl backdrop-saturate-150 border border-stone-700/80 shadow-[0_12px_36px_-6px_rgba(20,18,15,0.08)] py-3 rounded-2xl transition-all duration-200 z-50 mt-2",
                   isCollectionsDropdownOpen
                     ? "opacity-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 -translate-y-1 pointer-events-none"

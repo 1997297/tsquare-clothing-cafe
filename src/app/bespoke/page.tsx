@@ -1,6 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, Scissors, Ruler, ShieldCheck, Sparkles, CheckCircle2 } from "lucide-react";
+import {  Sparkles } from "lucide-react";
 import { Button } from "@/components/common/Button";
 
 export const metadata = {

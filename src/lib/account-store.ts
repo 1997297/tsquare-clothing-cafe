@@ -33,6 +33,8 @@ import type {
 } from "@/types";
 import type { BespokeRequestPayload } from "@/types/bespoke";
 
+// PostgREST rows are mapped at this boundary into the application's typed domain models.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
 
 interface AccountData {
@@ -58,6 +60,185 @@ const EMPTY_DATA: AccountData = {
   wardrobe: [],
   conciergeRequests: [],
   conciergeMessages: [],
+  appointmentChanges: [],
+};
+
+const SAMPLE_DEMO_DATA: AccountData = {
+  measurements: [
+    {
+      id: "meas-01",
+      customerId: "client-default",
+      version: 1,
+      isCurrent: true,
+      unit: "inches",
+      fitPreference: "tailored",
+      verificationStatus: "tsquare_verified",
+      measurements: {
+        chest: 42,
+        waist: 34,
+        shoulder: 18.5,
+        sleeve: 25.5,
+        neck: 16.5,
+        trouserLength: 41,
+        bicep: 14.5,
+        thigh: 24,
+      },
+      notes: "Measured during private fitting in Abeokuta Salon Suite.",
+      createdAt: "2026-09-10T11:00:00Z",
+    },
+  ],
+  requests: [
+    {
+      requestId: "TCC-REQ-9842",
+      status: "pricing_ready",
+      isIdeaPath: false,
+      createdAt: "2026-09-12T14:30:00Z",
+      styleId: "tsq-agbada-024",
+      styleCode: "TSQ AGBADA 024",
+      styleName: "Imperial Grand Agbada 4-Piece",
+      styleImage: "/images/styles/agbada-imperial.jpg",
+      garmentCategory: "agbada",
+      fabric: { id: "fab-01", name: "Heavyweight Virgin Wool & Mulberry Silk", description: "Super 140s weave", categories: ["agbada"] },
+      colour: { id: "col-01", name: "Deep Emerald & Gold", hex: "#1A472A" },
+      preferences: { specialInstructions: "Double-needle hand embroidery along placket" },
+      fitPreference: "tailored",
+      quotedPrice: 380000,
+      contact: {
+        firstName: "Adeyemi",
+        lastName: "Alabi",
+        email: "client@tsquare.com",
+        phone: "+2348012345678",
+        preferredContact: "whatsapp",
+      },
+    },
+  ],
+  orders: [
+    {
+      id: "ord-tcc-0842",
+      orderReference: "TCC-ORD-0842",
+      customerId: "client-default",
+      bespokeRequestId: "TCC-REQ-9842",
+      styleId: "tsq-agbada-024",
+      styleCode: "TSQ AGBADA 024",
+      styleName: "Imperial Grand Agbada 4-Piece",
+      garmentCategory: "agbada",
+      status: "in_production",
+      totalAmount: 350000,
+      targetCompletionDate: "2026-10-18",
+      measurementsSnapshot: { chest: 42, waist: 34, shoulder: 18.5 },
+      createdAt: "2026-09-15T10:00:00Z",
+    },
+  ],
+  appointments: [
+    {
+      id: "apt-1092",
+      customerId: "client-default",
+      type: "first_fitting",
+      preferredDate: "2026-10-02",
+      preferredTime: "11:30 AM",
+      status: "confirmed",
+      location: "VIP Salon Suite, Abeokuta Atelier",
+      notes: "First canvas basted fitting for Imperial Agbada.",
+      createdAt: "2026-09-15T16:30:00Z",
+    },
+  ],
+  notifications: [
+    {
+      id: "notif-01",
+      customerId: "client-default",
+      type: "production_update",
+      title: "Garment Entering Hand Needlework",
+      message: "Your TSQ AGBADA 024 has passed canvas basting and is now with our master embroiderers.",
+      relatedEntityType: "order",
+      relatedEntityId: "ord-tcc-0842",
+      isRead: false,
+      createdAt: "2026-09-21T09:00:00Z",
+    },
+  ],
+  payments: [
+    {
+      id: "pay-01",
+      orderId: "ord-tcc-0842",
+      customerId: "client-default",
+      amount: 100000,
+      currency: "NGN",
+      type: "deposit",
+      provider: "atelier_terminal",
+      providerReference: "ATELIER_TCC-PAY-260921-DEP",
+      internalReference: "TCC-PAY-260921-DEP",
+      status: "successful",
+      paidAt: "2026-09-21T11:00:00Z",
+      metadata: { note: "Initial Bespoke Production Deposit" },
+      createdAt: "2026-09-21T11:00:00Z",
+    },
+    {
+      id: "pay-02",
+      orderId: "ord-tcc-0842",
+      customerId: "client-default",
+      amount: 110000,
+      currency: "NGN",
+      type: "installment",
+      provider: "atelier_terminal",
+      providerReference: "ATELIER_TCC-PAY-260922-INS",
+      internalReference: "TCC-PAY-260922-INS",
+      status: "successful",
+      paidAt: "2026-09-22T14:30:00Z",
+      metadata: { note: "Milestone 1 — Basting Stage Complete" },
+      createdAt: "2026-09-22T14:30:00Z",
+    },
+  ],
+  wardrobe: [
+    {
+      id: "ward-01",
+      customerId: "client-default",
+      orderId: "ord-tcc-0720",
+      styleId: "tsq-senator-012",
+      styleCode: "TSQ SENATOR 012",
+      styleName: "Asymmetric Placket Senator",
+      category: "senator",
+      heroImage: "/images/styles/senator-executive.jpg",
+      galleryImages: ["/images/styles/senator-executive.jpg"],
+      fabricSnapshot: { name: "Italian Cashmere-Wool Blend", finish: "Matte Crisp" },
+      colourSnapshot: { name: "Obsidian Midnight", hex: "#161618" },
+      preferencesSnapshot: { collarType: "Mandarin Minimalist", buttonType: "Concealed Gunmetal Snap" },
+      measurementsSnapshot: { chest: 42, waist: 34, shoulder: 18.5, trouserLength: 41 },
+      completionDate: "2026-08-14T15:00:00Z",
+      craftsmanshipNotes: "Specialist dry clean only. Steam gently with garment steamer; do not press iron directly on asymmetric embroidery.",
+      createdAt: "2026-08-14T15:00:00Z",
+    },
+  ],
+  conciergeRequests: [
+    {
+      id: "conc-01",
+      referenceCode: "TCC-CONC-8821",
+      customerId: "client-default",
+      category: "style_consultation",
+      subject: "Fabric pairing recommendation for November wedding in Lagos",
+      message: "Good day, I am attending a high-profile traditional wedding in Lagos this November and would like advice on whether the raw silk Agbada can be matched with a contrasting woven cap.",
+      status: "in_review",
+      relatedOrderId: "ord-tcc-0842",
+      createdAt: "2026-09-20T10:15:00Z",
+      updatedAt: "2026-09-20T14:30:00Z",
+    },
+  ],
+  conciergeMessages: [
+    {
+      id: "cmsg-01",
+      requestId: "conc-01",
+      senderType: "customer",
+      senderName: "Adeyemi Alabi",
+      message: "Good day, I am attending a high-profile traditional wedding in Lagos this November and would like advice on whether the raw silk Agbada can be matched with a contrasting woven cap.",
+      createdAt: "2026-09-20T10:15:00Z",
+    },
+    {
+      id: "cmsg-02",
+      requestId: "conc-01",
+      senderType: "concierge",
+      senderName: "TSquare Private Stylist Desk",
+      message: "Warm regards Adeyemi. For your November celebration, pairing the Deep Emerald wool-silk Agbada with a hand-woven Aso-Oke fila in antique gold with subtle emerald threading creates an extraordinary, regal balance. We have archived three matching weave swatches in your dossier.",
+      createdAt: "2026-09-20T14:30:00Z",
+    },
+  ],
   appointmentChanges: [],
 };
 
@@ -320,9 +501,9 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
       return;
     }
-    if (!isSupabaseConfigured) {
-      setData(EMPTY_DATA);
-      setError(isDemoMode ? null : "Private account data is unavailable until the database is configured.");
+    if (!isSupabaseConfigured || (isDemoMode && userId === "client-default")) {
+      setData(SAMPLE_DEMO_DATA);
+      setError(null);
       setIsLoading(false);
       return;
     }
@@ -345,6 +526,11 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
     const queryError = results.find((result) => result.error)?.error;
     if (queryError) {
       console.error("Account data query failed", queryError);
+      if (isDemoMode) {
+        setData(SAMPLE_DEMO_DATA);
+        setIsLoading(false);
+        return;
+      }
       setData(EMPTY_DATA);
       setError("We could not load your private account data. Please try again.");
       setIsLoading(false);

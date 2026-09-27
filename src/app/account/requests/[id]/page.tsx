@@ -4,13 +4,13 @@ import { use } from "react";
 import Link from "next/link";
 import { useAccountData } from "@/lib/account-store";
 import {
-  ArrowLeft,
   Sparkles,
   AlertCircle,
   MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatNaira } from "@/lib/payments/service";
+import { ReturnLink } from "@/components/common/ReturnLink";
 
 export default function RequestDetailPage({
   params,
@@ -30,13 +30,7 @@ export default function RequestDetailPage({
         <p className="text-xs text-stone-400">
           The requested bespoke commission reference could not be found in your archive.
         </p>
-        <Link
-          href="/account/requests"
-          className="inline-flex items-center gap-2 text-xs text-champagne uppercase font-mono tracking-widest"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          Return to Requests
-        </Link>
+        <ReturnLink href="/account/requests" label="Return to Requests" />
       </div>
     );
   }
@@ -48,13 +42,7 @@ export default function RequestDetailPage({
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Header & Back Link */}
       <div>
-        <Link
-          href="/account/requests"
-          className="inline-flex items-center gap-2 text-xs text-stone-400 hover:text-champagne transition-colors uppercase font-mono tracking-wider mb-4"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to All Requests</span>
-        </Link>
+        <ReturnLink href="/account/requests" label="Back to All Requests" className="mb-4" />
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800/60 pb-6">
           <div>

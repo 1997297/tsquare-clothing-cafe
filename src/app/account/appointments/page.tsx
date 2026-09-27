@@ -7,12 +7,7 @@ import {
   Calendar,
   Clock,
   MapPin,
-  Sparkles,
   ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-  Repeat,
   Plus,
   ShieldCheck,
 } from "lucide-react";

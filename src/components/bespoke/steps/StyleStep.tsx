@@ -59,7 +59,7 @@ export function StyleStep({
                     className="object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
                     sizes="(max-width: 640px) 100vw, 50vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-near-black/90 via-near-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
                   {isSelected && (
                     <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-champagne flex items-center justify-center">
                       <svg viewBox="0 0 10 10" className="w-3 h-3 fill-near-black">
@@ -71,11 +71,11 @@ export function StyleStep({
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <p className={cn(
                     "text-sm font-semibold uppercase tracking-widest mb-1 transition-colors",
-                    isSelected ? "text-champagne" : "text-warm-ivory"
+                    isSelected ? "text-champagne-light" : "text-white"
                   )}>
                     {cat.label}
                   </p>
-                  <p className="text-[11px] text-stone-400 leading-snug line-clamp-2">
+                  <p className="text-[11px] text-stone-200 leading-snug line-clamp-2">
                     {cat.description}
                   </p>
                 </div>

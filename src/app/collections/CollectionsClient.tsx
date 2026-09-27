@@ -4,12 +4,11 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, SlidersHorizontal, Check } from "lucide-react";
+import {  SlidersHorizontal } from "lucide-react";
 import { getAllStyles } from "@/data/styles";
 import { COLLECTIONS } from "@/data/collections";
 import { OCCASIONS } from "@/data/occasions";
 import { StyleCard } from "@/components/features/styles/StyleCard";
-import { ProductCategory } from "@/types";
 
 export default function CollectionsClient() {
   const searchParams = useSearchParams();
@@ -98,14 +97,14 @@ export default function CollectionsClient() {
                   alt={c.name}
                   fill
                   sizes="16vw"
-                  className="object-cover object-top filter brightness-[0.6] group-hover:scale-105 group-hover:brightness-[0.75] transition-all duration-500"
+                  className="object-cover object-top filter brightness-[0.7] group-hover:scale-105 group-hover:brightness-[0.85] transition-all duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
                 <div className="relative z-10">
-                  <h3 className="font-display text-sm text-warm-ivory group-hover:text-champagne transition-colors">
+                  <h3 className="font-display text-sm text-[#FAF8F5] group-hover:text-champagne transition-colors font-medium">
                     {c.name}
                   </h3>
-                  <span className="text-[9px] uppercase tracking-widest text-stone-400 font-mono block mt-0.5">
+                  <span className="text-[9px] uppercase tracking-widest text-stone-300 font-mono block mt-0.5">
                     View Archive →
                   </span>
                 </div>

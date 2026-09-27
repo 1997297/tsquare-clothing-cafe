@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { useAccountData } from "@/lib/account-store";
 import {
-  Ruler,
+
   CheckCircle2,
-  AlertCircle,
-  Clock,
   History,
   Pencil,
   Save,

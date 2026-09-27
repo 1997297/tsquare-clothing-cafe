@@ -12,6 +12,7 @@ export const isSupabaseConfigured = Boolean(
 );
 
 export const isDemoMode =
+  !isSupabaseConfigured &&
   process.env.NODE_ENV !== "production" &&
   process.env.NEXT_PUBLIC_TCC_DEMO_MODE === "true";
 

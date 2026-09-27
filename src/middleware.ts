@@ -53,7 +53,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Protect /account routes
-  if (request.nextUrl.pathname.startsWith("/account")) {
+  if (request.nextUrl.pathname.startsWith("/account") && !isExplicitDevelopmentDemo) {
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/auth/sign-in";

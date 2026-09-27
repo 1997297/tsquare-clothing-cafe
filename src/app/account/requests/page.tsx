@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useAccountData } from "@/lib/account-store";
 import { FileText, ArrowRight, Clock, Sparkles, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";

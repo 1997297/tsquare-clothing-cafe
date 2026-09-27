@@ -8,12 +8,9 @@ import {
   ArrowRight,
   Clock,
   CheckCircle2,
-  AlertCircle,
-  FileText,
   ShieldCheck,
   ChevronRight,
   Receipt,
-  Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatNaira, calculateOrderPaymentPosition } from "@/lib/payments/service";

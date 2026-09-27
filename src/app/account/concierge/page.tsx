@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { useAccountData } from "@/lib/account-store";
 import { useAuth } from "@/lib/auth-context";
 import { ConciergeCategory } from "@/types";
@@ -9,18 +8,12 @@ import {
   MessageSquare,
   Send,
   Sparkles,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   HelpCircle,
   CreditCard,
   Scissors,
   Calendar,
   Layers,
-  Phone,
-  ArrowRight,
   ShieldCheck,
-  ChevronDown,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -76,7 +69,6 @@ export default function ConciergePage() {
     conciergeRequests,
     conciergeMessages,
     orders,
-    requests,
     createConciergeRequest,
     addConciergeMessage,
   } = useAccountData();

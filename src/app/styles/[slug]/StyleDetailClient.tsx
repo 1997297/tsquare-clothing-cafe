@@ -7,9 +7,6 @@ import {
   Heart,
   Calendar,
   Sparkles,
-  ShieldCheck,
-  Ruler,
-  Clock,
   ArrowRight,
   Check,
 } from "lucide-react";
@@ -93,6 +90,7 @@ export default function StyleDetailClient({
                       src={img}
                       alt={`${style.name} thumbnail ${idx + 1}`}
                       fill
+                      sizes="80px"
                       className="object-cover object-top"
                     />
                   </button>

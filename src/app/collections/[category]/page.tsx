@@ -55,13 +55,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             className="object-cover object-top filter brightness-[0.65]"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/30" />
+          <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-near-black to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <Link
             href="/collections"
-            className="inline-flex items-center text-[10px] uppercase font-mono tracking-[0.25em] text-stone-300 hover:text-champagne transition-colors mb-6 bg-near-black/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-stone-800"
+            className="inline-flex items-center text-[10px] uppercase font-mono tracking-[0.25em] text-[#FAF8F5] hover:text-champagne transition-colors mb-6 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20"
           >
             <ArrowLeft className="mr-2 h-3.5 w-3.5" />
             Back To All Collections
@@ -71,7 +72,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             House Collection
           </span>
 
-          <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-normal tracking-tight text-warm-ivory leading-tight">
+          <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-normal tracking-tight text-[#FAF8F5] leading-tight drop-shadow-sm">
             {collection.name}
           </h1>
 

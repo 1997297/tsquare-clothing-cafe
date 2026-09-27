@@ -1,6 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, MapPin, Compass, Award, Shield } from "lucide-react";
+import {  MapPin, Shield } from "lucide-react";
 import { Button } from "@/components/common/Button";
 
 export const metadata = {
@@ -91,6 +90,7 @@ export default function StoryPage() {
               src="/images/styles/traditional-chieftain.jpg"
               alt="Ancestral sartorial pride"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover object-top filter brightness-[0.9]"
             />
           </div>

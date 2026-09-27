@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Scissors, ShieldCheck, Ruler, Calendar, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Calendar, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { StyleCard } from "@/components/features/styles/StyleCard";
 import { getFeaturedStyles } from "@/data/styles";
@@ -27,16 +27,17 @@ export default function HomePage() {
             sizes="100vw"
           />
           {/* Subtle Vignette & Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/40 to-near-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/50" />
+          <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-near-black to-transparent" />
         </div>
 
         {/* Hero Copy */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-16 flex flex-col items-center">
-          <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight text-warm-ivory leading-[1.12] max-w-4xl animate-in fade-in slide-in-from-bottom-3 duration-700">
+          <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight text-[#FAF8F5] leading-[1.12] max-w-4xl animate-in fade-in slide-in-from-bottom-3 duration-700 drop-shadow-sm">
             Crafted for the man who commands presence.
           </h1>
 
-          <p className="mt-5 sm:mt-7 text-sm sm:text-lg md:text-xl text-stone-300 font-sans font-light max-w-2xl leading-relaxed tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+          <p className="mt-5 sm:mt-7 text-sm sm:text-lg md:text-xl text-[#FAF8F5]/90 font-sans font-light max-w-2xl leading-relaxed tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
             Bespoke menswear shaped by craftsmanship, character and individuality.
           </p>
 
@@ -46,7 +47,7 @@ export default function HomePage() {
               href="/collections"
               variant="champagne"
               size="lg"
-              className="w-full sm:w-auto rounded-xl"
+              className="w-full sm:w-auto rounded-xl shadow-lg"
             >
               Explore The Collection
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -56,7 +57,7 @@ export default function HomePage() {
               href="/book-a-fitting"
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto text-warm-ivory border-stone-400 hover:bg-warm-ivory/10 rounded-xl"
+              className="w-full sm:w-auto text-[#FAF8F5] border-white/30 hover:border-champagne hover:text-champagne hover:bg-white/5 rounded-xl backdrop-blur-sm"
             >
               Book A Fitting
             </Button>
@@ -173,20 +174,20 @@ export default function HomePage() {
                 sizes="(max-width: 768px) 100vw, 60vw"
                 className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/20 to-transparent opacity-85 group-hover:opacity-90 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity" />
               <div className="absolute bottom-6 sm:bottom-10 left-6 sm:left-10 right-6 z-10">
                 <span className="text-[10px] uppercase tracking-[0.25em] text-champagne font-mono font-semibold">
                   Volumetric Grandeur
                 </span>
-                <h3 className="font-display text-2xl sm:text-4xl text-warm-ivory mt-1">
+                <h3 className="font-display text-2xl sm:text-4xl text-[#FAF8F5] mt-1">
                   {COLLECTIONS[0].name}
                 </h3>
-                <p className="mt-2 text-xs sm:text-sm text-stone-300 font-light max-w-md hidden sm:block">
+                <p className="mt-2 text-xs sm:text-sm text-stone-200 font-light max-w-md hidden sm:block">
                   {COLLECTIONS[0].tagline}
                 </p>
                 <Link
                   href={`/collections/${COLLECTIONS[0].slug}`}
-                  className="mt-4 inline-flex items-center text-xs uppercase tracking-[0.2em] font-semibold text-warm-ivory hover:text-champagne transition-colors"
+                  className="mt-4 inline-flex items-center text-xs uppercase tracking-[0.2em] font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
                 >
                   Explore Agbada Collection <ArrowRight className="ml-2 h-3.5 w-3.5" />
                 </Link>
@@ -202,20 +203,20 @@ export default function HomePage() {
                 sizes="(max-width: 768px) 100vw, 40vw"
                 className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/30 to-transparent opacity-85 group-hover:opacity-90 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity" />
               <div className="absolute bottom-6 sm:bottom-10 left-6 sm:left-8 right-6 z-10">
                 <span className="text-[10px] uppercase tracking-[0.25em] text-champagne font-mono font-semibold">
                   Executive Authority
                 </span>
-                <h3 className="font-display text-2xl sm:text-3xl text-warm-ivory mt-1">
+                <h3 className="font-display text-2xl sm:text-3xl text-[#FAF8F5] mt-1">
                   {COLLECTIONS[1].name}
                 </h3>
-                <p className="mt-2 text-xs text-stone-300 font-light hidden sm:block">
+                <p className="mt-2 text-xs text-stone-200 font-light hidden sm:block">
                   {COLLECTIONS[1].tagline}
                 </p>
                 <Link
                   href={`/collections/${COLLECTIONS[1].slug}`}
-                  className="mt-4 inline-flex items-center text-xs uppercase tracking-[0.2em] font-semibold text-warm-ivory hover:text-champagne transition-colors"
+                  className="mt-4 inline-flex items-center text-xs uppercase tracking-[0.2em] font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
                 >
                   Explore Senator <ArrowRight className="ml-2 h-3.5 w-3.5" />
                 </Link>
@@ -231,17 +232,17 @@ export default function HomePage() {
                 sizes="(max-width: 768px) 100vw, 33vw"
                 className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/30 to-transparent opacity-85" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90" />
               <div className="absolute bottom-6 left-6 right-6 z-10">
                 <span className="text-[9px] uppercase tracking-widest text-champagne font-mono">
                   Tactile Luxury
                 </span>
-                <h3 className="font-display text-xl sm:text-2xl text-warm-ivory mt-0.5">
+                <h3 className="font-display text-xl sm:text-2xl text-[#FAF8F5] mt-0.5">
                   {COLLECTIONS[2].name}
                 </h3>
                 <Link
                   href={`/collections/${COLLECTIONS[2].slug}`}
-                  className="mt-3 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-warm-ivory hover:text-champagne transition-colors"
+                  className="mt-3 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
                 >
                   View Collection →
                 </Link>
@@ -257,17 +258,17 @@ export default function HomePage() {
                 sizes="(max-width: 768px) 100vw, 33vw"
                 className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/30 to-transparent opacity-85" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90" />
               <div className="absolute bottom-6 left-6 right-6 z-10">
                 <span className="text-[9px] uppercase tracking-widest text-champagne font-mono">
                   Ancestral Weaving
                 </span>
-                <h3 className="font-display text-xl sm:text-2xl text-warm-ivory mt-0.5">
+                <h3 className="font-display text-xl sm:text-2xl text-[#FAF8F5] mt-0.5">
                   {COLLECTIONS[3].name}
                 </h3>
                 <Link
                   href={`/collections/${COLLECTIONS[3].slug}`}
-                  className="mt-3 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-warm-ivory hover:text-champagne transition-colors"
+                  className="mt-3 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
                 >
                   View Collection →
                 </Link>
@@ -285,17 +286,17 @@ export default function HomePage() {
                   sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/50 to-transparent opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-95" />
                 <div className="relative z-10">
                   <span className="text-[9px] uppercase tracking-widest text-champagne font-mono">
                     Full Floating Canvas
                   </span>
-                  <h3 className="font-display text-xl text-warm-ivory mt-0.5">
+                  <h3 className="font-display text-xl text-[#FAF8F5] mt-0.5">
                     {COLLECTIONS[4].name}
                   </h3>
                   <Link
                     href={`/collections/${COLLECTIONS[4].slug}`}
-                    className="mt-2 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-warm-ivory hover:text-champagne transition-colors"
+                    className="mt-2 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
                   >
                     Explore Bespoke →
                   </Link>
@@ -311,17 +312,17 @@ export default function HomePage() {
                   sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/50 to-transparent opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-95" />
                 <div className="relative z-10">
                   <span className="text-[9px] uppercase tracking-widest text-champagne font-mono">
                     Black Tie & Galas
                   </span>
-                  <h3 className="font-display text-xl text-warm-ivory mt-0.5">
+                  <h3 className="font-display text-xl text-[#FAF8F5] mt-0.5">
                     {COLLECTIONS[5].name}
                   </h3>
                   <Link
                     href={`/collections/${COLLECTIONS[5].slug}`}
-                    className="mt-2 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-warm-ivory hover:text-champagne transition-colors"
+                    className="mt-2 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
                   >
                     Explore Formal →
                   </Link>
@@ -559,15 +560,15 @@ export default function HomePage() {
                   sizes="(max-width: 640px) 50vw, 25vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105 filter brightness-[0.7] group-hover:brightness-[0.85]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-near-black via-near-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
                 <div className="relative z-10">
                   <span className="text-[9px] uppercase font-mono tracking-widest text-champagne block mb-1">
                     Occasion
                   </span>
-                  <h3 className="font-display text-base sm:text-xl text-warm-ivory group-hover:text-champagne transition-colors">
+                  <h3 className="font-display text-base sm:text-xl text-[#FAF8F5] group-hover:text-champagne transition-colors">
                     {occ.name}
                   </h3>
-                  <p className="mt-1 text-[11px] text-stone-300 font-light line-clamp-2 hidden sm:block">
+                  <p className="mt-1 text-[11px] text-stone-200 font-light line-clamp-2 hidden sm:block">
                     {occ.tagline}
                   </p>
                 </div>
