@@ -12,13 +12,16 @@ import { minorToNaira, nairaToMinor, sumMinorUnits } from "../src/lib/payments/m
 import { calculateOrderPaymentPosition } from "../src/lib/payments/service.ts";
 import {
   sanitizeInternalPath,
+  isOwnedProfileAvatarReference,
   validateBespokeRequestPayload,
   validateContactEnquiry,
   validateMeasurementVersion,
   validateReferenceFile,
+  validateStaffProfileUpdate,
 } from "../src/lib/validation.ts";
 import { STYLES } from "../src/data/styles.ts";
 import { getStyleGallery, searchCatalogueStyles } from "../src/lib/catalogue.ts";
+import { getPostAuthDestination, getRoleLabel } from "../src/lib/auth/roles.ts";
 
 test("catalogue contains four unique Fits per house category", () => {
   assert.equal(STYLES.length, 24);
@@ -100,6 +103,58 @@ test("redirect sanitizer rejects external and protocol-relative targets", () => 
   assert.equal(sanitizeInternalPath("//evil.example/path"), "/account");
   assert.equal(sanitizeInternalPath("https://evil.example"), "/account");
   assert.equal(sanitizeInternalPath("/\\evil.example"), "/account");
+});
+
+test("post-auth routing separates client, admin, CEO and inactive staff", () => {
+  assert.equal(getPostAuthDestination("/account", "client", null), "/account");
+  assert.equal(getPostAuthDestination("/admin/orders", "client", null), "/auth/access-denied");
+  assert.equal(getPostAuthDestination("/account", "admin", "active"), "/admin");
+  assert.equal(getPostAuthDestination("/admin/orders", "admin", "active"), "/admin/orders");
+  assert.equal(getPostAuthDestination("/admin/staff", "ceo", "active"), "/admin/staff");
+  assert.equal(getPostAuthDestination("/admin", "admin", "inactive"), "/auth/access-denied?reason=inactive");
+  assert.equal(getRoleLabel("ceo"), "CEO / Super Admin");
+});
+
+test("staff profile validation allowlists personal fields and rejects authority injection", () => {
+  assert.deepEqual(
+    validateStaffProfileUpdate({
+      firstName: "  Ada  ",
+      lastName: "  Okafor ",
+      phone: "+234 800 000 0000",
+    }),
+    {
+      success: true,
+      data: { firstName: "Ada", lastName: "Okafor", phone: "+234 800 000 0000" },
+    }
+  );
+  assert.equal(
+    validateStaffProfileUpdate({
+      firstName: "Ada",
+      lastName: "Okafor",
+      phone: "+234 800 000 0000",
+      role: "ceo",
+    }).success,
+    false
+  );
+  assert.equal(
+    validateStaffProfileUpdate({
+      firstName: "Ada",
+      lastName: "Okafor",
+      phone: "+234 800 000 0000",
+      user_id: "00000000-0000-4000-8000-000000000000",
+    }).success,
+    false
+  );
+});
+
+test("staff avatar references must stay inside the authenticated owner's folder", () => {
+  const ownerId = "550e8400-e29b-41d4-a716-446655440000";
+  const otherId = "123e4567-e89b-42d3-a456-426614174000";
+  const reference = `${ownerId}/avatar-1727531234567-123e4567-e89b-42d3-a456-426614174000.webp`;
+
+  assert.equal(isOwnedProfileAvatarReference(reference, ownerId), true);
+  assert.equal(isOwnedProfileAvatarReference(reference, otherId), false);
+  assert.equal(isOwnedProfileAvatarReference(`https://example.com/avatar.webp`, ownerId), false);
 });
 
 test("shared validation rejects malformed domain inputs", () => {

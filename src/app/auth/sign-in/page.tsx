@@ -35,7 +35,7 @@ function SignInForm() {
       if (error) {
         setErrorMsg(error.message || "Invalid email or password. Please verify your credentials.");
       } else {
-        router.replace(nextUrl);
+        router.replace(`/auth/continue?next=${encodeURIComponent(nextUrl)}`);
       }
     } catch {
       setErrorMsg("An unexpected connection issue occurred. Please try again.");
@@ -51,13 +51,13 @@ function SignInForm() {
         <div className="text-center flex flex-col items-center">
           <BrandLogo variant="light" size="lg" />
           <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold mt-4 block">
-            Private Client Portal
+            Private Client & Atelier Access
           </span>
           <h1 className="font-display text-2xl sm:text-3xl text-warm-ivory mt-2 font-normal">
-            Sign In to Your Account
+            Sign In to Your TCC Account
           </h1>
           <p className="mt-2 text-xs text-stone-400 font-light">
-            Access your measurement archives, fitting dates, and bespoke commissions.
+            Secure access for private clients and authorized atelier staff.
           </p>
         </div>
 
@@ -71,7 +71,7 @@ function SignInForm() {
         <form onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
           <div>
             <label htmlFor="sign-in-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
-              Client Email Address
+              Email Address
             </label>
             <input
               type="email"
@@ -126,7 +126,7 @@ function SignInForm() {
                 </>
               ) : (
                 <>
-                  Sign In As Private Client
+                  Sign In Securely
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}

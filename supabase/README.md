@@ -34,3 +34,31 @@ npx supabase test db --local
 ```
 
 Never place the service-role key in a `NEXT_PUBLIC_` variable. Deployment is a separate, explicitly authorized operation.
+
+## Initial CEO provisioning
+
+Public signup always creates a client account. To establish the first CEO, create and verify that account through the normal TCC/Supabase Auth flow, then use the Supabase SQL Editor as a trusted database administrator:
+
+```sql
+select id, email, created_at
+from auth.users
+where lower(email) = lower('replace-with-the-ceo-email@example.com');
+```
+
+Copy the returned UUID and run the one-time bootstrap function:
+
+```sql
+select *
+from private.provision_initial_ceo('replace-with-the-auth-user-uuid'::uuid);
+```
+
+Verify the result without exposing credentials:
+
+```sql
+select staff.user_id, users.email, staff.role, staff.status, staff.created_at
+from public.staff_accounts as staff
+join auth.users as users on users.id = staff.user_id
+where staff.user_id = 'replace-with-the-auth-user-uuid'::uuid;
+```
+
+The bootstrap refuses to run after a CEO exists. Do not add `role` to signup metadata, edit `profiles` to simulate staff access, or expose this operation through a browser route.

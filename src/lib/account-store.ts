@@ -511,19 +511,27 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     setError(null);
     const results = await Promise.all([
-      supabase.from("measurement_profiles").select("*").order("version", { ascending: false }),
-      supabase.from("bespoke_requests").select("*").order("created_at", { ascending: false }),
-      supabase.from("orders").select("*").order("created_at", { ascending: false }),
-      supabase.from("appointments").select("*").order("created_at", { ascending: false }),
-      supabase.from("notifications").select("*").order("created_at", { ascending: false }),
-      supabase.from("payments").select("*").order("created_at", { ascending: false }),
-      supabase.from("wardrobe_items").select("*").order("created_at", { ascending: false }),
-      supabase.from("concierge_requests").select("*").order("created_at", { ascending: false }),
-      supabase.from("concierge_messages").select("*").order("created_at", { ascending: true }),
-      supabase.from("appointment_change_requests").select("*").order("created_at", { ascending: false }),
+      supabase.from("measurement_profiles").select("*").eq("customer_id", userId).order("version", { ascending: false }),
+      supabase.from("bespoke_requests").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("orders").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("appointments").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("notifications").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("payments").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("wardrobe_items").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("concierge_requests").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("appointment_change_requests").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
     ]);
 
-    const queryError = results.find((result) => result.error)?.error;
+    const conciergeRequestIds = (results[7].data ?? []).map((request) => request.id);
+    const messageResult = conciergeRequestIds.length > 0
+      ? await supabase
+          .from("concierge_messages")
+          .select("*")
+          .in("request_id", conciergeRequestIds)
+          .order("created_at", { ascending: true })
+      : { data: [] as Row[], error: null };
+
+    const queryError = results.find((result) => result.error)?.error ?? messageResult.error;
     if (queryError) {
       console.error("Account data query failed", queryError);
       if (isDemoMode) {
@@ -546,8 +554,8 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
       payments: (results[5].data ?? []).map(mapPayment),
       wardrobe: (results[6].data ?? []).map(mapWardrobe),
       conciergeRequests: (results[7].data ?? []).map(mapConciergeRequest),
-      conciergeMessages: (results[8].data ?? []).map(mapConciergeMessage),
-      appointmentChanges: (results[9].data ?? []).map(mapAppointmentChange),
+      conciergeMessages: (messageResult.data ?? []).map(mapConciergeMessage),
+      appointmentChanges: (results[8].data ?? []).map(mapAppointmentChange),
     });
     setIsLoading(false);
   }, [isAuthLoading, needsAccountData, userId]);

@@ -10,6 +10,9 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   const hasDedicatedLayout =
     pathname === "/account" ||
     pathname.startsWith("/account/") ||
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname === "/auth/access-denied" ||
     pathname === "/bespoke/create" ||
     pathname.startsWith("/bespoke/create/");
 

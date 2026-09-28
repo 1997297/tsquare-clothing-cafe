@@ -11,6 +11,11 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^\+?[0-9][0-9\s()-]{7,19}$/;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const PROFILE_NAME_MAX_LENGTH = 80;
+const PROFILE_PHONE_MAX_LENGTH = 30;
+const STAFF_PROFILE_UPDATE_FIELDS = new Set(["firstName", "lastName", "phone"]);
+const PROFILE_AVATAR_REFERENCE_PATTERN =
+  /^([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\/avatar-[0-9]{10,16}-[0-9a-f-]{36}\.(jpg|png|webp)$/i;
 
 export const APPROVED_REFERENCE_MIME_TYPES = [
   "image/jpeg",
@@ -44,6 +49,63 @@ export function isSafeInternalPath(value: unknown): value is string {
 
 export function sanitizeInternalPath(value: unknown, fallback = "/account"): string {
   return isSafeInternalPath(value) ? value : fallback;
+}
+
+export interface StaffProfileUpdateInput {
+  firstName: string;
+  lastName: string;
+  phone: string;
+}
+
+export function validateStaffProfileUpdate(
+  input: unknown
+): ValidationResult<StaffProfileUpdateInput> {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return { success: false, error: "Enter valid staff profile details." };
+  }
+
+  const record = input as Record<string, unknown>;
+  if (Object.keys(record).some((key) => !STAFF_PROFILE_UPDATE_FIELDS.has(key))) {
+    return {
+      success: false,
+      error: "Only your name and phone number can be changed from this profile.",
+    };
+  }
+
+  if (
+    typeof record.firstName !== "string" ||
+    typeof record.lastName !== "string" ||
+    typeof record.phone !== "string"
+  ) {
+    return { success: false, error: "Enter valid staff profile details." };
+  }
+
+  const firstName = record.firstName.trim();
+  const lastName = record.lastName.trim();
+  const phone = record.phone.trim();
+
+  if (!firstName || !lastName) {
+    return { success: false, error: "Please provide your first and last name." };
+  }
+  if (
+    firstName.length > PROFILE_NAME_MAX_LENGTH ||
+    lastName.length > PROFILE_NAME_MAX_LENGTH ||
+    /[\u0000-\u001F\u007F]/.test(firstName) ||
+    /[\u0000-\u001F\u007F]/.test(lastName)
+  ) {
+    return { success: false, error: "Enter a valid name using 80 characters or fewer." };
+  }
+  if (phone.length > PROFILE_PHONE_MAX_LENGTH || (phone && !PHONE_PATTERN.test(phone))) {
+    return { success: false, error: "Please enter a valid phone number." };
+  }
+
+  return { success: true, data: { firstName, lastName, phone } };
+}
+
+export function isOwnedProfileAvatarReference(reference: unknown, userId: string): reference is string {
+  if (typeof reference !== "string") return false;
+  const match = PROFILE_AVATAR_REFERENCE_PATTERN.exec(reference);
+  return Boolean(match && match[1].toLowerCase() === userId.toLowerCase());
 }
 
 function cleanText(value: unknown, maxLength: number): string {
