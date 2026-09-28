@@ -74,6 +74,7 @@ export function SavedStylesProvider({ children }: { children: ReactNode }) {
     const { data, error: queryError } = await supabase
       .from("saved_styles")
       .select("style_id")
+      .eq("customer_id", user.id)
       .order("saved_at", { ascending: false });
 
     if (queryError) {
@@ -123,6 +124,7 @@ export function SavedStylesProvider({ children }: { children: ReactNode }) {
       const { data, error: queryError } = await supabase
         .from("saved_styles")
         .select("style_id")
+        .eq("customer_id", user.id)
         .order("saved_at", { ascending: false });
 
       if (!active) return;

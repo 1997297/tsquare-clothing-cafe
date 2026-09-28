@@ -19,6 +19,7 @@ import {
 } from "../src/lib/validation.ts";
 import { STYLES } from "../src/data/styles.ts";
 import { getStyleGallery, searchCatalogueStyles } from "../src/lib/catalogue.ts";
+import { getPostAuthDestination, getRoleLabel } from "../src/lib/auth/roles.ts";
 
 test("catalogue contains four unique Fits per house category", () => {
   assert.equal(STYLES.length, 24);
@@ -100,6 +101,16 @@ test("redirect sanitizer rejects external and protocol-relative targets", () => 
   assert.equal(sanitizeInternalPath("//evil.example/path"), "/account");
   assert.equal(sanitizeInternalPath("https://evil.example"), "/account");
   assert.equal(sanitizeInternalPath("/\\evil.example"), "/account");
+});
+
+test("post-auth routing separates client, admin, CEO and inactive staff", () => {
+  assert.equal(getPostAuthDestination("/account", "client", null), "/account");
+  assert.equal(getPostAuthDestination("/admin/orders", "client", null), "/auth/access-denied");
+  assert.equal(getPostAuthDestination("/account", "admin", "active"), "/admin");
+  assert.equal(getPostAuthDestination("/admin/orders", "admin", "active"), "/admin/orders");
+  assert.equal(getPostAuthDestination("/admin/staff", "ceo", "active"), "/admin/staff");
+  assert.equal(getPostAuthDestination("/admin", "admin", "inactive"), "/auth/access-denied?reason=inactive");
+  assert.equal(getRoleLabel("ceo"), "CEO / Super Admin");
 });
 
 test("shared validation rejects malformed domain inputs", () => {

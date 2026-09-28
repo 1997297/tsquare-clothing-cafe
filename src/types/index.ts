@@ -97,7 +97,7 @@ export interface SavedLook {
 export interface User {
   id: string;
   email: string;
-  role: "visitor" | "customer" | "admin" | "staff";
+  role: "client" | "admin" | "ceo";
   createdAt: string;
 }
 

@@ -15,11 +15,14 @@ export async function middleware(request: NextRequest) {
   const isExplicitDevelopmentDemo =
     process.env.NODE_ENV !== "production" &&
     process.env.NEXT_PUBLIC_TCC_DEMO_MODE === "true";
+  const isAccountRoute = request.nextUrl.pathname.startsWith("/account");
+  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
+  const isProtectedRoute = isAccountRoute || isAdminRoute;
 
   // Protected routes fail closed. Mock auth is available only when explicitly
   // enabled in a development process.
   if (!supabaseUrl || !supabasePublishableKey || supabaseUrl === "https://your-project-ref.supabase.co") {
-    if (request.nextUrl.pathname.startsWith("/account") && !isExplicitDevelopmentDemo) {
+    if (isProtectedRoute && !isExplicitDevelopmentDemo) {
       const url = request.nextUrl.clone();
       url.pathname = "/auth/sign-in";
       url.search = "";
@@ -52,12 +55,48 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect /account routes
-  if (request.nextUrl.pathname.startsWith("/account") && !isExplicitDevelopmentDemo) {
+  // Refreshing the user above validates the cookie-backed session. Role lookup
+  // is restricted to protected account/admin traffic, never public assets.
+  if (isProtectedRoute && !isExplicitDevelopmentDemo) {
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/auth/sign-in";
+      url.search = "";
       url.searchParams.set("next", request.nextUrl.pathname);
+      return NextResponse.redirect(url);
+    }
+
+    const { data: staff, error: staffError } = await supabase
+      .from("staff_accounts")
+      .select("role, status")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (staffError) {
+      console.error("Protected route authorization lookup failed", {
+        code: staffError.code,
+        pathname: request.nextUrl.pathname,
+      });
+      const url = request.nextUrl.clone();
+      url.pathname = "/auth/access-denied";
+      url.search = "";
+      url.searchParams.set("reason", "service");
+      return NextResponse.redirect(url);
+    }
+
+    if (isAdminRoute && (!staff || staff.status !== "active")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/auth/access-denied";
+      url.search = "";
+      if (staff?.status === "inactive") url.searchParams.set("reason", "inactive");
+      return NextResponse.redirect(url);
+    }
+
+    if (isAccountRoute && staff) {
+      const url = request.nextUrl.clone();
+      url.pathname = staff.status === "active" ? "/admin" : "/auth/access-denied";
+      url.search = "";
+      if (staff.status === "inactive") url.searchParams.set("reason", "inactive");
       return NextResponse.redirect(url);
     }
   }
@@ -66,8 +105,9 @@ export async function middleware(request: NextRequest) {
   if (user && (request.nextUrl.pathname === "/auth/sign-in" || request.nextUrl.pathname === "/auth/create-account")) {
     const next = getSafeAuthRedirect(request.nextUrl.searchParams.get("next"));
     const url = request.nextUrl.clone();
-    url.pathname = next;
+    url.pathname = "/auth/continue";
     url.search = "";
+    url.searchParams.set("next", next);
     return NextResponse.redirect(url);
   }
 
@@ -77,6 +117,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/account/:path*",
+    "/admin/:path*",
     "/auth/:path*",
   ],
 };
