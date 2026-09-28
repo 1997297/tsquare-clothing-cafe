@@ -6,6 +6,21 @@ export type ProductCategory =
   | "bespoke"
   | "formal";
 
+export interface StyleImage {
+  src: string;
+  alt: string;
+  /** Optional focal point used by card and gallery crops. */
+  objectPosition?: string;
+  isPrimary?: boolean;
+}
+
+export interface StyleFabric {
+  name: string;
+  description: string;
+  weight?: string;
+  finish?: string;
+}
+
 export interface Style {
   id: string;
   slug: string;
@@ -16,7 +31,9 @@ export interface Style {
   description: string;
   longDescription?: string;
   images: string[];
+  gallery?: StyleImage[];
   availableColours: { name: string; hex: string }[];
+  availableFabrics?: StyleFabric[];
   fabricInformation: string;
   fitInformation: string;
   occasions: string[];

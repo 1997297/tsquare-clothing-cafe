@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAccountData } from "@/lib/account-store";
-import { getStyleById } from "@/data/styles";
+import { useCatalogue } from "@/lib/catalogue-context";
 import {
   Scissors,
   Repeat,
@@ -23,6 +23,7 @@ export default function WardrobeItemDetailPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const { getStyleById } = useCatalogue();
   const { wardrobe, orders } = useAccountData();
 
   const item = wardrobe.find((w) => w.id === id);

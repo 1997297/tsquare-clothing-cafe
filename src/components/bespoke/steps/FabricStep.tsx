@@ -7,6 +7,7 @@ import { getFabricsForCategory } from "@/data/bespoke-data";
 
 interface FabricStepProps {
   config: BespokeConfiguration;
+  fabrics?: FabricOption[];
   onSelect: (fabric: FabricOption) => void;
   onContinue: () => void;
   onBack: () => void;
@@ -14,12 +15,13 @@ interface FabricStepProps {
 
 export function FabricStep({
   config,
+  fabrics: fitFabrics,
   onSelect,
   onContinue,
   onBack,
 }: FabricStepProps) {
   const category = config.garmentCategory ?? "agbada";
-  const fabrics = getFabricsForCategory(category);
+  const fabrics = fitFabrics?.length ? fitFabrics : getFabricsForCategory(category);
   const selectedId = config.fabric?.id;
 
   return (

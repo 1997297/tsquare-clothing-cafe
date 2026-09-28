@@ -3,16 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSavedStyles } from "@/lib/saved-store";
-import { getStyleById } from "@/data/styles";
 import { Heart, Trash2, ArrowRight, Sparkles, Loader2 } from "lucide-react";
 import { ReturnLink } from "@/components/common/ReturnLink";
 
 export default function AccountSavedPage() {
-  const { savedIds, toggle, error, isLoaded } = useSavedStyles();
-
-  const savedStyles = savedIds
-    .map((id) => getStyleById(id))
-    .filter((s): s is NonNullable<typeof s> => Boolean(s));
+  const { savedStyles, toggle, error, isLoaded } = useSavedStyles();
 
   if (!isLoaded) {
     return (

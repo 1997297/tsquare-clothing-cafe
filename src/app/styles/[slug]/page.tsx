@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
-import { getAllStyles, getStyleBySlug, getRelatedStyles } from "@/data/styles";
+import { STYLES } from "@/data/styles";
+import { getCatalogueSnapshot } from "@/lib/catalogue-server";
+import { getRelatedStyles } from "@/lib/catalogue";
 import StyleDetailClient from "./StyleDetailClient";
 
 interface StylePageProps {
@@ -9,15 +11,15 @@ interface StylePageProps {
 }
 
 export async function generateStaticParams() {
-  const styles = getAllStyles();
-  return styles.map((s) => ({
+  return STYLES.map((s) => ({
     slug: s.slug,
   }));
 }
 
 export async function generateMetadata({ params }: StylePageProps) {
   const { slug } = await params;
-  const style = getStyleBySlug(slug);
+  const { styles } = await getCatalogueSnapshot();
+  const style = styles.find((candidate) => candidate.slug === slug);
   if (!style) return { title: "Style Not Found" };
 
   return {
@@ -40,13 +42,14 @@ export async function generateMetadata({ params }: StylePageProps) {
 
 export default async function StyleDetailPage({ params }: StylePageProps) {
   const { slug } = await params;
-  const style = getStyleBySlug(slug);
+  const { styles } = await getCatalogueSnapshot();
+  const style = styles.find((candidate) => candidate.slug === slug);
 
   if (!style) {
     notFound();
   }
 
-  const relatedStyles = getRelatedStyles(style, 3);
+  const relatedStyles = getRelatedStyles(styles, style, 3);
 
   return <StyleDetailClient style={style} relatedStyles={relatedStyles} />;
 }

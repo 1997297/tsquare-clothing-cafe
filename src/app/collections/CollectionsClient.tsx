@@ -5,12 +5,12 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {  SlidersHorizontal } from "lucide-react";
-import { getAllStyles } from "@/data/styles";
-import { COLLECTIONS } from "@/data/collections";
 import { OCCASIONS } from "@/data/occasions";
 import { StyleCard } from "@/components/features/styles/StyleCard";
+import { useCatalogue } from "@/lib/catalogue-context";
 
 export default function CollectionsClient() {
+  const { styles: allStyles, collections: COLLECTIONS } = useCatalogue();
   const searchParams = useSearchParams();
   const initialOccasion = searchParams.get("occasion") || "all";
 
@@ -24,8 +24,6 @@ export default function CollectionsClient() {
       setSelectedOccasion(occ);
     }
   }, [searchParams]);
-
-  const allStyles = useMemo(() => getAllStyles(), []);
 
   // Filter styles
   const filteredStyles = useMemo(() => {
@@ -219,8 +217,8 @@ export default function CollectionsClient() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-            {filteredStyles.map((style) => (
-              <StyleCard key={style.id} style={style} />
+            {filteredStyles.map((style, index) => (
+              <StyleCard key={style.id} style={style} priority={index < 3} />
             ))}
           </div>
         )}

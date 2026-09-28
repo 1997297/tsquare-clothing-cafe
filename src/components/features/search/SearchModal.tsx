@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
-import { searchStyles } from "@/data/styles";
-import { Style } from "@/types";
 import { trapTabKey } from "@/lib/a11y";
+import { useCatalogue } from "@/lib/catalogue-context";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -14,8 +13,12 @@ interface SearchModalProps {
 }
 
 export function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  const { searchStyles } = useCatalogue();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Style[]>([]);
+  const results = useMemo(
+    () => (query.trim() ? searchStyles(query) : []),
+    [query, searchStyles]
+  );
   const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -34,7 +37,6 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
     } else {
       document.body.style.overflow = "unset";
       setQuery("");
-      setResults([]);
       previousFocusRef.current?.focus();
       previousFocusRef.current = null;
     }
@@ -56,11 +58,6 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
   const handleQueryChange = (val: string) => {
     setQuery(val);
-    if (val.trim().length > 0) {
-      setResults(searchStyles(val));
-    } else {
-      setResults([]);
-    }
   };
 
   const quickTerms = [

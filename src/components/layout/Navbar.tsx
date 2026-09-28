@@ -16,11 +16,12 @@ import { BrandLogo } from "@/components/common/BrandLogo";
 import { SearchModal } from "@/components/features/search/SearchModal";
 import { useSavedStyles } from "@/lib/saved-store";
 import { useAuth } from "@/lib/auth-context";
-import { COLLECTIONS } from "@/data/collections";
+import { useCatalogue } from "@/lib/catalogue-context";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 
 export function Navbar() {
+  const { collections: COLLECTIONS } = useCatalogue();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollectionsDropdownOpen, setIsCollectionsDropdownOpen] = useState(false);

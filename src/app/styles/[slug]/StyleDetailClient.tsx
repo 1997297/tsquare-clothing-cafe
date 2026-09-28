@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,6 +9,8 @@ import {
   Sparkles,
   ArrowRight,
   Check,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Style } from "@/types";
 import { Button } from "@/components/common/Button";
@@ -16,6 +18,7 @@ import { StyleCard } from "@/components/features/styles/StyleCard";
 import { useSavedStyles } from "@/lib/saved-store";
 import { cn } from "@/lib/utils";
 import { ReturnLink } from "@/components/common/ReturnLink";
+import { getStyleGallery } from "@/lib/catalogue";
 
 interface StyleDetailClientProps {
   style: Style;
@@ -27,8 +30,15 @@ export default function StyleDetailClient({
   relatedStyles,
 }: StyleDetailClientProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
   const { isSaved, toggle } = useSavedStyles();
   const saved = isSaved(style.id);
+  const gallery = getStyleGallery(style);
+  const activeImage = gallery[activeImageIndex] ?? gallery[0];
+
+  const selectRelativeImage = (direction: -1 | 1) => {
+    setActiveImageIndex((current) => (current + direction + gallery.length) % gallery.length);
+  };
 
   return (
     <div className="bg-near-black min-h-screen text-warm-ivory pt-24 sm:pt-32 pb-24 selection:bg-champagne selection:text-near-black font-sans">
@@ -57,28 +67,61 @@ export default function StyleDetailClient({
           {/* Gallery (7 Columns) with Rounded-3xl */}
           <div className="lg:col-span-7 space-y-4">
             {/* Main Featured Photo */}
-            <div className="relative aspect-[3/4] w-full overflow-hidden bg-espresso fine-border rounded-3xl shadow-xl">
+            <div
+              className="relative aspect-[3/4] w-full overflow-hidden bg-espresso fine-border rounded-3xl shadow-xl"
+              onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }}
+              onTouchEnd={(event) => {
+                if (touchStartX.current === null || gallery.length < 2) return;
+                const delta = event.changedTouches[0]?.clientX - touchStartX.current;
+                touchStartX.current = null;
+                if (Math.abs(delta) > 45) selectRelativeImage(delta > 0 ? -1 : 1);
+              }}
+            >
               <Image
-                src={style.images[activeImageIndex] || style.images[0]}
-                alt={`${style.name}, view ${activeImageIndex + 1}`}
+                src={activeImage.src}
+                alt={activeImage.alt}
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 60vw"
-                className="object-cover object-top transition-all duration-500"
+                className="object-cover transition-all duration-500"
+                style={{ objectPosition: activeImage.objectPosition ?? "top" }}
               />
               <div className="absolute top-4 left-4 bg-near-black/85 backdrop-blur-md px-3.5 py-1 text-[10px] uppercase font-mono tracking-[0.25em] text-warm-ivory rounded-full border border-stone-800">
                 {style.code}
               </div>
+              {gallery.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => selectRelativeImage(-1)}
+                    aria-label="Previous garment view"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/65 p-2.5 text-white backdrop-blur-md transition-colors hover:bg-black/85 focus:outline-none focus:ring-2 focus:ring-champagne"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => selectRelativeImage(1)}
+                    aria-label="Next garment view"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/65 p-2.5 text-white backdrop-blur-md transition-colors hover:bg-black/85 focus:outline-none focus:ring-2 focus:ring-champagne"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                  <div className="absolute bottom-4 right-4 rounded-full border border-white/15 bg-black/65 px-3 py-1 text-[10px] font-mono text-white backdrop-blur-md">
+                    {activeImageIndex + 1} / {gallery.length}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Thumbnail Selectors if multiple images exist */}
-            {style.images.length > 1 && (
+            {gallery.length > 1 && (
               <div className="flex items-center gap-3 overflow-x-auto pb-2">
-                {style.images.map((img, idx) => (
+                {gallery.map((image, idx) => (
                   <button
-                    key={idx}
+                    key={`${image.src}-${idx}`}
                     onClick={() => setActiveImageIndex(idx)}
-                    aria-label={`View photo ${idx + 1}`}
+                    aria-label={`View ${image.alt}`}
                     className={cn(
                       "relative h-24 w-20 shrink-0 overflow-hidden fine-border rounded-xl transition-all focus:outline-none",
                       activeImageIndex === idx
@@ -87,11 +130,12 @@ export default function StyleDetailClient({
                     )}
                   >
                     <Image
-                      src={img}
-                      alt={`${style.name} thumbnail ${idx + 1}`}
+                      src={image.src}
+                      alt={image.alt}
                       fill
                       sizes="80px"
-                      className="object-cover object-top"
+                      className="object-cover"
+                      style={{ objectPosition: image.objectPosition ?? "top" }}
                     />
                   </button>
                 ))}
@@ -146,13 +190,29 @@ export default function StyleDetailClient({
 
             {/* Fabric & Fit Specifications with Rounded-2xl */}
             <div className="space-y-4 text-xs">
-              <div className="p-4 bg-stone-950 fine-border rounded-2xl space-y-1">
+              <div className="p-4 bg-stone-950 fine-border rounded-2xl space-y-2">
                 <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-stone-400 font-semibold block">
                   Fabric Architecture
                 </span>
-                <p className="text-stone-300 font-light leading-relaxed">
-                  {style.fabricInformation}
-                </p>
+                {style.availableFabrics?.length ? (
+                  <div className="space-y-3">
+                    {style.availableFabrics.map((fabric) => (
+                      <div key={fabric.name} className="border-t border-stone-800/70 pt-2 first:border-0 first:pt-0">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="font-medium text-warm-ivory">{fabric.name}</span>
+                          {(fabric.weight || fabric.finish) && (
+                            <span className="text-[9px] uppercase tracking-wider text-stone-500">
+                              {[fabric.weight, fabric.finish].filter(Boolean).join(" · ")}
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-1 text-stone-400 font-light leading-relaxed">{fabric.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-stone-300 font-light leading-relaxed">{style.fabricInformation}</p>
+                )}
               </div>
 
               <div className="p-4 bg-stone-950 fine-border rounded-2xl space-y-1">

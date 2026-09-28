@@ -7,20 +7,21 @@ import { COLOURS } from "@/data/bespoke-data";
 
 interface ColourStepProps {
   config: BespokeConfiguration;
+  colours?: ColourOption[];
   onSelect: (colour: ColourOption) => void;
   onContinue: () => void;
   onBack: () => void;
 }
 
-const COLOUR_GROUPS = ["Neutrals", "Warm Tones", "Cool Tones", "Deep Tones"];
-
 export function ColourStep({
   config,
+  colours = COLOURS,
   onSelect,
   onContinue,
   onBack,
 }: ColourStepProps) {
   const selectedId = config.colour?.id;
+  const colourGroups = Array.from(new Set(colours.map((colour) => colour.group ?? "Fit Palette")));
 
   return (
     <div className="animate-in fade-in duration-300">
@@ -35,8 +36,8 @@ export function ColourStep({
       </p>
 
       <div className="space-y-8 mb-10">
-        {COLOUR_GROUPS.map((group) => {
-          const groupColours = COLOURS.filter((c) => c.group === group);
+        {colourGroups.map((group) => {
+          const groupColours = colours.filter((colour) => (colour.group ?? "Fit Palette") === group);
           if (!groupColours.length) return null;
           return (
             <div key={group}>

@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { BrandLogo } from "@/components/common/BrandLogo";
-import { COLLECTIONS } from "@/data/collections";
+import { useCatalogue } from "@/lib/catalogue-context";
 import { MapPin } from "lucide-react";
 
 export function Footer() {
+  const { collections: COLLECTIONS } = useCatalogue();
   return (
     <footer className="bg-near-black text-warm-ivory border-t border-stone-800/80 pt-16 sm:pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

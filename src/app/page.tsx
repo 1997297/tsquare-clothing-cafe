@@ -3,12 +3,12 @@ import Link from "next/link";
 import { ArrowRight, Calendar, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { StyleCard } from "@/components/features/styles/StyleCard";
-import { getFeaturedStyles } from "@/data/styles";
-import { COLLECTIONS } from "@/data/collections";
 import { OCCASIONS } from "@/data/occasions";
+import { getCatalogueSnapshot } from "@/lib/catalogue-server";
 
-export default function HomePage() {
-  const featuredStyles = getFeaturedStyles();
+export default async function HomePage() {
+  const { styles, collections: COLLECTIONS } = await getCatalogueSnapshot();
+  const featuredStyles = styles.filter((style) => style.featured);
 
   return (
     <div className="flex flex-col bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black font-sans">

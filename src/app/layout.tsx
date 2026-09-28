@@ -6,6 +6,8 @@ import { AuthProvider } from "@/lib/auth-context";
 import { AccountDataProvider } from "@/lib/account-store";
 import { SavedStylesProvider } from "@/lib/saved-store";
 import { ThemeProvider } from "@/lib/theme-context";
+import { CatalogueProvider } from "@/lib/catalogue-context";
+import { getCatalogueSnapshot } from "@/lib/catalogue-server";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -67,11 +69,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const catalogue = await getCatalogueSnapshot();
+
   return (
     <html
       lang="en"
@@ -89,13 +93,15 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black font-sans">
         <ThemeProvider>
-          <AuthProvider>
-            <SavedStylesProvider>
-              <AccountDataProvider>
-                <SiteLayout>{children}</SiteLayout>
-              </AccountDataProvider>
-            </SavedStylesProvider>
-          </AuthProvider>
+          <CatalogueProvider styles={catalogue.styles} collections={catalogue.collections}>
+            <AuthProvider>
+              <SavedStylesProvider>
+                <AccountDataProvider>
+                  <SiteLayout>{children}</SiteLayout>
+                </AccountDataProvider>
+              </SavedStylesProvider>
+            </AuthProvider>
+          </CatalogueProvider>
         </ThemeProvider>
       </body>
     </html>

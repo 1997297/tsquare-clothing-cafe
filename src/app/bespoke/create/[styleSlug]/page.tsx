@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getStyleBySlug } from "@/data/styles";
+import { getCatalogueSnapshot } from "@/lib/catalogue-server";
 import { BespokeConfigurator } from "./BespokeConfigurator";
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { styleSlug } = await params;
+  const { styles } = await getCatalogueSnapshot();
 
   if (styleSlug === "idea") {
     return {
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const style = getStyleBySlug(styleSlug);
+  const style = styles.find((candidate) => candidate.slug === styleSlug);
   if (!style) return { title: "Style Not Found" };
 
   return {
@@ -31,11 +32,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BespokeCreatePage({ params, searchParams }: Props) {
   const { styleSlug } = await params;
   const query = await searchParams;
+  const { styles } = await getCatalogueSnapshot();
   const isIdeaPath = styleSlug === "idea";
 
   let style = null;
   if (!isIdeaPath) {
-    style = getStyleBySlug(styleSlug);
+    style = styles.find((candidate) => candidate.slug === styleSlug);
     if (!style) notFound();
   }
 

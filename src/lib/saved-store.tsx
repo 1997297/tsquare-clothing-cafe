@@ -11,9 +11,9 @@ import {
   type ReactNode,
 } from "react";
 import type { Style } from "@/types";
-import { getAllStyles } from "@/data/styles";
 import { useAuth } from "./auth-context";
 import { isSupabaseConfigured, supabase } from "./supabase/client";
+import { useCatalogue } from "./catalogue-context";
 
 const STORAGE_KEY = "tcc_saved_looks_v1";
 
@@ -47,6 +47,7 @@ function persistGuestIds(ids: string[]) {
 }
 
 export function SavedStylesProvider({ children }: { children: ReactNode }) {
+  const { styles } = useCatalogue();
   const { user, isLoading: isAuthLoading } = useAuth();
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const savedIdsRef = useRef<string[]>([]);
@@ -193,8 +194,8 @@ export function SavedStylesProvider({ children }: { children: ReactNode }) {
   const save = useCallback((id: string) => setSaved(id, true), [setSaved]);
   const remove = useCallback((id: string) => setSaved(id, false), [setSaved]);
   const savedStyles = useMemo(
-    () => (isLoaded ? getAllStyles().filter((style) => savedIds.includes(style.id)) : []),
-    [isLoaded, savedIds]
+    () => (isLoaded ? styles.filter((style) => savedIds.includes(style.id)) : []),
+    [isLoaded, savedIds, styles]
   );
 
   const value = useMemo(

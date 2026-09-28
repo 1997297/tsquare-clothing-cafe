@@ -1,26 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
-import { searchStyles, getAllStyles } from "@/data/styles";
 import { StyleCard } from "@/components/features/styles/StyleCard";
-import { Style } from "@/types";
+import { useCatalogue } from "@/lib/catalogue-context";
 
 export default function SearchClient() {
+  const { styles, searchStyles } = useCatalogue();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
 
   const [query, setQuery] = useState(initialQuery);
-  const [results, setResults] = useState<Style[]>([]);
-
-  useEffect(() => {
-    if (query.trim().length > 0) {
-      setResults(searchStyles(query));
-    } else {
-      setResults(getAllStyles().slice(0, 6));
-    }
-  }, [query]);
+  const results = useMemo(
+    () => (query.trim() ? searchStyles(query) : styles.slice(0, 6)),
+    [query, searchStyles, styles]
+  );
 
   const quickTerms = [
     "Agbada",

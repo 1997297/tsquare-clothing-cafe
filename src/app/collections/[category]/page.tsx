@@ -2,10 +2,11 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
-import { COLLECTIONS, getCollectionBySlug } from "@/data/collections";
-import { getStylesByCategory } from "@/data/styles";
+import { COLLECTIONS } from "@/data/collections";
 import { StyleCard } from "@/components/features/styles/StyleCard";
 import { ProductCategory } from "@/types";
+import { getCatalogueSnapshot } from "@/lib/catalogue-server";
+import { getCollectionBySlug, getStylesByCategory } from "@/lib/catalogue";
 
 interface CategoryPageProps {
   params: Promise<{
@@ -21,7 +22,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: CategoryPageProps) {
   const { category } = await params;
-  const collection = getCollectionBySlug(category);
+  const { collections } = await getCatalogueSnapshot();
+  const collection = getCollectionBySlug(collections, category);
   if (!collection) return { title: "Collection Not Found" };
 
   return {
@@ -32,13 +34,14 @@ export async function generateMetadata({ params }: CategoryPageProps) {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category } = await params;
-  const collection = getCollectionBySlug(category);
+  const { styles, collections } = await getCatalogueSnapshot();
+  const collection = getCollectionBySlug(collections, category);
 
   if (!collection) {
     notFound();
   }
 
-  const categoryStyles = getStylesByCategory(collection.slug as ProductCategory);
+  const categoryStyles = getStylesByCategory(styles, collection.slug as ProductCategory);
 
   return (
     <div className="bg-near-black min-h-screen text-warm-ivory selection:bg-champagne selection:text-near-black font-sans">
@@ -133,8 +136,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-            {categoryStyles.map((style) => (
-              <StyleCard key={style.id} style={style} />
+            {categoryStyles.map((style, index) => (
+              <StyleCard key={style.id} style={style} priority={index < 3} />
             ))}
           </div>
         )}

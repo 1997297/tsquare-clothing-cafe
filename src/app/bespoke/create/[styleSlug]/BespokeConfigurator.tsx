@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Style } from "@/types";
 import { ProductCategory } from "@/types";
 import { completeSubmission, useBespokeConfig } from "@/lib/bespoke-store";
@@ -19,6 +19,7 @@ import { RequiredDateStep } from "@/components/bespoke/steps/RequiredDateStep";
 import { AppointmentStep } from "@/components/bespoke/steps/AppointmentStep";
 import { ContactStep } from "@/components/bespoke/steps/ContactStep";
 import { ReviewStep } from "@/components/bespoke/steps/ReviewStep";
+import type { ColourOption, FabricOption } from "@/types/bespoke";
 
 interface BespokeConfiguratorProps {
   styleSlug: string;
@@ -54,6 +55,29 @@ export function BespokeConfigurator({
   const { addBespokeRequest, wardrobe } = useAccountData();
   const { user } = useAuth();
   const inspirationApplied = useRef(false);
+  const fitFabrics = useMemo<FabricOption[] | undefined>(() => {
+    if (!style) return undefined;
+    const fabrics = style.availableFabrics?.length
+      ? style.availableFabrics
+      : [{ name: "Signature Fit Fabric", description: style.fabricInformation }];
+    return fabrics.map((fabric, index) => ({
+      id: `${style.id}-fabric-${index + 1}`,
+      name: fabric.name,
+      description: fabric.description,
+      weight: fabric.weight,
+      finish: fabric.finish,
+      categories: [style.category],
+    }));
+  }, [style]);
+  const fitColours = useMemo<ColourOption[] | undefined>(
+    () => style?.availableColours.map((colour, index) => ({
+      id: `${style.id}-colour-${index + 1}`,
+      name: colour.name,
+      hex: colour.hex,
+      group: "Fit Palette",
+    })),
+    [style]
+  );
 
   const handleBespokeSubmit = async () => {
     const payload = submitRequest();
@@ -139,6 +163,7 @@ export function BespokeConfigurator({
         return (
           <FabricStep
             config={config}
+            fabrics={fitFabrics}
             onSelect={setFabric}
             onContinue={goNext}
             onBack={goBack}
@@ -149,6 +174,7 @@ export function BespokeConfigurator({
         return (
           <ColourStep
             config={config}
+            colours={fitColours}
             onSelect={setColour}
             onContinue={goNext}
             onBack={goBack}

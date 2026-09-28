@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import {
   canCreateWardrobeItem,
   isRequestEligibleForConversion,
@@ -15,6 +17,42 @@ import {
   validateMeasurementVersion,
   validateReferenceFile,
 } from "../src/lib/validation.ts";
+import { STYLES } from "../src/data/styles.ts";
+import { getStyleGallery, searchCatalogueStyles } from "../src/lib/catalogue.ts";
+
+test("catalogue contains four unique Fits per house category", () => {
+  assert.equal(STYLES.length, 24);
+  assert.equal(new Set(STYLES.map((style) => style.id)).size, 24);
+  assert.equal(new Set(STYLES.map((style) => style.slug)).size, 24);
+  assert.equal(new Set(STYLES.map((style) => style.code)).size, 24);
+
+  for (const category of ["agbada", "senator", "kaftan", "traditional", "bespoke", "formal"] as const) {
+    assert.equal(STYLES.filter((style) => style.category === category).length, 4);
+  }
+});
+
+test("catalogue images are local and every Fit resolves a truthful gallery", () => {
+  for (const style of STYLES) {
+    const gallery = getStyleGallery(style);
+    assert.ok(gallery.length >= 1, `${style.code} has no gallery`);
+    for (const image of gallery) {
+      assert.ok(image.src.startsWith("/images/"), `${style.code} has a remote image`);
+      assert.ok(
+        existsSync(join(process.cwd(), "public", image.src.replace(/^\/+/, ""))),
+        `${style.code} image is missing: ${image.src}`
+      );
+      assert.ok(image.alt.length > 5, `${style.code} image needs useful alt text`);
+    }
+  }
+});
+
+test("new Fit fabrics and colours are searchable configuration data", () => {
+  const garnet = STYLES.find((style) => style.id === "tsq-agbada-031");
+  assert.ok(garnet);
+  assert.ok((garnet.availableFabrics?.length ?? 0) >= 2);
+  assert.ok(garnet.availableColours.length >= 2);
+  assert.equal(searchCatalogueStyles(STYLES, "Silk-Wool Damask")[0]?.id, garnet.id);
+});
 
 test("money uses deliberate integer minor-unit conversions", () => {
   assert.equal(nairaToMinor(1250.5), 125050);

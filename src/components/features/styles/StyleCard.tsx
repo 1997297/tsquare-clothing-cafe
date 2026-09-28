@@ -6,6 +6,7 @@ import { Heart } from "lucide-react";
 import { Style } from "@/types";
 import { useSavedStyles } from "@/lib/saved-store";
 import { cn } from "@/lib/utils";
+import { getPrimaryStyleImage } from "@/lib/catalogue";
 
 interface StyleCardProps {
   style: Style;
@@ -16,6 +17,7 @@ interface StyleCardProps {
 export function StyleCard({ style, priority = false, className }: StyleCardProps) {
   const { isSaved, toggle } = useSavedStyles();
   const saved = isSaved(style.id);
+  const primaryImage = getPrimaryStyleImage(style);
 
   const handleToggleSave = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,12 +40,13 @@ export function StyleCard({ style, priority = false, className }: StyleCardProps
           tabIndex={-1}
         >
           <Image
-            src={style.images[0]}
-            alt={style.name}
+            src={primaryImage.src}
+            alt={primaryImage.alt}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             priority={priority}
-            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            style={{ objectPosition: primaryImage.objectPosition ?? "center" }}
           />
           {/* Subtle vignette gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />

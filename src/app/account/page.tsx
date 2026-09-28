@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { useAccountData } from "@/lib/account-store";
 import { useSavedStyles } from "@/lib/saved-store";
-import { getStyleById } from "@/data/styles";
+import { useCatalogue } from "@/lib/catalogue-context";
 import {
   Sparkles,
   ArrowRight,
@@ -31,6 +31,7 @@ const CRAFTSMANSHIP_STAGES = [
 ];
 
 export default function AccountOverviewPage() {
+  const { getStyleById } = useCatalogue();
   const { profile } = useAuth();
   const {
     orders,
