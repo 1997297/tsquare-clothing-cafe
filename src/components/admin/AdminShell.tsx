@@ -16,12 +16,18 @@ import {
   MessageSquareText,
   PackageCheck,
   ShieldCheck,
+<<<<<<< HEAD
   UserRound,
+=======
+>>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
   Users,
   X,
 } from "lucide-react";
 import { BrandLogo } from "@/components/common/BrandLogo";
+<<<<<<< HEAD
 import { ProfileAvatar } from "@/components/common/ProfileAvatar";
+=======
+>>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { useAuth } from "@/lib/auth-context";
 import { getRoleLabel, type StaffRole } from "@/lib/auth/roles";
@@ -44,9 +50,12 @@ interface AdminShellProps {
     displayName: string;
     email: string;
     role: StaffRole;
+<<<<<<< HEAD
     firstName: string;
     lastName: string;
     avatarUrl: string | null;
+=======
+>>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
   };
 }
 
@@ -58,12 +67,15 @@ export function AdminShell({ children, identity }: AdminShellProps) {
   const navigation = identity.role === "ceo"
     ? [...OPERATIONAL_NAV, { href: "/admin/staff", label: "Staff", icon: ShieldCheck }]
     : OPERATIONAL_NAV;
+<<<<<<< HEAD
   const avatarIdentity = {
     firstName: identity.firstName,
     lastName: identity.lastName,
     avatarUrl: identity.avatarUrl,
   };
   const profileActive = pathname === "/admin/profile";
+=======
+>>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
 
   useEffect(() => setMobileOpen(false), [pathname]);
 
@@ -122,6 +134,7 @@ export function AdminShell({ children, identity }: AdminShellProps) {
           <div className="ml-auto flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
             <div className="hidden h-6 w-px bg-stone-800 sm:block" />
+<<<<<<< HEAD
             <Link
               href="/admin/profile"
               aria-label="Open staff profile"
@@ -144,6 +157,17 @@ export function AdminShell({ children, identity }: AdminShellProps) {
                 priority
               />
             </Link>
+=======
+            <div className="hidden text-right md:block">
+              <p className="max-w-48 truncate text-xs font-medium text-warm-ivory">{identity.displayName}</p>
+              <p className="mt-1 text-[9px] font-mono uppercase tracking-[0.2em] text-champagne-dark">
+                {getRoleLabel(identity.role)}
+              </p>
+            </div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-champagne/30 bg-champagne/10 text-xs font-semibold text-champagne">
+              {identity.displayName.charAt(0).toUpperCase()}
+            </div>
+>>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
             <button
               type="button"
               onClick={async () => {
@@ -162,6 +186,7 @@ export function AdminShell({ children, identity }: AdminShellProps) {
 
       {mobileOpen && (
         <div className="fixed inset-0 top-16 z-30 bg-near-black/95 px-4 py-6 backdrop-blur-2xl sm:top-20 lg:hidden">
+<<<<<<< HEAD
           <Link
             href="/admin/profile"
             aria-current={profileActive ? "page" : undefined}
@@ -180,6 +205,15 @@ export function AdminShell({ children, identity }: AdminShellProps) {
             </div>
             <span className="text-[9px] font-mono uppercase tracking-widest text-champagne">Profile</span>
           </Link>
+=======
+          <div className="mb-6 rounded-2xl border border-stone-800 bg-stone-950/60 p-4">
+            <p className="truncate text-sm font-medium">{identity.displayName}</p>
+            <p className="mt-1 truncate text-xs text-stone-500">{identity.email}</p>
+            <p className="mt-3 text-[9px] font-mono uppercase tracking-[0.2em] text-champagne-dark">
+              {getRoleLabel(identity.role)}
+            </p>
+          </div>
+>>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
           {nav}
         </div>
       )}
@@ -196,6 +230,7 @@ export function AdminShell({ children, identity }: AdminShellProps) {
             </p>
           </div>
           {nav}
+<<<<<<< HEAD
           <div className="mt-auto space-y-2">
             <Link
               href="/admin/profile"
@@ -217,6 +252,14 @@ export function AdminShell({ children, identity }: AdminShellProps) {
               Return to Boutique
             </Link>
           </div>
+=======
+          <Link
+            href="/"
+            className="mt-auto rounded-xl border border-stone-800 px-4 py-3 text-center text-[10px] uppercase tracking-[0.2em] text-stone-500 hover:text-warm-ivory"
+          >
+            Return to Boutique
+          </Link>
+>>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
         </aside>
 
         <main id="admin-content" className="min-w-0 flex-1 px-4 py-8 sm:px-6 sm:py-10 lg:px-10 xl:px-14">
