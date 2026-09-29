@@ -1,6 +1,6 @@
 begin;
 
-select plan(40);
+select plan(48);
 
 select ok((select relrowsecurity from pg_class where oid = 'public.measurement_profiles'::regclass), 'measurement RLS is enabled');
 select ok((select relrowsecurity from pg_class where oid = 'public.bespoke_requests'::regclass), 'request RLS is enabled');
@@ -43,5 +43,13 @@ select ok(has_function_privilege('authenticated', 'public.replace_catalogue_fit_
 select is((select prosecdef from pg_proc where oid = 'public.reorder_catalogue_fit_images(text,bigint[],bigint)'::regprocedure), false, 'gallery reordering uses invoker rights');
 select is((select count(*)::integer from storage.buckets where id = 'catalogue-media' and not public and file_size_limit = 8388608 and allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp']), 1, 'catalogue media bucket is private and image-limited');
 
+select ok(not has_function_privilege('service_role', 'public.submit_bespoke_request(uuid,jsonb)', 'EXECUTE'), 'legacy submit is retired for service role');
+select ok(not has_function_privilege('service_role', 'public.convert_bespoke_request_to_order(uuid,uuid,text)', 'EXECUTE'), 'legacy conversion is retired for service role');
+select ok(not has_column_privilege('authenticated', 'public.bespoke_requests', 'admin_notes', 'SELECT'), 'legacy private notes are never customer-readable');
+select ok(not has_table_privilege('authenticated', 'public.bespoke_request_revisions', 'UPDATE'), 'browser cannot rewrite revisions');
+select ok((select relrowsecurity from pg_class where oid = 'public.commission_private_notes'::regclass), 'private note RLS enabled');
+select ok((select relrowsecurity from pg_class where oid = 'public.bespoke_request_revisions'::regclass), 'revision RLS enabled');
+select ok(has_function_privilege('authenticated', 'public.convert_bespoke_request_to_order(uuid,bigint,uuid)', 'EXECUTE'), 'authenticated RPC available with SQL staff authorization');
+select ok(not has_function_privilege('authenticated', 'private.commission_payload(jsonb,public.bespoke_requests)', 'EXECUTE'), 'canonicalization helper is private');
 select * from finish();
 rollback;
