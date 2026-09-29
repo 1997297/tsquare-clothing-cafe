@@ -23,11 +23,13 @@ import { getStyleGallery } from "@/lib/catalogue";
 interface StyleDetailClientProps {
   style: Style;
   relatedStyles: Style[];
+  previewMode?: { status: string; editHref: string };
 }
 
 export default function StyleDetailClient({
   style,
   relatedStyles,
+  previewMode,
 }: StyleDetailClientProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
@@ -43,8 +45,17 @@ export default function StyleDetailClient({
   return (
     <div className="bg-near-black min-h-screen text-warm-ivory pt-24 sm:pt-32 pb-24 selection:bg-champagne selection:text-near-black font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {previewMode && (
+          <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-amber-800/60 bg-amber-950/30 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-amber-400">Staff-only preview · {previewMode.status}</p>
+              <p className="mt-1 text-xs text-stone-400">Customer actions are disabled in preview mode.</p>
+            </div>
+            <Link href={previewMode.editHref} className="text-xs uppercase tracking-widest text-champagne hover:text-champagne-light">Return to editor</Link>
+          </div>
+        )}
         <div className="mb-5">
-          <ReturnLink href={`/collections/${style.category}`} label={`Back to ${style.categoryLabel}`} />
+          <ReturnLink href={previewMode ? previewMode.editHref : `/collections/${style.category}`} label={previewMode ? "Back to Fit editor" : `Back to ${style.categoryLabel}`} />
         </div>
         {/* Breadcrumb Navigation */}
         <div className="flex items-center gap-2 text-[10px] uppercase font-mono tracking-[0.22em] text-stone-500 mb-8 sm:mb-12">
@@ -266,7 +277,7 @@ export default function StyleDetailClient({
             </div>
 
             {/* Primary Action Buttons: MAKE THIS MINE */}
-            <div className="pt-4 space-y-3">
+            {!previewMode ? <div className="pt-4 space-y-3">
               <Button
                 href={`/bespoke/create/${style.slug}`}
                 variant="champagne"
@@ -308,7 +319,7 @@ export default function StyleDetailClient({
               <p className="text-[10px] text-center text-stone-500 font-mono tracking-widest pt-1">
                 Zero Mass Production • Individually Tailored at TCC
               </p>
-            </div>
+            </div> : <div className="rounded-2xl border border-dashed border-stone-700 p-5 text-center text-xs uppercase tracking-widest text-stone-500">Customer actions disabled for staff preview</div>}
           </div>
         </div>
 

@@ -80,16 +80,16 @@ export default async function AdminOverviewPage() {
         </div>
 
         <div className="rounded-3xl border border-stone-800 bg-stone-950/60 p-6 sm:p-8">
-          <p className="text-[9px] font-mono uppercase tracking-[0.22em] text-champagne-dark">Phase Boundary</p>
-          <h2 className="mt-2 font-display text-2xl">Control room secured</h2>
+          <p className="text-[9px] font-mono uppercase tracking-[0.22em] text-champagne-dark">Catalogue Operations</p>
+          <h2 className="mt-2 font-display text-2xl">Collections are live</h2>
           <p className="mt-4 text-sm leading-7 text-stone-400">
-            Phase 2 establishes authorization and route foundations. Collection editing and operational workflows remain intentionally locked for their scheduled phases.
+            Authorized staff can now manage categories, Fits, galleries, fabrics, colours and publication status without weakening the client-facing catalogue boundary.
           </p>
           <Link
             href="/admin/collections"
             className="mt-7 inline-flex items-center gap-2 text-xs uppercase tracking-widest text-champagne hover:text-champagne-light"
           >
-            View Collection foundation
+            Manage Collections
             <ArrowUpRight className="h-4 w-4" />
           </Link>
         </div>

@@ -22,6 +22,13 @@ import {
 import { STYLES } from "../src/data/styles.ts";
 import { getStyleGallery, searchCatalogueStyles } from "../src/lib/catalogue.ts";
 import { getPostAuthDestination, getRoleLabel } from "../src/lib/auth/roles.ts";
+import {
+  isOwnedCatalogueMediaPath,
+  slugifyCatalogueValue,
+  validateCategoryMutation,
+  validateColourMutation,
+  validateFitMutation,
+} from "../src/lib/catalogue-admin.ts";
 
 test("catalogue contains four unique Fits per house category", () => {
   assert.equal(STYLES.length, 24);
@@ -210,4 +217,41 @@ test("bespoke validation accepts a complete request and rejects non-durable refe
       }],
     },
   }).success, false);
+});
+
+test("catalogue media references stay inside the intended Fit folder", () => {
+  const fitId = "fit-550e8400-e29b-41d4-a716-446655440000";
+  const objectId = "123e4567-e89b-42d3-a456-426614174000";
+  assert.equal(isOwnedCatalogueMediaPath(`${fitId}/${objectId}.webp`, fitId), true);
+  assert.equal(isOwnedCatalogueMediaPath(`fit-other/${objectId}.webp`, fitId), false);
+  assert.equal(isOwnedCatalogueMediaPath(`${fitId}/../${objectId}.webp`, fitId), false);
+  assert.equal(isOwnedCatalogueMediaPath(`https://example.com/${objectId}.webp`, fitId), false);
+});
+
+test("catalogue validators normalize inputs and reject authority injection", () => {
+  const validFit = {
+    name: "  Midnight Governor  ", code: " tcc 301 ", categorySlug: "senator",
+    description: "A precise formal Fit.", longDescription: "", fabricInformation: "Mid-weight wool.",
+    fitInformation: "Tailored through the shoulder.", occasions: ["Office", "Office"], featured: false,
+    collectionName: "Civic Atelier", tags: ["Formal"], leadTimeWeeks: 4,
+    craftsmanshipHighlights: ["Hand-finished"], displayOrder: 3, status: "draft",
+    fabricIds: ["fab-wool"], colourIds: ["clr-black"],
+  };
+  const result = validateFitMutation(validFit);
+  assert.equal(result.success, true);
+  if (result.success) {
+    assert.equal(result.data.name, "Midnight Governor");
+    assert.equal(result.data.code, "TCC 301");
+    assert.deepEqual(result.data.occasions, ["Office"]);
+  }
+  assert.equal(validateFitMutation({ ...validFit, uploadedBy: "someone-else" }).success, false);
+  assert.equal(validateColourMutation({ name: "Onyx", hex: "#0a0b0c", isActive: true }).success, true);
+  assert.equal(validateColourMutation({ name: "Onyx", hex: "black", isActive: true }).success, false);
+});
+
+test("catalogue category validation permits only safe image references", () => {
+  const base = { name: "Evening", tagline: "After-dark tailoring", description: "Formal evening Fits.", heroImage: "/images/editorial/hero-editorial.jpg", featuredQuote: "Made for arrival.", characteristics: ["Structured"], displayOrder: 7, isActive: true };
+  assert.equal(validateCategoryMutation(base).success, true);
+  assert.equal(validateCategoryMutation({ ...base, heroImage: "javascript:alert(1)" }).success, false);
+  assert.equal(slugifyCatalogueValue(" Àṣẹ Evening / Edit "), "ase-evening-edit");
 });

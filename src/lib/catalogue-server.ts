@@ -4,10 +4,12 @@ import { createClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
 import { COLLECTIONS } from "@/data/collections";
 import { STYLES } from "@/data/styles";
-import type { Collection, ProductCategory, Style } from "@/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Collection, Style } from "@/types";
 
 interface CatalogueImageRow {
-  image_path: string;
+  image_path: string | null;
+  storage_object_path: string | null;
   alt_text: string;
   object_position: string | null;
   sort_order: number;
@@ -15,6 +17,7 @@ interface CatalogueImageRow {
 }
 
 interface CatalogueFabricRow {
+  id: string;
   name: string;
   description: string;
   weight: string | null;
@@ -23,9 +26,20 @@ interface CatalogueFabricRow {
 }
 
 interface CatalogueColourRow {
+  id: string;
   name: string;
   hex: string;
   sort_order: number;
+}
+
+interface CatalogueFabricLinkRow {
+  sort_order: number;
+  catalogue_fabrics: CatalogueFabricRow | null;
+}
+
+interface CatalogueColourLinkRow {
+  sort_order: number;
+  catalogue_colours: CatalogueColourRow | null;
 }
 
 interface CatalogueFitRow {
@@ -33,7 +47,7 @@ interface CatalogueFitRow {
   slug: string;
   code: string;
   name: string;
-  category_slug: ProductCategory;
+  category_slug: string;
   description: string;
   long_description: string | null;
   fabric_information: string;
@@ -45,12 +59,12 @@ interface CatalogueFitRow {
   lead_time_weeks: number | null;
   craftsmanship_highlights: string[];
   catalogue_fit_images: CatalogueImageRow[];
-  catalogue_fit_fabrics: CatalogueFabricRow[];
-  catalogue_fit_colours: CatalogueColourRow[];
+  catalogue_fit_fabrics: CatalogueFabricLinkRow[];
+  catalogue_fit_colours: CatalogueColourLinkRow[];
 }
 
 interface CatalogueCategoryRow {
-  slug: ProductCategory;
+  slug: string;
   name: string;
   tagline: string;
   description: string;
@@ -71,12 +85,34 @@ const fallbackSnapshot: CatalogueSnapshot = {
   source: "fallback",
 };
 
-function mapFit(row: CatalogueFitRow): Style {
-  const images = [...(row.catalogue_fit_images ?? [])].sort(
-    (a, b) => Number(b.is_primary) - Number(a.is_primary) || a.sort_order - b.sort_order
-  );
-  const fabrics = [...(row.catalogue_fit_fabrics ?? [])].sort((a, b) => a.sort_order - b.sort_order);
-  const colours = [...(row.catalogue_fit_colours ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+async function resolveImageSource(
+  supabase: SupabaseClient,
+  image: CatalogueImageRow
+) {
+  if (!image.storage_object_path) return image.image_path ?? "/images/editorial/hero-editorial.jpg";
+  const { data, error } = await supabase.storage
+    .from("catalogue-media")
+    .createSignedUrl(image.storage_object_path, 7200);
+  if (error || !data?.signedUrl) {
+    console.error("Catalogue media signing failed", { message: error?.message });
+    return "/images/editorial/hero-editorial.jpg";
+  }
+  return data.signedUrl;
+}
+
+async function mapFit(
+  supabase: SupabaseClient,
+  row: CatalogueFitRow,
+  categoryName: string
+): Promise<Style> {
+  const images = [...(row.catalogue_fit_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+  const imageSources = await Promise.all(images.map((image) => resolveImageSource(supabase, image)));
+  const fabrics = [...(row.catalogue_fit_fabrics ?? [])]
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .flatMap((link) => (link.catalogue_fabrics ? [link.catalogue_fabrics] : []));
+  const colours = [...(row.catalogue_fit_colours ?? [])]
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .flatMap((link) => (link.catalogue_colours ? [link.catalogue_colours] : []));
 
   return {
     id: row.id,
@@ -84,12 +120,12 @@ function mapFit(row: CatalogueFitRow): Style {
     code: row.code,
     name: row.name,
     category: row.category_slug,
-    categoryLabel: row.category_slug.charAt(0).toUpperCase() + row.category_slug.slice(1),
+    categoryLabel: categoryName,
     description: row.description,
     longDescription: row.long_description ?? undefined,
-    images: images.map((image) => image.image_path),
-    gallery: images.map((image) => ({
-      src: image.image_path,
+    images: imageSources,
+    gallery: images.map((image, index) => ({
+      src: imageSources[index],
       alt: image.alt_text,
       objectPosition: image.object_position ?? undefined,
       isPrimary: image.is_primary,
@@ -144,9 +180,9 @@ const loadCatalogue = unstable_cache(
         supabase
           .from("catalogue_fits")
           .select(
-            "id,slug,code,name,category_slug,description,long_description,fabric_information,fit_information,occasions,featured,collection_name,tags,lead_time_weeks,craftsmanship_highlights,catalogue_fit_images(image_path,alt_text,object_position,sort_order,is_primary),catalogue_fit_fabrics(name,description,weight,finish,sort_order),catalogue_fit_colours(name,hex,sort_order)"
+            "id,slug,code,name,category_slug,description,long_description,fabric_information,fit_information,occasions,featured,collection_name,tags,lead_time_weeks,craftsmanship_highlights,catalogue_fit_images(image_path,storage_object_path,alt_text,object_position,sort_order,is_primary),catalogue_fit_fabrics(sort_order,catalogue_fabrics(id,name,description,weight,finish)),catalogue_fit_colours(sort_order,catalogue_colours(id,name,hex))"
           )
-          .eq("is_active", true)
+          .eq("status", "published")
           .order("display_order"),
         supabase
           .from("catalogue_categories")
@@ -155,7 +191,7 @@ const loadCatalogue = unstable_cache(
           .order("display_order"),
       ]);
 
-      if (fitResult.error || categoryResult.error || !fitResult.data?.length) {
+      if (fitResult.error || categoryResult.error) {
         console.error("Catalogue query failed; using bundled fallback", {
           fits: fitResult.error?.message,
           categories: categoryResult.error?.message,
@@ -163,11 +199,21 @@ const loadCatalogue = unstable_cache(
         return fallbackSnapshot;
       }
 
+      const categories = categoryResult.data?.length
+        ? (categoryResult.data as CatalogueCategoryRow[]).map(mapCategory)
+        : [];
+      const categoryNames = new Map(categories.map((category) => [category.slug, category.name]));
+      const styles = await Promise.all(
+        (fitResult.data as unknown as CatalogueFitRow[]).map((fit) =>
+          mapFit(supabase, fit, categoryNames.get(fit.category_slug) ?? fit.category_slug)
+        )
+      );
+
       return {
-        styles: (fitResult.data as unknown as CatalogueFitRow[]).map(mapFit),
+        styles,
         collections: categoryResult.data?.length
-          ? (categoryResult.data as CatalogueCategoryRow[]).map(mapCategory)
-          : COLLECTIONS,
+          ? categories
+          : [],
         source: "supabase",
       };
     } catch (error) {
@@ -175,7 +221,7 @@ const loadCatalogue = unstable_cache(
       return fallbackSnapshot;
     }
   },
-  ["tcc-catalogue-v1"],
+  ["tcc-catalogue-v2"],
   { revalidate: 3600, tags: ["catalogue"] }
 );
 

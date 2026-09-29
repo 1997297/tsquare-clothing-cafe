@@ -1,6 +1,6 @@
 begin;
 
-select plan(26);
+select plan(40);
 
 select ok((select relrowsecurity from pg_class where oid = 'public.measurement_profiles'::regclass), 'measurement RLS is enabled');
 select ok((select relrowsecurity from pg_class where oid = 'public.bespoke_requests'::regclass), 'request RLS is enabled');
@@ -28,6 +28,20 @@ select ok(not has_column_privilege('authenticated', 'public.profiles', 'email', 
 select ok(not has_column_privilege('authenticated', 'public.profiles', 'id', 'UPDATE'), 'ordinary profile editing cannot change profile ownership');
 select is((select count(*)::integer from pg_policies where schemaname = 'public' and tablename = 'profiles' and policyname = 'Customers update safe profile fields'), 1, 'own-profile update RLS remains active');
 select is((select count(*)::integer from storage.buckets where id = 'profile-avatars' and public and file_size_limit = 5242880 and allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp']), 1, 'shared profile avatar bucket retains its validated image limits');
+select ok((select relrowsecurity from pg_class where oid = 'public.catalogue_fits'::regclass), 'catalogue Fit RLS remains enabled');
+select ok((select relrowsecurity from pg_class where oid = 'public.catalogue_fabrics'::regclass), 'catalogue fabric RLS is enabled');
+select ok((select relrowsecurity from pg_class where oid = 'public.catalogue_colours'::regclass), 'catalogue colour RLS is enabled');
+select ok((select relrowsecurity from pg_class where oid = 'public.catalogue_fit_fabrics'::regclass), 'Fit fabric relation RLS is enabled');
+select ok((select relrowsecurity from pg_class where oid = 'public.catalogue_fit_colours'::regclass), 'Fit colour relation RLS is enabled');
+select ok(not has_table_privilege('anon', 'public.catalogue_fits', 'INSERT'), 'anonymous visitors cannot create Fits');
+select ok(not has_table_privilege('anon', 'public.catalogue_fits', 'UPDATE'), 'anonymous visitors cannot update Fits');
+select ok(not has_table_privilege('authenticated', 'public.catalogue_fits', 'DELETE'), 'browser sessions cannot permanently delete Fits');
+select ok(not has_table_privilege('authenticated', 'public.catalogue_fabrics', 'DELETE'), 'browser sessions cannot permanently delete fabrics');
+select ok(not has_table_privilege('authenticated', 'public.catalogue_colours', 'DELETE'), 'browser sessions cannot permanently delete colours');
+select ok(has_function_privilege('authenticated', 'public.reorder_catalogue_fit_images(text,bigint[],bigint)', 'EXECUTE'), 'authenticated staff can call the RLS-protected reorder operation');
+select ok(has_function_privilege('authenticated', 'public.replace_catalogue_fit_options(text,text[],text[])', 'EXECUTE'), 'authenticated staff can call the RLS-protected option operation');
+select is((select prosecdef from pg_proc where oid = 'public.reorder_catalogue_fit_images(text,bigint[],bigint)'::regprocedure), false, 'gallery reordering uses invoker rights');
+select is((select count(*)::integer from storage.buckets where id = 'catalogue-media' and not public and file_size_limit = 8388608 and allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp']), 1, 'catalogue media bucket is private and image-limited');
 
 select * from finish();
 rollback;

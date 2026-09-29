@@ -1,10 +1,5 @@
-export type ProductCategory = 
-  | "agbada"
-  | "senator"
-  | "kaftan"
-  | "traditional"
-  | "bespoke"
-  | "formal";
+/** Stable category slug. Built-in values remain supported while staff may add new categories. */
+export type ProductCategory = string;
 
 export interface StyleImage {
   src: string;

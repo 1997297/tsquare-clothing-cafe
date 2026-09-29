@@ -44,23 +44,23 @@ export default function CollectionsClient() {
     });
   }, [allStyles, selectedCategory, selectedOccasion, selectedColor]);
 
-  const categories = [
-    { label: "All Silhouettes", value: "all" },
-    { label: "Agbada", value: "agbada" },
-    { label: "Senator", value: "senator" },
-    { label: "Kaftan", value: "kaftan" },
-    { label: "Traditional", value: "traditional" },
-    { label: "Bespoke Suiting", value: "bespoke" },
-    { label: "Formal Occasion", value: "formal" },
-  ];
+  const categories = useMemo(
+    () => [
+      { label: "All Silhouettes", value: "all" },
+      ...COLLECTIONS.map((collection) => ({ label: collection.name, value: collection.slug })),
+    ],
+    [COLLECTIONS]
+  );
 
-  const colors = [
-    { label: "All Palettes", value: "all" },
-    { label: "Black", value: "black" },
-    { label: "Ivory", value: "ivory" },
-    { label: "Navy", value: "navy" },
-    { label: "Espresso", value: "espresso" },
-  ];
+  const colors = useMemo(() => {
+    const names = Array.from(
+      new Set(allStyles.flatMap((style) => style.availableColours.map((colour) => colour.name)))
+    ).sort((left, right) => left.localeCompare(right));
+    return [
+      { label: "All Palettes", value: "all" },
+      ...names.map((name) => ({ label: name, value: name })),
+    ];
+  }, [allStyles]);
 
   return (
     <div className="bg-near-black min-h-screen text-warm-ivory pt-24 sm:pt-32 pb-24 font-sans">

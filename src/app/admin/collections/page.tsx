@@ -1,5 +1,7 @@
-import { AdminModulePlaceholder } from "@/components/admin/AdminModulePlaceholder";
+import { CatalogueManager } from "./CatalogueManager";
+import { getCatalogueManagementSnapshot } from "@/lib/server/catalogue-management";
 
-export default function AdminCollectionsPage() {
-  return <AdminModulePlaceholder eyebrow="Catalogue Operations" title="Collections" description="The secure route foundation for managing TCC categories, Fits, galleries, fabrics and colours is ready." nextPhase="Phase 3 · Admin Collection Management" />;
+export default async function AdminCollectionsPage() {
+  const snapshot = await getCatalogueManagementSnapshot();
+  return <CatalogueManager snapshot={snapshot} />;
 }
