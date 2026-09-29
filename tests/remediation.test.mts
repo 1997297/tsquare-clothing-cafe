@@ -115,7 +115,6 @@ test("post-auth routing separates client, admin, CEO and inactive staff", () => 
   assert.equal(getRoleLabel("ceo"), "CEO / Super Admin");
 });
 
-<<<<<<< HEAD
 test("staff profile validation allowlists personal fields and rejects authority injection", () => {
   assert.deepEqual(
     validateStaffProfileUpdate({
@@ -158,8 +157,6 @@ test("staff avatar references must stay inside the authenticated owner's folder"
   assert.equal(isOwnedProfileAvatarReference(`https://example.com/avatar.webp`, ownerId), false);
 });
 
-=======
->>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
 test("shared validation rejects malformed domain inputs", () => {
   assert.equal(validateContactEnquiry({ name: "A", email: "bad", subject: "x", message: "short" }).success, false);
   assert.equal(validateMeasurementVersion({ measurements: { chest: -2 }, unit: "cm" }).success, false);

@@ -18,12 +18,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         displayName: actor.displayName,
         email: actor.user.email ?? "Authorized TCC account",
         role: actor.role,
-<<<<<<< HEAD
         firstName: actor.profile?.firstName ?? "",
         lastName: actor.profile?.lastName ?? "",
         avatarUrl: actor.profile?.avatarUrl ?? null,
-=======
->>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
       }}
     >
       {children}

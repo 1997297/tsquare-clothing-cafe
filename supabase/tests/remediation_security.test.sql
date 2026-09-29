@@ -1,10 +1,6 @@
 begin;
 
-<<<<<<< HEAD
 select plan(26);
-=======
-select plan(20);
->>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
 
 select ok((select relrowsecurity from pg_class where oid = 'public.measurement_profiles'::regclass), 'measurement RLS is enabled');
 select ok((select relrowsecurity from pg_class where oid = 'public.bespoke_requests'::regclass), 'request RLS is enabled');
@@ -26,15 +22,12 @@ select ok(has_table_privilege('authenticated', 'public.staff_accounts', 'SELECT'
 select ok(has_function_privilege('authenticated', 'private.current_staff_role()', 'EXECUTE'), 'authenticated sessions can resolve their active staff role inside RLS');
 select ok(not has_function_privilege('authenticated', 'private.provision_initial_ceo(uuid)', 'EXECUTE'), 'browser users cannot provision the initial CEO');
 select is((select count(*)::integer from pg_policies where schemaname = 'public' and tablename = 'profiles' and policyname = 'Clients read own profile or active staff'), 1, 'combined profile policy preserves client isolation and staff access');
-<<<<<<< HEAD
 select ok(has_column_privilege('authenticated', 'public.profiles', 'first_name', 'UPDATE'), 'authenticated users may update their own first name through RLS');
 select ok(has_column_privilege('authenticated', 'public.profiles', 'avatar_url', 'UPDATE'), 'authenticated users may persist their own avatar reference through RLS');
 select ok(not has_column_privilege('authenticated', 'public.profiles', 'email', 'UPDATE'), 'ordinary profile editing cannot change profile email');
 select ok(not has_column_privilege('authenticated', 'public.profiles', 'id', 'UPDATE'), 'ordinary profile editing cannot change profile ownership');
 select is((select count(*)::integer from pg_policies where schemaname = 'public' and tablename = 'profiles' and policyname = 'Customers update safe profile fields'), 1, 'own-profile update RLS remains active');
 select is((select count(*)::integer from storage.buckets where id = 'profile-avatars' and public and file_size_limit = 5242880 and allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp']), 1, 'shared profile avatar bucket retains its validated image limits');
-=======
->>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
 
 select * from finish();
 rollback;

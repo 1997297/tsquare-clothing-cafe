@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { User } from "@supabase/supabase-js";
-<<<<<<< HEAD
 import { cache } from "react";
 import type { AppRole, StaffRole, StaffStatus } from "@/lib/auth/roles";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -15,20 +14,12 @@ export interface AuthenticatedProfile {
   updatedAt: string;
 }
 
-=======
-import type { AppRole, StaffRole, StaffStatus } from "@/lib/auth/roles";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-
->>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
 export interface AuthenticatedActor {
   user: User;
   role: AppRole;
   staffStatus: StaffStatus | null;
   displayName: string;
-<<<<<<< HEAD
   profile: AuthenticatedProfile | null;
-=======
->>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
 }
 
 interface StaffAccountRow {
@@ -36,7 +27,6 @@ interface StaffAccountRow {
   status: StaffStatus;
 }
 
-<<<<<<< HEAD
 interface ProfileRow {
   first_name: string;
   last_name: string;
@@ -47,9 +37,6 @@ interface ProfileRow {
 }
 
 export const getAuthenticatedActor = cache(async (): Promise<AuthenticatedActor | null> => {
-=======
-export async function getAuthenticatedActor(): Promise<AuthenticatedActor | null> {
->>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
   const supabase = await createServerSupabaseClient();
   const {
     data: { user },
@@ -67,15 +54,9 @@ export async function getAuthenticatedActor(): Promise<AuthenticatedActor | null
         .maybeSingle<StaffAccountRow>(),
       supabase
         .from("profiles")
-<<<<<<< HEAD
         .select("first_name, last_name, phone, avatar_url, created_at, updated_at")
         .eq("id", user.id)
         .maybeSingle<ProfileRow>(),
-=======
-        .select("first_name, last_name")
-        .eq("id", user.id)
-        .maybeSingle(),
->>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
     ]);
 
   if (staffError) {
@@ -102,7 +83,6 @@ export async function getAuthenticatedActor(): Promise<AuthenticatedActor | null
     role: staff?.role ?? "client",
     staffStatus: staff?.status ?? null,
     displayName: profileName || user.email || "TCC Account",
-<<<<<<< HEAD
     profile: profile
       ? {
           firstName: profile.first_name,
@@ -115,10 +95,6 @@ export async function getAuthenticatedActor(): Promise<AuthenticatedActor | null
       : null,
   };
 });
-=======
-  };
-}
->>>>>>> d7d91596d3a24c0239ae1e79836274394842a7eb
 
 export async function requireAuthenticatedCustomer() {
   const actor = await getAuthenticatedActor();
