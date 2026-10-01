@@ -7,9 +7,10 @@ Last updated: 2026-10-01
 Phase 4's backward-compatible expansion, application, and security contract are live
 and the authenticated request-to-completed-order workflow has passed production tests.
 The contact-input fix is verified live. Temporary production records, Auth users and
-sessions have been removed with legitimate data preserved. A final navigation fix
-and documentation checkpoint are being pushed and verified before starting Phase 5.
-Phase 5 is authorized next; Phase 6 remains out of scope.
+sessions have been removed with legitimate data preserved. The final navigation fix
+is pushed and verified on production as `3c7d4a9`; this follow-up is documentation only.
+Phase 4 is complete and ready for Phase 5. Phase 5 is authorized next but has not
+been implemented; Phase 6 remains out of scope.
 
 The primary Phase 3 implementation is present on `main` in commit `26f8f82` (`Acc Migrations`).
 
@@ -63,9 +64,13 @@ been supplied for the queued Phase 5.
 - Security contract `20260929140100` was dry-run separately after the application
   workflow passed, then applied successfully. Remote migration history confirms both
   migrations. Do not rerun or edit either applied file.
-- Verified production application checkpoint: READY Vercel deployment
-  `dpl_7rkQm4eBqk8h34f6FQD8M9UVWdCK`, main SHA
-  `6eb82d523c6bbd3bcf5fef0b3f9dd09e4fa26cb1`. Connector calls need empty `teamId`
+- Verified final application checkpoint: READY Vercel deployment
+  `dpl_69qPGFRVgvuNUbmUuWn6Kzb8wxvc`, main SHA
+  `3c7d4a91022eade95d580837498bbc97a5a0d09d`. Corrected change-style navigation,
+  collections and sign-in page passed on localhost:3001 and production without page
+  exceptions or failed responses. A transient connection reset cleared on retry.
+  The final documentation-only checkpoint follows this application SHA.
+  Connector calls need empty `teamId`
   for the connected account scope; passing the account's team ID returns 403.
 - Production Client/Admin/CEO authentication, dashboard, Fit detail, MAKE THIS MINE,
   submission, changes requested, client resubmission, revision-2 approval, conversion,
@@ -78,6 +83,8 @@ been supplied for the queued Phase 5.
 - Cleanup fingerprints matched across 13 tables. Remaining legitimate records include
   2 requests, 1 order, 4 profiles, 2 staff, 24 Fits and 6 Saved Looks. No temporary
   Phase 4 SQL-suite users remain. Temporary credentials must never be committed.
+- Temporary credential manifest, screenshots and stopped disposable PostgreSQL
+  clusters were removed. Existing Worker2 worktrees and unrelated changes are preserved.
 - A legitimate existing staff member converted an original request while testing was
   in progress. Preserve that new live order; do not try to restore the earlier zero
   orders baseline. Our browser tests operate only on tagged temporary customers.

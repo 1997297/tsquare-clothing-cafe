@@ -81,11 +81,19 @@ complete production error-log audit.
 
 ## Git and deployment checkpoint
 
-Application checkpoint `2b5697c` and contact/concurrency checkpoint `6eb82d5` are on
-GitHub main. READY deployment `dpl_7rkQm4eBqk8h34f6FQD8M9UVWdCK` serves `6eb82d5`.
-The final navigation/documentation checkpoint is pending push and production check.
-Verify exact HEAD/origin/main equality and the Vercel deployment SHA before calling
-this final checkpoint complete. `.env.local` and temporary credentials are ignored.
+Application checkpoint `2b5697c`, contact/concurrency checkpoint `6eb82d5` and final
+navigation checkpoint `3c7d4a91022eade95d580837498bbc97a5a0d09d` are on GitHub main.
+READY deployment `dpl_69qPGFRVgvuNUbmUuWn6Kzb8wxvc` serves the final application SHA.
+HEAD, origin/main and the GitHub remote matched, with a clean worktree.
+Local and production browser assertions confirmed change-style navigation to the
+real collections page, catalogue content and sign-in controls, with no page exceptions
+or failed HTTP responses. A transient connection reset cleared on retry.
+
+This report's completion update is a documentation-only follow-up; the final response
+records its exact SHA and verified deployment. `.env.local` remains ignored and
+untracked. No secrets were committed.
+
+PHASE 4 IS COMPLETE AND READY FOR PHASE 5.
 
 Phase 5 is authorized next but has not been implemented. No official bank details
 have been supplied; do not invent them. Phase 6 is not authorized.
