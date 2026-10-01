@@ -150,8 +150,8 @@ export default function AccountOrdersPage() {
                 {/* Footer specs & CTA */}
                 <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-stone-800/40">
                   <p className="text-xs text-stone-400">
-                    Fabric: <span className="text-stone-300">{order.fabricDetails?.name || "Pure Wool & Silk"}</span> • Palette:{" "}
-                    <span className="text-stone-300">{order.colourDetails?.name || "Midnight Black"}</span>
+                    Fabric: <span className="text-stone-300">{order.fabricDetails?.name || "Not recorded"}</span> • Palette:{" "}
+                    <span className="text-stone-300">{order.colourDetails?.name || "Not recorded"}</span>
                   </p>
 
                   <Link

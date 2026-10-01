@@ -1,7 +1,8 @@
 import "server-only";
 
 import type { BespokeRequestPayload, ReferenceImage } from "@/types/bespoke";
-import { getSupabaseAdminClient } from "./supabase-admin";
+import type { OrderWorkflowStatus, RequestStaffAction } from "@/lib/atelier-workflow";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 function durableReferences(images: ReferenceImage[] | undefined, customerId: string) {
   return (images ?? []).map((image) => {
@@ -18,46 +19,24 @@ function durableReferences(images: ReferenceImage[] | undefined, customerId: str
 }
 
 export async function submitCustomerBespokeRequest(customerId: string, payload: BespokeRequestPayload) {
-  const admin = getSupabaseAdminClient();
-  let measurementSnapshot: Record<string, unknown>;
-
-  if (payload.measurementMethod === "saved") {
-    const { data: current, error } = await admin
-      .from("measurement_profiles")
-      .select("id, version, unit, fit_preference, verification_status, measurements")
-      .eq("customer_id", customerId)
-      .eq("is_current", true)
-      .single();
-    if (error || !current) throw new Error("A current measurement profile is required.");
-    measurementSnapshot = {
-      values: current.measurements,
-      unit: current.unit,
-      method: "saved",
-      sourceMeasurementId: current.id,
-      sourceVersion: current.version,
-      verificationStatus: current.verification_status,
-      fitPreference: payload.fitPreference ?? current.fit_preference,
-      snapshottedAt: new Date().toISOString(),
-    };
-  } else {
-    measurementSnapshot = {
-      values: payload.measurements ?? {},
-      unit: payload.measurementUnit ?? "cm",
-      method: payload.measurementMethod ?? "schedule",
-      sourceMeasurementId: null,
-      sourceVersion: null,
-      verificationStatus: payload.measurementMethod === "manual" ? "customer_entered" : "needs_confirmation",
-      fitPreference: payload.fitPreference ?? null,
-      snapshottedAt: new Date().toISOString(),
-    };
-  }
+  const supabase = await createServerSupabaseClient();
+  // The RPC resolves and freezes saved measurements on the first successful call.
+  // A retry sends the same intent, even if the current profile changes meanwhile.
+  const measurementSnapshot = payload.measurementMethod === "saved"
+    ? { method: "saved" }
+    : {
+        values: payload.measurements ?? {},
+        unit: payload.measurementUnit ?? "cm",
+        method: payload.measurementMethod ?? "schedule",
+      };
 
   const referenceImages = durableReferences(payload.preferences.referenceImages, customerId);
   const preferences = { ...payload.preferences };
   delete preferences.referenceImages;
 
-  const { data, error } = await admin.rpc("submit_bespoke_request", {
-    p_customer_id: customerId,
+  if (!payload.submissionKey) throw new Error("A submission key is required.");
+  const { data, error } = await supabase.rpc("submit_bespoke_request", {
+    p_submission_key: payload.submissionKey,
     p_payload: {
       style_id: payload.styleId,
       style_code: payload.styleCode,
@@ -84,17 +63,76 @@ export async function submitCustomerBespokeRequest(customerId: string, payload: 
   if (error) throw error;
   return data;
 }
-
 export interface TrustedActor {
   id: string;
   type: "staff" | "system";
 }
 
-export async function convertBespokeRequestToOrder(requestId: string, actor: TrustedActor) {
-  const { data, error } = await getSupabaseAdminClient().rpc("convert_bespoke_request_to_order", {
-    p_request_id: requestId,
-    p_actor_id: actor.id,
-    p_actor_type: actor.type,
+export async function transitionBespokeRequest(input: {
+  requestId: string;
+  action: RequestStaffAction;
+  message?: string;
+  expectedVersion: number;
+  operationKey: string;
+}) {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.rpc("transition_bespoke_request", {
+    p_request_id: input.requestId,
+    p_action: input.action,
+    p_message: input.message ?? null,
+    p_expected_version: input.expectedVersion,
+    p_operation_key: input.operationKey,
+  });
+  if (error) throw error;
+  return data;
+}
+export async function resubmitBespokeRequest(input: {
+  requestId: string;
+  response: string;
+  payload: Record<string, unknown>;
+  expectedVersion: number;
+  operationKey: string;
+}) {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.rpc("resubmit_bespoke_request", {
+    p_request_id: input.requestId,
+    p_payload: input.payload,
+    p_response: input.response,
+    p_expected_version: input.expectedVersion,
+    p_operation_key: input.operationKey,
+  });
+  if (error) throw error;
+  return data;
+}
+export async function convertBespokeRequestToOrder(input: {
+  requestId: string;
+  expectedVersion: number;
+  operationKey: string;
+}) {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.rpc("convert_bespoke_request_to_order", {
+    p_request_id: input.requestId,
+    p_expected_version: input.expectedVersion,
+    p_operation_key: input.operationKey,
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function transitionOrderStatus(input: {
+  orderId: string;
+  status: OrderWorkflowStatus;
+  message?: string;
+  expectedVersion: number;
+  operationKey: string;
+}) {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.rpc("transition_order_status", {
+    p_order_id: input.orderId,
+    p_status: input.status,
+    p_message: input.message ?? null,
+    p_expected_version: input.expectedVersion,
+    p_operation_key: input.operationKey,
   });
   if (error) throw error;
   return data;

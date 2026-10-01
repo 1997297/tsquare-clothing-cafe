@@ -5,15 +5,13 @@ import Link from "next/link";
 import {
   AlertCircle,
   CheckCircle2,
-  ChevronRight,
-  CreditCard,
   MessageSquare,
   Sparkles,
 } from "lucide-react";
 import { useAccountData } from "@/lib/account-store";
-import { calculateOrderPaymentPosition, formatNaira } from "@/lib/payments/service";
 import { cn, formatOfficeLocation } from "@/lib/utils";
 import { ReturnLink } from "@/components/common/ReturnLink";
+import { WorkflowTimeline } from "@/components/atelier/WorkflowUI";
 
 const STAGES = [
   ["order_confirmed", "Order Confirmed"],
@@ -26,7 +24,7 @@ const STAGES = [
 
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { orders, appointments, payments, wardrobe } = useAccountData();
+  const { orders, appointments, wardrobe } = useAccountData();
   const order = orders.find((item) => item.id === id);
 
   if (!order) {
@@ -41,8 +39,6 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   }
 
   const currentStage = STAGES.findIndex(([stage]) => stage === order.status);
-  const orderPayments = payments.filter((payment) => payment.orderId === order.id);
-  const position = calculateOrderPaymentPosition(order.totalAmount, orderPayments);
   const relatedAppointments = appointments.filter((appointment) => appointment.orderId === order.id);
   const wardrobeItem = wardrobe.find((item) => item.orderId === order.id);
   const measurementValues = (order.measurementsSnapshot.values ?? order.measurementsSnapshot) as Record<string, unknown>;
@@ -121,27 +117,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         <div className="space-y-6">
-          <section className="p-6 rounded-3xl bg-stone-950 fine-border space-y-5 text-xs">
-            <h2 className="flex items-center justify-between text-xs font-mono uppercase tracking-[0.25em] text-champagne">Payment Position <CreditCard className="w-4 h-4" /></h2>
-            <dl className="space-y-3">
-              <div className="flex justify-between"><dt className="text-stone-400">Order Total</dt><dd>{formatNaira(position.orderTotal)}</dd></div>
-              <div className="flex justify-between"><dt className="text-stone-400">Paid to Date</dt><dd className="text-champagne">{formatNaira(position.amountPaid)}</dd></div>
-              <div className="flex justify-between"><dt className="text-stone-400">Outstanding</dt><dd>{formatNaira(position.outstandingBalance)}</dd></div>
-            </dl>
-            {position.outstandingBalance > 0 ? (
-              <button type="button" disabled title="Online payments are not active yet" className="w-full py-3 rounded-xl border border-stone-700 text-stone-400 uppercase tracking-widest disabled:cursor-not-allowed">Online Payment Not Yet Active</button>
-            ) : (
-              <p className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-800/40 text-emerald-400 text-center">Commission settled in full</p>
-            )}
-            <div className="pt-3 border-t border-stone-800 space-y-2">
-              {orderPayments.length === 0 && <p className="text-stone-500 italic">No verified payments recorded.</p>}
-              {orderPayments.map((payment) => (
-                <div key={payment.id} className="flex justify-between items-center p-3 rounded-xl bg-stone-900/40">
-                  <span className="capitalize">{payment.type.replace(/_/g, " ")}</span>
-                  <span className="text-right">{formatNaira(payment.amount)}{payment.status === "successful" && <Link href={`/account/payments/${payment.id}`} className="block text-[10px] text-champagne">Receipt <ChevronRight className="inline w-3 h-3" /></Link>}</span>
-                </div>
-              ))}
-            </div>
+          <section className="p-6 rounded-3xl bg-stone-950 fine-border space-y-3 text-xs">
+            <h2 className="font-mono uppercase tracking-[0.25em] text-champagne">Payment</h2>
+            <p className="leading-6 text-stone-400">Payment requests and balance tracking are not active in this phase. Your production record does not imply that any amount is due or settled.</p>
           </section>
 
           <section className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4 text-xs">
@@ -157,6 +135,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           </section>
         </div>
       </div>
+      <WorkflowTimeline events={order.timeline ?? []} />
     </div>
   );
 }

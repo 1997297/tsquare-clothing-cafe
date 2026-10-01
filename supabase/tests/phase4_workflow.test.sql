@@ -3,14 +3,14 @@
 begin;
 select no_plan();
 create function pg_temp.assert_true(p_ok boolean, label text) returns text language plpgsql as $$
-begin if p_ok is distinct from true then raise exception 'ASSERTION FAILED: %',label; end if; return ok(true,label); end $$;
+begin if p_ok is distinct from true then raise exception 'ASSERTION FAILED: %',label; end if; return ok(true,label); end; $$;
 create function pg_temp.expect_error(command text, expected text) returns text language plpgsql as $$
 declare caught text; begin
  begin execute command; exception when others then caught:=sqlerrm; end;
  if caught is null or position(expected in caught)=0 then
  raise exception 'Expected %, got % for %',expected,coalesce(caught,'SUCCESS'),command; end if;
  return ok(true,'Rejected with '||expected);
-end $$;
+end; $$;
 create temporary table phase4_fixture(key text primary key,val jsonb);
 grant all on phase4_fixture to authenticated;
 -- These exact UUIDs exist only inside this rolled-back transaction.
@@ -40,7 +40,7 @@ insert into phase4_fixture values('payload','{"is_idea_path":true,"style_name":"
 insert into phase4_fixture values('request',public.submit_bespoke_request((select val from phase4_fixture where key='payload'),'f4100000-0000-0000-0000-000000000001'));
 select pg_temp.assert_true((select val->>'status'='submitted' and val->>'revision'='1' from phase4_fixture where key='request'),'submitted revision one');
 select pg_temp.assert_true(public.submit_bespoke_request((select val from phase4_fixture where key='payload'),'f4100000-0000-0000-0000-000000000001')->>'id'=(select val->>'id' from phase4_fixture where key='request'),'submission replay');
-select pg_temp.expect_error($q$select public.submit_bespoke_request('{"is_idea_path":true}', 'f4100000-0000-0000-0000-000000000001')$q$,'idempotency_conflict');
+select pg_temp.expect_error($q$select public.submit_bespoke_request('{"is_idea_path":true}'::jsonb, 'f4100000-0000-0000-0000-000000000001'::uuid)$q$,'idempotency_conflict');
 select pg_temp.expect_error($q$select public.submit_bespoke_request('{"customer_id":"forged"}',gen_random_uuid())$q$,'invalid_field');
 select pg_temp.expect_error($q$select public.submit_bespoke_request('{"contact_info":{},"style_id":"missing-fit"}',gen_random_uuid())$q$,'unavailable_fit');
 select pg_temp.expect_error($q$select admin_notes from public.bespoke_requests$q$,'permission denied');
@@ -103,8 +103,6 @@ reset role;
 -- Approval metadata is mandatory even for preserved confirmed legacy rows.
 insert into public.bespoke_requests(id,request_reference,customer_id,status,contact_info,admin_notes)
 values('f4600000-0000-0000-0000-000000000001','PHASE4-LEGACY-TEST','f4000000-0000-0000-0000-000000000001','confirmed','{}','LEGACY SECRET');
-insert into public.bespoke_request_revisions(request_id,revision,snapshot,provenance)
-select id,revision,to_jsonb(r)-'admin_notes'-'submission_intent','legacy_import' from public.bespoke_requests r where request_reference='PHASE4-LEGACY-TEST';
 set local role authenticated;
 select set_config('request.jwt.claim.sub','f4000000-0000-0000-0000-000000000003',true);
 select pg_temp.expect_error($q$select public.convert_bespoke_request_to_order('f4600000-0000-0000-0000-000000000001',1,gen_random_uuid())$q$,'current_approval_required');

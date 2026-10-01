@@ -142,6 +142,8 @@ export interface BespokeConfiguration {
   styleCode?: string;
   styleName?: string;
   styleImage?: string;
+  styleImageStoragePath?: string;
+  styleImageAlt?: string;
   isIdeaPath: boolean;
   garmentCategory?: ProductCategory;
 
@@ -200,15 +202,20 @@ export type BespokeStatus =
 // ─────────────────────────────────────────────
 
 export interface BespokeRequestPayload {
+  submissionKey?: string;
+  databaseId?: string;
   requestId: string;
   status: BespokeStatus;
   createdAt: string;
+  updatedAt?: string;
 
   // Garment
   styleId?: string;
   styleCode?: string;
   styleName?: string;
   styleImage?: string;
+  styleImageStoragePath?: string;
+  styleImageAlt?: string;
   garmentCategory?: ProductCategory;
   isIdeaPath: boolean;
 
@@ -236,5 +243,16 @@ export interface BespokeRequestPayload {
   // Customer
   contact: ContactInfo;
   quotedPrice?: number;
+  clientMessage?: string;
+  lastClientResponse?: string;
+  reviewedBy?: string;
+  reviewStartedAt?: string;
+  decisionAt?: string;
+  approvedAt?: string;
+  approvedRevision?: number;
+  revision?: number;
+  lockVersion?: number;
+  resubmissionCount?: number;
+  timeline?: import("@/lib/atelier-workflow").WorkflowEvent[];
   persistence?: "local" | "database";
 }

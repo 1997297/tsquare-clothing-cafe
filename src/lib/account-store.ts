@@ -32,6 +32,7 @@ import type {
   WardrobeItem,
 } from "@/types";
 import type { BespokeRequestPayload } from "@/types/bespoke";
+import type { WorkflowEvent } from "@/lib/atelier-workflow";
 
 // PostgREST rows are mapped at this boundary into the application's typed domain models.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -257,13 +258,37 @@ function mapMeasurement(row: Row): CustomerMeasurementRecord {
   };
 }
 
-function mapRequest(row: Row): BespokeRequestPayload {
+function mapWorkflowEvent(row: Row): WorkflowEvent {
+  return {
+    id: row.id,
+    entityType: row.entity_type,
+    eventType: row.event_type,
+    actorType: row.actor_type,
+    actorId: row.actor_id ?? undefined,
+    metadata: row.metadata ?? {},
+    createdAt: row.created_at,
+  };
+}
+
+function catalogueSnapshotPath(value: unknown): string | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const snapshot = value as Row;
+  return snapshot.kind === "storage" &&
+    snapshot.bucket === "catalogue-media" &&
+    typeof snapshot.path === "string"
+    ? snapshot.path
+    : undefined;
+}
+
+function mapRequest(row: Row, timeline: WorkflowEvent[] = []): BespokeRequestPayload {
   const snapshot = row.measurements_snapshot ?? {};
   const references = Array.isArray(row.reference_images) ? row.reference_images : [];
   return {
+    databaseId: row.id,
     requestId: row.request_reference,
     status: row.status,
     createdAt: row.created_at,
+    updatedAt: row.updated_at,
     styleId: row.style_id ?? undefined,
     styleCode: row.style_code ?? undefined,
     styleName: row.style_name ?? undefined,
@@ -272,7 +297,11 @@ function mapRequest(row: Row): BespokeRequestPayload {
     isIdeaPath: row.is_idea_path,
     fabric: row.fabric ?? undefined,
     colour: row.colour ?? undefined,
-    preferences: { ...(row.preferences ?? {}), referenceImages: references },
+    preferences: {
+      ...(row.preferences ?? {}),
+      specialInstructions: row.special_instructions ?? "",
+      referenceImages: references,
+    },
     fitPreference: row.fit_preference ?? undefined,
     measurementMethod: snapshot.method ?? undefined,
     measurementUnit: snapshot.unit ?? undefined,
@@ -292,11 +321,27 @@ function mapRequest(row: Row): BespokeRequestPayload {
     },
     quotedPrice:
       row.quoted_price_minor == null ? undefined : Number(row.quoted_price_minor) / 100,
+    clientMessage: row.clarification_notes ?? undefined,
+    lastClientResponse: [...timeline]
+      .reverse()
+      .find((event) => event.eventType === "request_resubmitted")?.metadata.message as string | undefined,
+    reviewedBy: row.reviewed_by ?? undefined,
+    reviewStartedAt: row.reviewed_at ?? timeline
+      .find((event) => event.eventType === "request_under_review")?.createdAt,
+    decisionAt: row.approved_at ?? [...timeline]
+      .reverse()
+      .find((event) => event.eventType === "request_declined")?.createdAt,
+    approvedAt: row.approved_at ?? undefined,
+    approvedRevision: row.approved_revision ?? undefined,
+    revision: row.revision ?? 1,
+    lockVersion: row.lock_version ?? 1,
+    resubmissionCount: Math.max(0, (row.revision ?? 1) - 1),
+    timeline,
     persistence: "database",
   };
 }
 
-function mapOrder(row: Row): CustomerOrder {
+function mapOrder(row: Row, timeline: WorkflowEvent[] = []): CustomerOrder {
   return {
     id: row.id,
     orderReference: row.order_reference,
@@ -319,6 +364,8 @@ function mapOrder(row: Row): CustomerOrder {
     specialInstructions: row.special_instructions ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at ?? undefined,
+    lockVersion: row.lock_version ?? 1,
+    timeline,
   };
 }
 
@@ -512,14 +559,15 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
     setError(null);
     const results = await Promise.all([
       supabase.from("measurement_profiles").select("*").eq("customer_id", userId).order("version", { ascending: false }),
-      supabase.from("bespoke_requests").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
-      supabase.from("orders").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("bespoke_requests").select("id,request_reference,customer_id,style_id,style_code,style_name,style_image,style_image_snapshot,garment_category,is_idea_path,fabric,colour,preferences,fit_preference,measurements_snapshot,measurement_confidence,occasion,event_name,event_date,required_date,appointment_request,reference_images,special_instructions,contact_info,status,quoted_price_minor,clarification_notes,submitted_at,last_submitted_at,reviewed_at,reviewed_by,approved_at,approved_by,approved_revision,revision,lock_version,created_at,updated_at").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("orders").select("id,order_reference,customer_id,bespoke_request_id,style_id,style_code,style_name,style_image,garment_category,fabric_details,colour_details,preferences,measurements_snapshot,accepted_request_snapshot,status,total_amount_minor,target_completion_date,production_stage_updated_at,special_instructions,lock_version,created_at,updated_at").eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("appointments").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("notifications").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("payments").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("wardrobe_items").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("concierge_requests").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("appointment_change_requests").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("lifecycle_events").select("id,entity_type,entity_id,event_type,actor_type,actor_id,metadata,created_at").eq("customer_id", userId).in("entity_type", ["bespoke_request", "order"]).order("created_at", { ascending: true }),
     ]);
 
     const conciergeRequestIds = (results[7].data ?? []).map((request) => request.id);
@@ -545,10 +593,47 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    const timelineByEntity = new Map<string, WorkflowEvent[]>();
+    for (const row of results[9].data ?? []) {
+      if (!row.entity_id) continue;
+      timelineByEntity.set(row.entity_id, [
+        ...(timelineByEntity.get(row.entity_id) ?? []),
+        mapWorkflowEvent(row),
+      ]);
+    }
+
+    const requestRows = (results[1].data ?? []) as Row[];
+    const orderRows = (results[2].data ?? []) as Row[];
+    const cataloguePaths = [...new Set([
+      ...requestRows.map((row) => catalogueSnapshotPath(row.style_image_snapshot)),
+      ...orderRows.map((row) => catalogueSnapshotPath(row.accepted_request_snapshot?.style_image_snapshot)),
+    ].filter((path): path is string => Boolean(path)))];
+    const signedImageByPath = new Map<string, string>();
+    if (cataloguePaths.length > 0) {
+      const { data: signedImages, error: signedImageError } = await supabase.storage
+        .from("catalogue-media")
+        .createSignedUrls(cataloguePaths, 60 * 60);
+      if (signedImageError) {
+        console.error("Historical catalogue image signing failed", signedImageError);
+      } else {
+        for (const image of signedImages ?? []) {
+          if (image.path && image.signedUrl) signedImageByPath.set(image.path, image.signedUrl);
+        }
+      }
+    }
+
     setData({
       measurements: (results[0].data ?? []).map(mapMeasurement),
-      requests: (results[1].data ?? []).map(mapRequest),
-      orders: (results[2].data ?? []).map(mapOrder),
+      requests: requestRows.map((row) => {
+        const request = mapRequest(row, timelineByEntity.get(row.id) ?? []);
+        const path = catalogueSnapshotPath(row.style_image_snapshot);
+        return path ? { ...request, styleImage: signedImageByPath.get(path) ?? request.styleImage } : request;
+      }),
+      orders: orderRows.map((row) => {
+        const order = mapOrder(row, timelineByEntity.get(row.id) ?? []);
+        const path = catalogueSnapshotPath(row.accepted_request_snapshot?.style_image_snapshot);
+        return path ? { ...order, styleImage: signedImageByPath.get(path) ?? order.styleImage } : order;
+      }),
       appointments: (results[3].data ?? []).map(mapAppointment),
       notifications: (results[4].data ?? []).map(mapNotification),
       payments: (results[5].data ?? []).map(mapPayment),

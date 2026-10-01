@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { workflowOperation } from "../src/lib/workflow-operation.ts";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -29,6 +30,24 @@ import {
   validateColourMutation,
   validateFitMutation,
 } from "../src/lib/catalogue-admin.ts";
+import {
+  isOrderTransitionAllowed,
+  isRequestTransitionAllowed,
+  nextOrderStatus,
+  normalizeRequestStatus,
+  requestActionNeedsMessage,
+} from "../src/lib/atelier-workflow.ts";
+
+test("workflow retries retain their key until the operation intent changes", () => {
+  let keys = 0;
+  const newKey = () => `operation-${++keys}`;
+  const input = { requestId: "request", action: "approve", expectedVersion: 2 };
+  const first = workflowOperation(null, input, newKey);
+  assert.equal(workflowOperation(first, { ...input }, newKey), first);
+  assert.equal(keys, 1);
+  assert.notEqual(workflowOperation(first, { ...input, expectedVersion: 3 }, newKey).key, first.key);
+  assert.notEqual(workflowOperation(first, { ...input, action: "decline" }, newKey).key, first.key);
+});
 
 test("catalogue contains four unique Fits per house category", () => {
   assert.equal(STYLES.length, 24);
@@ -82,11 +101,26 @@ test("financial position counts only verified successful payments", () => {
   assert.equal(position.paymentStatus, "partially_paid");
 });
 
-test("request conversion requires ownership, eligible state and trusted quote", () => {
-  assert.equal(isRequestEligibleForConversion({ status: "pricing_ready", customerId: "c1", quotedPriceMinor: 1 }), true);
-  assert.equal(isRequestEligibleForConversion({ status: "submitted", customerId: "c1", quotedPriceMinor: 1 }), false);
-  assert.equal(isRequestEligibleForConversion({ status: "pricing_ready", customerId: null, quotedPriceMinor: 1 }), false);
-  assert.equal(isRequestEligibleForConversion({ status: "pricing_ready", customerId: "c1", quotedPriceMinor: 0 }), false);
+test("request conversion requires ownership and current-revision approval, not payment", () => {
+  assert.equal(isRequestEligibleForConversion({ status: "confirmed", customerId: "c1", approvedAt: "2026-09-29T12:00:00Z", revision: 2, approvedRevision: 2 }), true);
+  assert.equal(isRequestEligibleForConversion({ status: "pricing_ready", customerId: "c1", approvedAt: "2026-09-29T12:00:00Z", revision: 2, approvedRevision: 2 }), false);
+  assert.equal(isRequestEligibleForConversion({ status: "confirmed", customerId: null, approvedAt: "2026-09-29T12:00:00Z", revision: 2, approvedRevision: 2 }), false);
+  assert.equal(isRequestEligibleForConversion({ status: "confirmed", customerId: "c1", approvedAt: null, revision: 2, approvedRevision: 2 }), false);
+  assert.equal(isRequestEligibleForConversion({ status: "confirmed", customerId: "c1", approvedAt: "2026-09-29T12:00:00Z", revision: 3, approvedRevision: 2 }), false);
+});
+
+test("request and order lifecycle helpers reject skipped transitions", () => {
+  assert.equal(normalizeRequestStatus("approved"), "confirmed");
+  assert.equal(normalizeRequestStatus("changes_requested"), "needs_clarification");
+  assert.equal(isRequestTransitionAllowed("submitted", "under_review"), true);
+  assert.equal(isRequestTransitionAllowed("submitted", "confirmed"), false);
+  assert.equal(isRequestTransitionAllowed("under_review", "needs_clarification"), true);
+  assert.equal(isRequestTransitionAllowed("confirmed", "converted_to_order"), true);
+  assert.equal(requestActionNeedsMessage("request_changes"), true);
+  assert.equal(requestActionNeedsMessage("approve"), false);
+  assert.equal(nextOrderStatus("order_confirmed"), "measurements_confirmed");
+  assert.equal(isOrderTransitionAllowed("in_production", "finishing"), true);
+  assert.equal(isOrderTransitionAllowed("order_confirmed", "ready"), false);
 });
 
 test("measurement versions always advance beyond preserved history", () => {
@@ -173,6 +207,7 @@ test("shared validation rejects malformed domain inputs", () => {
 
 test("bespoke validation accepts a complete request and rejects non-durable references", () => {
   const payload = {
+    submissionKey: "550e8400-e29b-41d4-a716-446655440000",
     requestId: "TCC-LOCAL-1",
     status: "submitted",
     createdAt: new Date().toISOString(),

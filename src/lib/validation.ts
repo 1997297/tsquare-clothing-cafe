@@ -14,6 +14,15 @@ const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const PROFILE_NAME_MAX_LENGTH = 80;
 const PROFILE_PHONE_MAX_LENGTH = 30;
 const STAFF_PROFILE_UPDATE_FIELDS = new Set(["firstName", "lastName", "phone"]);
+const BESPOKE_SUBMISSION_FIELDS = new Set([
+  "submissionKey", "requestId", "status", "createdAt", "styleId", "styleCode",
+  "styleName", "styleImage", "styleImageStoragePath", "styleImageAlt",
+  "garmentCategory", "isIdeaPath", "fabric", "colour", "preferences",
+  "fitPreference", "measurementMethod", "measurementUnit", "measurements",
+  "measurementConfidence", "occasion", "eventName", "eventDate", "requiredDate",
+  "appointmentRequest", "contact", "persistence",
+]);
+const CATEGORY_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const PROFILE_AVATAR_REFERENCE_PATTERN =
   /^([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\/avatar-[0-9]{10,16}-[0-9a-f-]{36}\.(jpg|png|webp)$/i;
 
@@ -294,6 +303,16 @@ export function validatePaymentInitialization(input: unknown): ValidationResult<
 
 export function validateBespokeRequestPayload(input: unknown): ValidationResult<BespokeRequestPayload> {
   const record = (input ?? {}) as Record<string, unknown>;
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return { success: false, error: "Enter a valid bespoke request." };
+  }
+  if (Object.keys(record).some((key) => !BESPOKE_SUBMISSION_FIELDS.has(key))) {
+    return { success: false, error: "The request contains unsupported fields." };
+  }
+  const submissionKey = cleanText(record.submissionKey, 36);
+  if (!isUuid(submissionKey)) {
+    return { success: false, error: "This request draft is missing its secure submission key." };
+  }
   const contact = (record.contact ?? {}) as Record<string, unknown>;
   const firstName = cleanText(contact.firstName, 80);
   const lastName = cleanText(contact.lastName, 80);
@@ -311,11 +330,8 @@ export function validateBespokeRequestPayload(input: unknown): ValidationResult<
     return { success: false, error: "Please select a valid contact method." };
   }
 
-  const categories = new Set<ProductCategory>([
-    "agbada", "senator", "kaftan", "traditional", "bespoke", "formal",
-  ]);
   const garmentCategory = cleanText(record.garmentCategory, 40) as ProductCategory;
-  if (!categories.has(garmentCategory)) {
+  if (!CATEGORY_SLUG_PATTERN.test(garmentCategory)) {
     return { success: false, error: "Please select a valid garment category." };
   }
   const isIdeaPath = record.isIdeaPath === true;
@@ -325,7 +341,7 @@ export function validateBespokeRequestPayload(input: unknown): ValidationResult<
   const rawFabric = (record.fabric ?? {}) as Record<string, unknown>;
   const fabricCategories = Array.isArray(rawFabric.categories)
     ? rawFabric.categories.filter((value): value is ProductCategory =>
-        typeof value === "string" && categories.has(value as ProductCategory)
+        typeof value === "string" && CATEGORY_SLUG_PATTERN.test(value)
       )
     : [];
   const fabric: FabricOption = {
@@ -455,6 +471,7 @@ export function validateBespokeRequestPayload(input: unknown): ValidationResult<
   return {
     success: true,
     data: {
+      submissionKey,
       requestId: cleanText(record.requestId, 120),
       status: "submitted",
       createdAt: new Date().toISOString(),
@@ -462,6 +479,13 @@ export function validateBespokeRequestPayload(input: unknown): ValidationResult<
       styleCode: cleanText(record.styleCode, 120) || undefined,
       styleName: cleanText(record.styleName, 160) || undefined,
       styleImage: cleanText(record.styleImage, 500) || undefined,
+      styleImageStoragePath: (() => {
+        const value = cleanText(record.styleImageStoragePath, 500);
+        return value && !value.includes("..") && !value.startsWith("/") && !value.includes("\\")
+          ? value
+          : undefined;
+      })(),
+      styleImageAlt: cleanText(record.styleImageAlt, 180) || undefined,
       garmentCategory,
       isIdeaPath,
       fabric,

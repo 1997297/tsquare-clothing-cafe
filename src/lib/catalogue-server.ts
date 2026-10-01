@@ -127,11 +127,13 @@ async function mapFit(
     gallery: images.map((image, index) => ({
       src: imageSources[index],
       alt: image.alt_text,
+      storageObjectPath: image.storage_object_path ?? undefined,
       objectPosition: image.object_position ?? undefined,
       isPrimary: image.is_primary,
     })),
-    availableColours: colours.map((colour) => ({ name: colour.name, hex: colour.hex })),
+    availableColours: colours.map((colour) => ({ id: colour.id, name: colour.name, hex: colour.hex })),
     availableFabrics: fabrics.map((fabric) => ({
+      id: fabric.id,
       name: fabric.name,
       description: fabric.description,
       weight: fabric.weight ?? undefined,

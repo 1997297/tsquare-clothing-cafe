@@ -1,5 +1,9 @@
--- Phase 4 database core. Coordinated authenticated-client cutover required.
+-- Phase 4 database expansion. This remains compatible with the deployed Phase 3
+-- application; the legacy contract is retired only after the Phase 4 app deploys.
 begin;
+-- Bound the cutover and serialize existing media mutations with snapshot backfill.
+set local lock_timeout='10s';
+lock table storage.objects in share row exclusive mode;
 alter table public.bespoke_requests
  add column revision bigint not null default 1 check (revision > 0),
  add column lock_version bigint not null default 1 check (lock_version > 0),
@@ -17,6 +21,29 @@ alter table public.orders
  add column lock_version bigint not null default 1 check (lock_version > 0),
  add column source_request_revision bigint,
  add column accepted_request_snapshot jsonb;
+-- Reconstruct the strongest available image locator for pre-Phase-4 rows before
+-- their first immutable revision is captured. Submitted local paths take
+-- precedence; otherwise the current canonical Fit image supplies the locator.
+update public.bespoke_requests request
+set style_image_snapshot=case
+ when request.style_image like '/%' then
+  jsonb_build_object('kind','local','path',request.style_image,'alt',request.style_name)
+ else coalesce(
+  (select case
+    when image.storage_object_path is not null then
+     jsonb_build_object('kind','storage','bucket','catalogue-media','path',image.storage_object_path,'alt',image.alt_text)
+    when image.image_path is not null then
+     jsonb_build_object('kind','local','path',image.image_path,'alt',image.alt_text)
+   end
+   from public.catalogue_fit_images image
+   where image.fit_id=request.style_id
+   order by image.is_primary desc,image.sort_order,image.id
+   limit 1),
+  case when request.style_image is not null then
+   jsonb_build_object('kind','legacy_url','url',request.style_image,'alt',request.style_name)
+  else jsonb_build_object('kind','unavailable') end)
+end
+where request.style_image_snapshot is null;
 create unique index bespoke_submission_key_uidx on public.bespoke_requests(customer_id,submission_key) where submission_key is not null;
 create index bespoke_review_queue_idx on public.bespoke_requests(status,last_submitted_at,id);
 create index bespoke_reviewed_by_idx on public.bespoke_requests(reviewed_by) where reviewed_by is not null;
@@ -33,22 +60,13 @@ insert into public.bespoke_request_revisions(request_id,revision,snapshot,proven
 alter table public.orders add constraint orders_source_revision_fk
  foreign key(bespoke_request_id,source_request_revision) references public.bespoke_request_revisions(request_id,revision);
 create index orders_source_revision_idx on public.orders(bespoke_request_id,source_request_revision);
+create index bespoke_revision_snapshot_gin on public.bespoke_request_revisions using gin(snapshot jsonb_path_ops);
 alter table public.bespoke_request_revisions enable row level security;
 create policy revisions_read on public.bespoke_request_revisions for select to authenticated using (
  exists(select 1 from public.bespoke_requests r where r.id=request_id and
  (r.customer_id=(select auth.uid()) or (select private.current_staff_role()) in ('admin','ceo'))));
 revoke all on public.bespoke_request_revisions from public,anon,authenticated;
 grant select on public.bespoke_request_revisions to authenticated;
--- Preserve confidential legacy values; column grants deliberately make SELECT * fail.
-revoke select on public.bespoke_requests from public,anon,authenticated;
-do $$ declare c record; begin
- for c in select attname from pg_attribute where attrelid='public.bespoke_requests'::regclass and attnum>0 and not attisdropped loop
- execute format('revoke select (%I) on public.bespoke_requests from public, anon, authenticated',c.attname);
- if c.attname not in ('admin_notes','submission_intent') then
- execute format('grant select (%I) on public.bespoke_requests to authenticated',c.attname);
- end if;
- end loop;
-end $$;
 create table public.commission_private_notes (
  id uuid primary key default gen_random_uuid(),
  request_id uuid not null references public.bespoke_requests(id) on delete restrict,
@@ -79,7 +97,7 @@ declare a uuid:=auth.uid(); begin
  elsif exists(select 1 from public.staff_accounts where user_id=a) or not exists(select 1 from public.profiles where id=a) then
  raise exception 'unauthorized'; end if;
  return a;
-end $$;
+end; $$;
 -- Operation lock precedes entity lock everywhere; intent includes expected version.
 create function private.commission_replay(k uuid,i jsonb) returns boolean
 language plpgsql security definer set search_path='' as $$
@@ -93,7 +111,7 @@ declare old jsonb; begin
  end if;
  insert into private.commission_operations values(auth.uid(),k,i);
  return false;
-end $$;
+end; $$;
 create function private.commission_event(t text,e uuid,c uuid,a text,m text,staff boolean) returns void
 language plpgsql security definer set search_path='' as $$ begin
  insert into public.lifecycle_events(entity_type,entity_id,customer_id,event_type,actor_type,actor_id,metadata)
@@ -102,13 +120,144 @@ language plpgsql security definer set search_path='' as $$ begin
  insert into public.notifications(customer_id,type,title,message,related_entity_type,related_entity_id)
  values(c,a,'Commission update',coalesce(nullif(m,''),replace(a,'_',' ')),t,e::text);
  end if;
-end $$;
+end; $$;
 create function private.commission_immutable() returns trigger
-language plpgsql set search_path='' as $$ begin raise exception 'immutable_revision'; end $$;
+language plpgsql set search_path='' as $$ begin raise exception 'immutable_revision'; end; $$;
 create trigger immutable_revision before update or delete on public.bespoke_request_revisions
  for each row execute function private.commission_immutable();
 create function private.commission_snapshot(r public.bespoke_requests) returns jsonb
 language sql immutable set search_path='' as $$ select to_jsonb(r)-'admin_notes'-'submission_intent' $$;
+create function private.canonicalize_commission_image() returns trigger
+language plpgsql security definer set search_path='' as $$ begin
+ if new.style_image_snapshot is not null then return new; end if;
+ if new.style_image like '/%' then
+  new.style_image_snapshot:=jsonb_build_object('kind','local','path',new.style_image,'alt',new.style_name);
+ elsif new.style_id is not null then
+  select case
+   when image.storage_object_path is not null then
+    jsonb_build_object('kind','storage','bucket','catalogue-media','path',image.storage_object_path,'alt',image.alt_text)
+   when image.image_path is not null then
+    jsonb_build_object('kind','local','path',image.image_path,'alt',image.alt_text)
+  end into new.style_image_snapshot
+  from public.catalogue_fit_images image
+  where image.fit_id=new.style_id
+  order by image.is_primary desc,image.sort_order,image.id
+  limit 1;
+ end if;
+ new.style_image_snapshot:=coalesce(
+  new.style_image_snapshot,
+  case when new.style_image is not null then
+   jsonb_build_object('kind','legacy_url','url',new.style_image,'alt',new.style_name)
+  else jsonb_build_object('kind','unavailable') end);
+ if new.style_image_snapshot->>'kind'='storage' then
+  perform 1 from storage.objects where bucket_id='catalogue-media'
+   and name=new.style_image_snapshot->>'path' for share;
+  if not found then raise exception 'unavailable_fit_image'; end if;
+ end if;
+ return new;
+end; $$;
+create trigger canonicalize_commission_image
+ before insert on public.bespoke_requests for each row
+ execute function private.canonicalize_commission_image();
+create function private.capture_initial_commission_revision() returns trigger
+language plpgsql security definer set search_path='' as $$ begin
+ insert into public.bespoke_request_revisions(request_id,revision,snapshot,provenance)
+ values(new.id,new.revision,private.commission_snapshot(new),
+  case when new.submission_key is null then 'cutover_submission' else 'customer_submission' end)
+ on conflict (request_id,revision) do nothing;
+ return new;
+end; $$;
+create trigger capture_initial_commission_revision
+ after insert on public.bespoke_requests for each row
+ execute function private.capture_initial_commission_revision();
+
+-- RLS scan snapshots can predate a concurrent submission. Lock the target first,
+-- then use a VOLATILE function's fresh internal snapshot to check retention.
+-- This stays inside supported policies; no custom trigger on Storage's schema.
+create function private.commission_media_mutable(p_bucket text,p_name text)
+returns boolean language plpgsql volatile security definer set search_path='' as $$
+declare actor uuid:=auth.uid(); media_owner text;
+begin
+ if actor is null or p_bucket not in ('bespoke-references','catalogue-media') then return false; end if;
+ if p_bucket='bespoke-references' and split_part(p_name,'/',1)<>actor::text then return false; end if;
+ if p_bucket='catalogue-media' and coalesce(private.current_staff_role(),'') not in ('admin','ceo') then return false; end if;
+ select owner_id into media_owner from storage.objects where bucket_id=p_bucket and name=p_name for update;
+ if found and p_bucket='bespoke-references' and media_owner is distinct from actor::text then return false; end if;
+ if p_bucket='bespoke-references' then
+  return not exists(select 1 from public.bespoke_request_revisions revision
+   where revision.snapshot @> jsonb_build_object('reference_images',jsonb_build_array(jsonb_build_object('path',p_name))));
+ end if;
+ return not exists(select 1 from public.bespoke_request_revisions revision
+  where revision.snapshot @> jsonb_build_object('style_image_snapshot',jsonb_build_object('bucket',p_bucket,'path',p_name)));
+end; $$;
+revoke all on function private.commission_media_mutable(text,text) from public,anon,authenticated,service_role;
+grant execute on function private.commission_media_mutable(text,text) to authenticated;
+
+-- A submitted revision keeps its referenced media immutable. Owners retain
+-- normal control over unused uploads, and can read catalogue media preserved by
+-- one of their historical request snapshots even after a Fit is archived.
+drop policy if exists "Customers update own bespoke references" on storage.objects;
+create policy "Customers update own bespoke references"
+ on storage.objects for update to authenticated
+ using (
+  bucket_id='bespoke-references'
+  and (storage.foldername(name))[1]=(select auth.uid()::text)
+  and owner_id=(select auth.uid()::text)
+  and private.commission_media_mutable(bucket_id,name)
+ )
+ with check (
+  bucket_id='bespoke-references'
+  and (storage.foldername(name))[1]=(select auth.uid()::text)
+  and private.commission_media_mutable(bucket_id,name)
+ );
+drop policy if exists "Customers delete own bespoke references" on storage.objects;
+create policy "Customers delete own bespoke references"
+ on storage.objects for delete to authenticated
+ using (
+  bucket_id='bespoke-references'
+  and (storage.foldername(name))[1]=(select auth.uid()::text)
+  and owner_id=(select auth.uid()::text)
+  and private.commission_media_mutable(bucket_id,name)
+ );
+drop policy if exists "Clients read historical catalogue media" on storage.objects;
+create policy "Clients read historical catalogue media"
+ on storage.objects for select to authenticated
+ using (
+  bucket_id='catalogue-media'
+  and exists (
+   select 1
+   from public.bespoke_request_revisions revision
+   join public.bespoke_requests request on request.id=revision.request_id
+   where request.customer_id=(select auth.uid())
+    and revision.snapshot @> jsonb_build_object('style_image_snapshot',
+     jsonb_build_object('bucket','catalogue-media','path',storage.objects.name))
+  )
+ );
+drop policy if exists "Active staff update catalogue media" on storage.objects;
+create policy "Active staff update catalogue media"
+ on storage.objects for update to authenticated
+ using (
+  bucket_id='catalogue-media'
+  and (select private.current_staff_role()) in ('admin','ceo')
+  and private.commission_media_mutable(bucket_id,name)
+ )
+ with check (
+  bucket_id='catalogue-media'
+  and (select private.current_staff_role()) in ('admin','ceo')
+  and exists (
+   select 1 from public.catalogue_fits fit
+   where fit.id=(storage.foldername(storage.objects.name))[1]
+  )
+  and private.commission_media_mutable(bucket_id,name)
+ );
+drop policy if exists "Active staff delete catalogue media" on storage.objects;
+create policy "Active staff delete catalogue media"
+ on storage.objects for delete to authenticated
+ using (
+  bucket_id='catalogue-media'
+  and (select private.current_staff_role()) in ('admin','ceo')
+  and private.commission_media_mutable(bucket_id,name)
+ );
 
 -- Numeric suffixes are allocated, never computed with MAX()+1 during requests.
 -- Retry below also skips a preserved legacy reference if a matching value exists.
@@ -124,7 +273,7 @@ language plpgsql security definer set search_path='' as $$
 declare n text; begin
  n:=nextval(case when is_order then 'private.commission_order_reference_seq'::regclass else 'private.commission_request_reference_seq'::regclass end)::text;
  return case when is_order then 'TCC-ORD-' else 'TCC-REQ-' end||lpad(n,greatest(6,length(n)),'0');
-end $$;
+end; $$;
 
 -- Validate only customer-editable fields. Resubmission merges a patch; origin is fixed.
 create function private.commission_payload(p jsonb, old public.bespoke_requests)
@@ -166,14 +315,14 @@ begin
  then raise exception 'invalid_preference'; end if;
  if k='capIncluded' then
  if jsonb_typeof(v)<>'boolean' then raise exception 'invalid_preference'; end if;
- elsif jsonb_typeof(v)<>'string' or length(v#>>'{}')>case when k='specialInstructions' then 2000 else 160 end then raise exception 'invalid_preference'; end if;
+ elsif jsonb_typeof(v)<>'string' or length(v#>>'{}')>(case when k='specialInstructions' then 2000 else 160 end) then raise exception 'invalid_preference'; end if;
  end loop;
  end if;
  if old.id is null or p ? 'contact_info' then
  if r.contact_info is null or jsonb_typeof(r.contact_info)<>'object' then raise exception 'contact_required'; end if;
  for k,v in select * from jsonb_each(r.contact_info) loop
  if not k=any(array['firstName','lastName','email','phone','preferredContact','name']) or jsonb_typeof(v)<>'string'
- or length(v#>>'{}')>case when k='email' then 254 when k='phone' then 30 else 80 end then raise exception 'invalid_contact'; end if;
+ or length(v#>>'{}')>(case when k='email' then 254 when k='phone' then 30 else 80 end) then raise exception 'invalid_contact'; end if;
  end loop;
  if r.contact_info ? 'preferredContact' and r.contact_info->>'preferredContact' not in ('whatsapp','phone','email','') then raise exception 'invalid_contact'; end if;
  end if;
@@ -203,6 +352,10 @@ begin
  if old.id is null then
  r.style_code:=f.code; r.style_name:=f.name; r.garment_category:=f.category_slug;
  select * into img from public.catalogue_fit_images where fit_id=f.id order by is_primary desc,sort_order,id limit 1 for share;
+ if img.storage_object_path is not null then
+  perform 1 from storage.objects where bucket_id='catalogue-media' and name=img.storage_object_path for share;
+  if not found then raise exception 'unavailable_fit_image'; end if;
+ end if;
  r.style_image:=img.image_path;
  r.style_image_snapshot:=case when img.storage_object_path is not null then
  jsonb_build_object('kind','storage','bucket','catalogue-media','path',img.storage_object_path,'alt',img.alt_text)
@@ -243,7 +396,7 @@ begin
  for k,v in select * from jsonb_each(m->'values') loop
  if not k=any(array['neck','shoulder','chest','sleeveLength','bicep','wrist','stomach','waist','topLength','trouserWaist','hip','thigh','knee','trouserLength','ankle'])
  or jsonb_typeof(v)<>'number' then raise exception 'invalid_measurement'; end if;
- if (v#>>'{}')::numeric<=0 or (v#>>'{}')::numeric*case when unit='inches' then 2.54 else 1 end>300 then raise exception 'invalid_measurement'; end if;
+ if (v#>>'{}')::numeric<=0 or (v#>>'{}')::numeric*(case when unit='inches' then 2.54 else 1 end)>300 then raise exception 'invalid_measurement'; end if;
  end loop;
  r.measurements_snapshot:=jsonb_build_object('method','manual','values',m->'values','unit',unit,'verificationStatus','customer_entered');
  elsif method='schedule' then
@@ -261,13 +414,13 @@ begin
  end loop;
  end if;
  if old.id is null and r.appointment_request is not null and coalesce(r.appointment_request->>'type','none')<>'none' then
- if r.appointment_request->>'type' not in ('consultation','measurement','first-fitting','final-fitting')
+ if r.appointment_request->>'type' not in ('consultation','style-consultation','measurement','first-fitting','final-fitting')
  or nullif(r.appointment_request->>'preferredDate','') is null or nullif(r.appointment_request->>'preferredTime','') is null
  or length(coalesce(r.appointment_request->>'notes',''))>1000 then raise exception 'invalid_appointment'; end if;
  perform (r.appointment_request->>'preferredDate')::date;
  end if;
  return r;
-end $$;
+end; $$;
 
 create function public.submit_bespoke_request(p_payload jsonb,p_submission_key uuid)
 returns jsonb language plpgsql security definer set search_path='' as $$
@@ -299,14 +452,13 @@ begin
  if violated<>'bespoke_requests_request_reference_key' then raise; end if;
  end;
  end loop;
- insert into public.bespoke_request_revisions values(r.id,r.revision,private.commission_snapshot(r),'customer_submission',null,now());
  if r.appointment_request is not null and coalesce(r.appointment_request->>'type','none')<>'none' then
  insert into public.appointments(customer_id,bespoke_request_id,type,preferred_date,preferred_time,status,notes)
  values(a,r.id,r.appointment_request->>'type',r.appointment_request->>'preferredDate',r.appointment_request->>'preferredTime','requested',r.appointment_request->>'notes');
  end if;
  perform private.commission_event('bespoke_request',r.id,a,'request_submitted',null,false);
  return private.commission_snapshot(r);
-end $$;
+end; $$;
 
 create function public.transition_bespoke_request(p_request_id uuid,p_action text,p_message text,p_expected_version bigint,p_operation_key uuid)
 returns jsonb language plpgsql security definer set search_path='' as $$
@@ -334,7 +486,7 @@ begin
  where id=r.id returning * into r;
  perform private.commission_event('bespoke_request',r.id,r.customer_id,'request_'||target,p_message,true);
  return private.commission_snapshot(r);
-end $$;
+end; $$;
 
 create function public.resubmit_bespoke_request(p_request_id uuid,p_payload jsonb,p_response text,p_expected_version bigint,p_operation_key uuid)
 returns jsonb language plpgsql security definer set search_path='' as $$
@@ -359,7 +511,7 @@ begin
  insert into public.bespoke_request_revisions values(r.id,r.revision,private.commission_snapshot(r),'customer_resubmission',btrim(p_response),now());
  perform private.commission_event('bespoke_request',r.id,a,'request_resubmitted',btrim(p_response),false);
  return private.commission_snapshot(r);
-end $$;
+end; $$;
 
 create function public.convert_bespoke_request_to_order(p_request_id uuid,p_expected_version bigint,p_operation_key uuid)
 returns jsonb language plpgsql security definer set search_path='' as $$
@@ -397,7 +549,7 @@ begin
  perform private.commission_event('bespoke_request',r.id,r.customer_id,'request_converted_to_order',o.order_reference,true);
  perform private.commission_event('order',o.id,o.customer_id,'order_confirmed',null,true);
  return to_jsonb(o);
-end $$;
+end; $$;
 
 create function public.transition_order_status(p_order_id uuid,p_status text,p_message text,p_expected_version bigint,p_operation_key uuid)
 returns jsonb language plpgsql security definer set search_path='' as $$
@@ -418,7 +570,7 @@ begin
  perform private.commission_event('order',o.id,o.customer_id,'order_'||p_status,p_message,true);
  if p_status='completed' then perform public.create_wardrobe_for_completed_order(o.id,a,'staff'); end if;
  return to_jsonb(o);
-end $$;
+end; $$;
 
 create function public.add_commission_private_note(p_request_id uuid,p_note text)
 returns uuid language plpgsql security definer set search_path='' as $$
@@ -429,20 +581,13 @@ declare a uuid; n uuid; begin
  if not found then raise exception 'not_found'; end if;
  insert into public.commission_private_notes(request_id,author_id,note) values(p_request_id,a,p_note) returning id into n;
  return n;
-end $$;
-
--- Fail closed even if a future grant accidentally restores the legacy overloads.
-create or replace function public.submit_bespoke_request(p_customer_id uuid,p_payload jsonb)
-returns public.bespoke_requests language plpgsql security invoker set search_path='' as $$
-begin raise exception 'retired_rpc_use_authenticated_signature'; end $$;
-create or replace function public.convert_bespoke_request_to_order(p_request_id uuid,p_actor_id uuid,p_actor_type text)
-returns public.orders language plpgsql security invoker set search_path='' as $$
-begin raise exception 'retired_rpc_use_authenticated_signature'; end $$;
-revoke all on function public.submit_bespoke_request(uuid,jsonb),public.convert_bespoke_request_to_order(uuid,uuid,text) from public,anon,authenticated,service_role;
+end; $$;
 
 revoke all on function private.commission_actor(boolean),private.commission_replay(uuid,jsonb),
  private.commission_event(text,uuid,uuid,text,text,boolean),private.commission_immutable(),
- private.commission_snapshot(public.bespoke_requests),private.commission_payload(jsonb,public.bespoke_requests),private.commission_reference(boolean)
+ private.commission_snapshot(public.bespoke_requests),private.canonicalize_commission_image(),
+ private.capture_initial_commission_revision(),
+ private.commission_payload(jsonb,public.bespoke_requests),private.commission_reference(boolean)
  from public,anon,authenticated,service_role;
 revoke all on function public.submit_bespoke_request(jsonb,uuid),
  public.transition_bespoke_request(uuid,text,text,bigint,uuid),public.resubmit_bespoke_request(uuid,jsonb,text,bigint,uuid),

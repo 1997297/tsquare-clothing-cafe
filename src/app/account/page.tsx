@@ -16,10 +16,8 @@ import {
   Clock,
   Scissors,
   Check,
-  CreditCard,
 } from "lucide-react";
 import { cn, formatOfficeLocation } from "@/lib/utils";
-import { formatNaira } from "@/lib/payments/service";
 
 const CRAFTSMANSHIP_STAGES = [
   { id: "order_confirmed", label: "Confirmed" },
@@ -38,7 +36,6 @@ export default function AccountOverviewPage() {
     requests,
     appointments,
     currentMeasurement,
-    payments,
     wardrobe,
   } = useAccountData();
   const { savedIds: savedStyleIds } = useSavedStyles();
@@ -71,12 +68,6 @@ export default function AccountOverviewPage() {
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
 
   const clientFirstName = profile?.firstName || "Client";
-
-  const totalCommitted = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-  const totalSettled = payments
-    .filter((p) => p.status === "successful")
-    .reduce((sum, p) => sum + p.amount, 0);
-  const totalOutstanding = Math.max(0, totalCommitted - totalSettled);
 
   return (
     <div className="space-y-10 animate-in fade-in duration-300">
@@ -114,31 +105,6 @@ export default function AccountOverviewPage() {
       </div>
 
       {/* ── Commercial Position Highlight (When balance is due) ── */}
-      {totalOutstanding > 0 && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-stone-950 border border-amber-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-950/40 border border-amber-800/40 flex items-center justify-center text-amber-400 shrink-0">
-              <CreditCard className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-xs text-warm-ivory font-medium">
-                Outstanding Balance: <span className="font-mono text-champagne font-bold">{formatNaira(totalOutstanding)}</span>
-              </p>
-              <p className="text-[11px] text-stone-400 font-light">
-                Milestone settlement is due across your active bespoke commissions.
-              </p>
-            </div>
-          </div>
-          <Link
-            href="/account/payments"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-stone-900 border border-stone-800 hover:border-champagne/40 text-xs font-mono uppercase tracking-wider text-warm-ivory hover:text-champagne transition-colors self-start sm:self-auto shrink-0"
-          >
-            <span>Review Payments</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      )}
-
       {/* ── Section 1: Priority Active Garment Focus ── */}
       {activeOrder ? (
         <div className="p-6 sm:p-8 bg-stone-950 fine-border rounded-3xl space-y-6">

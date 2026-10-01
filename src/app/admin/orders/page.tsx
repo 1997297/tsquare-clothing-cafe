@@ -1,5 +1,7 @@
-import { AdminModulePlaceholder } from "@/components/admin/AdminModulePlaceholder";
+import { getAdminOrders } from "@/lib/server/atelier-workflow";
+import { OrderManager } from "./OrderManager";
 
-export default function AdminOrdersPage() {
-  return <AdminModulePlaceholder eyebrow="Atelier Production" title="Orders" description="The protected order-management route is established without exposing or fabricating production records." nextPhase="Future Order Management phase" />;
+export default async function AdminOrdersPage() {
+  const orders = await getAdminOrders();
+  return <OrderManager orders={orders} />;
 }

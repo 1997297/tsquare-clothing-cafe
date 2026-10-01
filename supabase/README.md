@@ -35,12 +35,19 @@ npx supabase test db --local
 
 Never place the service-role key in a `NEXT_PUBLIC_` variable. Deployment is a separate, explicitly authorized operation.
 
-## Phase 4 database core (not applied)
+## Phase 4 database expansion and contract
 
-`20260929140000_phase4_commission_core.sql` follows `20260929131721`. Coordinate
-application integration before applying it: both old service-role request RPC
-overloads are retired, and request `select('*')` intentionally fails because
-`admin_notes` and `submission_intent` are no longer granted to authenticated users.
+Rollout checkpoint (2026-10-01): the compatible core expansion is live. The security
+contract is pending application deployment and production verification. Consult
+`PROJECT_HANDOFF.md` for the current deployment checkpoint before applying anything.
+
+`20260929140000_phase4_commission_core.sql` follows `20260929131721` and is the
+backward-compatible expansion. Apply it before deploying the Phase 4 application;
+it adds the new workflow without retiring the Phase 3 RPCs or broad request read.
+After the Phase 4 application is live, apply
+`20260929140100_phase4_commission_contract.sql`. The contract retires both old
+service-role request RPC overloads, and request `select('*')` intentionally fails
+because `admin_notes` and `submission_intent` are no longer granted to authenticated users.
 Use explicit safe request columns (for example `id,request_reference,customer_id,
 status,revision,lock_version,style_name,fabric,colour,clarification_notes,
 submitted_at,last_submitted_at,reviewed_at,approved_at,approved_revision`).
@@ -49,7 +56,12 @@ Legacy note strings remain unchanged in their original rows and are copied exact
 to that staff-only table, with unknown author/time left unattributed (the copy's
 `created_at` records migration time). No existing request/order status or reference
 is rewritten. Legacy revision 1 records are labelled `legacy_import`; approval
-dates and actors are never inferred.
+dates and actors are never inferred. An insert trigger captures revision 1 for any
+request accepted by the still-live Phase 3 RPC during the expansion/deploy window;
+the contract migration reconciles any missing current revision before retiring that RPC.
+Existing and cutover requests reconstruct their strongest available image locator:
+the submitted local path first, otherwise the current canonical Fit image, otherwise
+the legacy URL is retained and labelled as such rather than presented as canonical.
 
 All RPCs below return a JSON object containing the current request or order row,
 not a wrapper. Request results omit private notes and raw submission intent. Use
@@ -152,6 +164,12 @@ psql "$env:LOCAL_DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/remediation_
 ```
 
 Both suites use pgTAP and rollback their fixtures; sequence gaps are expected.
+On Windows without Docker, `node scripts/verify-phase4-db.mjs <runtime-directory>`
+can replay the same suites on an isolated native PostgreSQL 17.6 cluster using a
+minimal assertion adapter. Install `embedded-postgres@17.6.0-beta.15` in that
+temporary runtime directory, not in the application dependencies. The runner also
+checks preserved rows and concurrent storage retention. `--compare-linked` compares
+the pre-expansion baseline only, so use that option before applying Phase 4 live.
 The Phase 4 suite exercises auth roles, private-note isolation, immutable revisions,
 stale/replayed operations, approval gates, catalogue canonicalization/archive
 retries, conversion, production progression, wardrobe idempotency and no payment
@@ -159,14 +177,14 @@ writes. Before rollout, also run two actual concurrent sessions for same-key
 submission, conversion with different keys, conflicting review actions and
 resubmission/review. The serialized SQL suite does not prove concurrency behavior.
 
-Known boundary: immutable JSON snapshots preserve business data and canonical media
-locators, **not storage bytes**. This core does not change existing storage policies
-or freeze historical media; referenced objects may still be removed and archived
-catalogue media may require later authenticated historical-media access work.
-Storage retention/race tests, live schema comparison, row-count preservation tests,
-and security/performance advisors remain rollout checks. Do not claim those passed
-from repository tests alone. Existing application pricing rules and unsafe broad
-request selects must be updated by the application owner before deployment.
+Immutable JSON snapshots preserve business data and canonical media locators. The
+Phase 4 storage policies also prevent normal clients from changing/removing submitted
+reference objects, prevent active staff from changing/removing catalogue objects used
+by a revision, and let an owning client read snapshotted catalogue media after archive.
+Database owners and service-role storage operations still bypass RLS and must respect
+the same retention rule operationally. Storage retention/race tests, live schema
+comparison, row-count preservation tests, and security/performance advisors remain
+rollout checks. Do not claim those passed from repository tests alone.
 
 ## Initial CEO provisioning
 

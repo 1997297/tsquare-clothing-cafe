@@ -61,7 +61,7 @@ export function BespokeConfigurator({
       ? style.availableFabrics
       : [{ name: "Signature Fit Fabric", description: style.fabricInformation }];
     return fabrics.map((fabric, index) => ({
-      id: `${style.id}-fabric-${index + 1}`,
+      id: fabric.id ?? `${style.id}-fabric-${index + 1}`,
       name: fabric.name,
       description: fabric.description,
       weight: fabric.weight,
@@ -71,7 +71,7 @@ export function BespokeConfigurator({
   }, [style]);
   const fitColours = useMemo<ColourOption[] | undefined>(
     () => style?.availableColours.map((colour, index) => ({
-      id: `${style.id}-colour-${index + 1}`,
+      id: colour.id ?? `${style.id}-colour-${index + 1}`,
       name: colour.name,
       hex: colour.hex,
       group: "Fit Palette",
@@ -81,9 +81,11 @@ export function BespokeConfigurator({
 
   const handleBespokeSubmit = async () => {
     const payload = submitRequest();
-    const saved = user && isSupabaseConfigured
-      ? await addBespokeRequest(payload)
-      : { ...payload, persistence: "local" as const };
+    if (!user) throw new Error("Sign in to submit this request to the TCC atelier.");
+    if (!isSupabaseConfigured) {
+      throw new Error("Request submission is temporarily unavailable. Your draft is still saved on this device.");
+    }
+    const saved = await addBespokeRequest(payload);
     completeSubmission(saved);
     return saved;
   };
@@ -97,6 +99,8 @@ export function BespokeConfigurator({
       update("styleCode", style.code);
       update("styleName", style.name);
       update("styleImage", style.images[0]);
+      update("styleImageStoragePath", style.gallery?.[0]?.storageObjectPath);
+      update("styleImageAlt", style.gallery?.[0]?.alt ?? style.name);
       update("garmentCategory", style.category);
     }
   }, [config.styleId, isLoaded, style, update]);

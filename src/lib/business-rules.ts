@@ -1,13 +1,15 @@
 export function isRequestEligibleForConversion(request: {
   status: string;
   customerId?: string | null;
-  quotedPriceMinor?: number | null;
+  approvedAt?: string | null;
+  revision?: number | null;
+  approvedRevision?: number | null;
 }): boolean {
   return Boolean(
     request.customerId &&
-    (request.status === "pricing_ready" || request.status === "confirmed") &&
-    Number.isSafeInteger(request.quotedPriceMinor) &&
-    (request.quotedPriceMinor ?? 0) > 0
+    request.status === "confirmed" &&
+    request.approvedAt &&
+    request.revision === request.approvedRevision
   );
 }
 

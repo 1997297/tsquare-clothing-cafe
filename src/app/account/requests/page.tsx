@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAccountData } from "@/lib/account-store";
 import { FileText, ArrowRight, Clock, Sparkles, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RequestStatusBadge } from "@/components/atelier/WorkflowUI";
 
 const STATUS_FILTERS = ["all", "active", "completed"] as const;
 
@@ -104,20 +105,7 @@ export default function AccountRequestsPage() {
 
                   {/* Status Badge */}
                   <div className="flex items-center gap-2">
-                    <span
-                      className={cn(
-                        "px-3 py-1 rounded-full text-[10px] uppercase font-mono tracking-wider font-semibold border",
-                        request.status === "submitted" && "bg-stone-900 border-stone-700 text-stone-300",
-                        request.status === "under_review" && "bg-blue-950/40 border-blue-800/40 text-blue-400",
-                        request.status === "needs_clarification" && "bg-amber-950/40 border-amber-700 text-amber-400",
-                        request.status === "pricing_ready" && "bg-champagne/15 border-champagne text-champagne",
-                        request.status === "confirmed" && "bg-emerald-950/40 border-emerald-700 text-emerald-400",
-                        request.status === "converted_to_order" && "bg-emerald-950/40 border-emerald-700 text-emerald-400",
-                        request.status === "declined" && "bg-red-950/40 border-red-800 text-red-400"
-                      )}
-                    >
-                      {request.status.replace(/_/g, " ")}
-                    </span>
+                    <RequestStatusBadge status={request.status} />
                   </div>
                 </div>
 
@@ -151,7 +139,7 @@ export default function AccountRequestsPage() {
                 {isClarificationNeeded && (
                   <div className="pt-2 text-xs text-amber-300 flex items-center gap-2">
                     <Clock className="w-3.5 h-3.5" />
-                    <span>Action Required: TSquare master tailors have requested a measurement clarification.</span>
+                    <span>Action required: {request.clientMessage ?? "TCC has requested a clarification."}</span>
                   </div>
                 )}
 

@@ -4,12 +4,14 @@ export type ProductCategory = string;
 export interface StyleImage {
   src: string;
   alt: string;
+  storageObjectPath?: string;
   /** Optional focal point used by card and gallery crops. */
   objectPosition?: string;
   isPrimary?: boolean;
 }
 
 export interface StyleFabric {
+  id?: string;
   name: string;
   description: string;
   weight?: string;
@@ -27,7 +29,7 @@ export interface Style {
   longDescription?: string;
   images: string[];
   gallery?: StyleImage[];
-  availableColours: { name: string; hex: string }[];
+  availableColours: { id?: string; name: string; hex: string }[];
   availableFabrics?: StyleFabric[];
   fabricInformation: string;
   fitInformation: string;
@@ -163,6 +165,8 @@ export interface CustomerOrder {
   specialInstructions?: string;
   createdAt: string;
   updatedAt?: string;
+  lockVersion?: number;
+  timeline?: import("@/lib/atelier-workflow").WorkflowEvent[];
 }
 
 export type CustomerAppointmentStatus =

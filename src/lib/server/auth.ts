@@ -129,5 +129,5 @@ export function toSafeServerError(error: unknown): string {
   ) {
     return "This account is not authorized for that operation.";
   }
-  return "We could not complete that request. Your changes have not been applied; please try again.";
+  return "We could not confirm that request completed. Refresh to check its status before trying again.";
 }

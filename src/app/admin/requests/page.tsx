@@ -1,5 +1,7 @@
-import { AdminModulePlaceholder } from "@/components/admin/AdminModulePlaceholder";
+import { getAdminRequests } from "@/lib/server/atelier-workflow";
+import { RequestManager } from "./RequestManager";
 
-export default function AdminRequestsPage() {
-  return <AdminModulePlaceholder eyebrow="Commission Intake" title="Requests" description="The protected workspace for reviewing bespoke submissions and client requirements is ready for its operational workflow." nextPhase="Future Requests workflow phase" />;
+export default async function AdminRequestsPage() {
+  const requests = await getAdminRequests();
+  return <RequestManager requests={requests} />;
 }

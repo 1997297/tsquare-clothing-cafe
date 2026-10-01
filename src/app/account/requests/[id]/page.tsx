@@ -6,11 +6,11 @@ import { useAccountData } from "@/lib/account-store";
 import {
   Sparkles,
   AlertCircle,
-  MessageSquare,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { formatNaira } from "@/lib/payments/service";
 import { ReturnLink } from "@/components/common/ReturnLink";
+import { RequestStatusBadge, WorkflowTimeline } from "@/components/atelier/WorkflowUI";
+import { RequestResubmissionForm } from "./RequestResubmissionForm";
 
 export default function RequestDetailPage({
   params,
@@ -18,7 +18,7 @@ export default function RequestDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const { requests } = useAccountData();
+  const { requests, reloadData } = useAccountData();
 
   const request = requests.find((r) => r.requestId === id);
 
@@ -64,19 +64,7 @@ export default function RequestDetailPage({
             </h1>
           </div>
 
-          <span
-            className={cn(
-              "px-3.5 py-1.5 rounded-full text-xs uppercase font-mono tracking-wider font-semibold border self-start sm:self-auto",
-              request.status === "submitted" && "bg-stone-900 border-stone-700 text-stone-300",
-              request.status === "under_review" && "bg-blue-950/40 border-blue-800/40 text-blue-400",
-              request.status === "needs_clarification" && "bg-amber-950/40 border-amber-700 text-amber-400",
-              request.status === "pricing_ready" && "bg-champagne/15 border-champagne text-champagne",
-              request.status === "confirmed" && "bg-emerald-950/40 border-emerald-700 text-emerald-400",
-              request.status === "converted_to_order" && "bg-emerald-950/40 border-emerald-700 text-emerald-400"
-            )}
-          >
-            {request.status.replace(/_/g, " ")}
-          </span>
+          <RequestStatusBadge status={request.status} />
         </div>
       </div>
 
@@ -87,18 +75,8 @@ export default function RequestDetailPage({
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>We Need One More Detail</span>
           </div>
-          <p className="text-xs text-stone-300 leading-relaxed">
-            Our master cutter has reviewed your sleeve and chest measurements and requests a quick re-check of your shoulder slope before cutting the paper pattern.
-          </p>
-          <div className="pt-2 flex items-center gap-3">
-            <Link
-              href="/account/concierge"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs font-bold uppercase tracking-wider hover:bg-champagne-light transition-all"
-            >
-              <MessageSquare className="w-3.5 h-3.5" />
-              <span>Provide Response to Atelier</span>
-            </Link>
-          </div>
+          <p className="text-xs text-stone-300 leading-relaxed">{request.clientMessage ?? "TCC needs a clarification before this request can continue."}</p>
+          {request.databaseId && request.lockVersion ? <RequestResubmissionForm requestId={request.databaseId} expectedVersion={request.lockVersion} initialInstructions={request.preferences?.specialInstructions ?? ""} onSaved={reloadData} /> : <p className="text-xs text-amber-300">Refresh this request before responding.</p>}
         </div>
       )}
 
@@ -310,6 +288,8 @@ export default function RequestDetailPage({
           </div>
         </div>
       </div>
+
+      <WorkflowTimeline events={request.timeline ?? []} />
     </div>
   );
 }

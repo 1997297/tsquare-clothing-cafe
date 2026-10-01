@@ -135,6 +135,7 @@ export function buildPayload(
   config: BespokeConfiguration
 ): BespokeRequestPayload {
   return {
+    submissionKey: config.draftId,
     requestId: generateRequestId(),
     status: "submitted" as BespokeStatus,
     createdAt: new Date().toISOString(),
@@ -142,6 +143,8 @@ export function buildPayload(
     styleCode: config.styleCode,
     styleName: config.styleName,
     styleImage: config.styleImage,
+    styleImageStoragePath: config.styleImageStoragePath,
+    styleImageAlt: config.styleImageAlt,
     garmentCategory: config.garmentCategory,
     isIdeaPath: config.isIdeaPath,
     fabric: config.fabric,
