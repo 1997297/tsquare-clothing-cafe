@@ -158,7 +158,7 @@ export function StyleStep({
           </div>
 
           <Link
-            href="/styles"
+            href="/collections"
             className="mt-4 inline-flex items-center gap-1.5 text-[10px] text-stone-500 hover:text-stone-300 uppercase tracking-widest transition-colors"
           >
             <Shuffle className="w-3 h-3" />

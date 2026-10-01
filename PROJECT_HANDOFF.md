@@ -4,10 +4,12 @@ Last updated: 2026-10-01
 
 ## Current status
 
-Phase 4's backward-compatible expansion, application, and security contract are live.
-The final contact-input fix deployment and browser fixture cleanup are pending.
-The user has now authorized Phase 5 after Phase 4 is genuinely finished; do not
-start its implementation before completing this gate. Phase 6 remains out of scope.
+Phase 4's backward-compatible expansion, application, and security contract are live
+and the authenticated request-to-completed-order workflow has passed production tests.
+The contact-input fix is verified live. Temporary production records, Auth users and
+sessions have been removed with legitimate data preserved. A final navigation fix
+and documentation checkpoint are being pushed and verified before starting Phase 5.
+Phase 5 is authorized next; Phase 6 remains out of scope.
 
 The primary Phase 3 implementation is present on `main` in commit `26f8f82` (`Acc Migrations`).
 
@@ -15,16 +17,18 @@ The public catalogue still uses stable Fit IDs, while active Admin and CEO staff
 
 Worker2's isolated database checkpoint was merged into local `main` as `1271b2c`.
 The Phase 4 application checkpoint is committed and pushed as `2b5697c`.
-Production testing found a preexisting contact input focus loss: a nested Field
-component remounted per keystroke. Its narrow stable-component fix is being verified
-for the next checkpoint. No bank details have been supplied for the queued Phase 5.
+Production testing found contact input focus loss: a nested Field component remounted
+per keystroke. The stable-component fix is pushed as `6eb82d5` and real keyboard typing
+passed in production. Final browser inspection also found the configurator's change-style
+link targeted nonexistent `/styles`; it now uses `/collections`. No bank details have
+been supplied for the queued Phase 5.
 
 ## Completed architecture
 
 - Phase 1: database-backed catalogue architecture and public Fit/collection integration.
 - Phase 2: active Admin/CEO authorization, protected staff routes, staff profile handling, and RLS foundations.
 - Phase 3: Admin/CEO catalogue management for categories, Fits, galleries, fabrics, colours, publication lifecycle, staff preview, and safe archive/deactivation.
-- Phase 4 (application local; database expansion live): authenticated request submission, staff review,
+- Phase 4 (application and both database migrations live): authenticated request submission, staff review,
   client changes/resubmission, approval/decline, explicit idempotent order conversion,
   production status controls, revision snapshots, timelines, and historical media retention.
 
@@ -56,20 +60,24 @@ for the next checkpoint. No bank details have been supplied for the queued Phase
 - A guarded transactional live expansion test passed 53 workflow assertions and
   rolled back all fixtures. No test users remain; the 13 fingerprints still match.
   PostgreSQL reference sequences can advance despite rollback (harmless gaps).
-- Next: finish local app checks, commit/push main, verify the actual production SHA
-  and real browser workflows, then dry-run/apply the security contract. Rerun live
-  authorization tests/advisors and clean temporary tests before the final checkpoint.
-- Current production is Phase 4: READY Vercel deployment
-  `dpl_BU4fDJL198X932rb5dBCgQRUfsdD`, main SHA
-  `2b5697cd39a2a88a75b9ab41d09287b32e07a670`. Connector calls need empty `teamId`
+- Security contract `20260929140100` was dry-run separately after the application
+  workflow passed, then applied successfully. Remote migration history confirms both
+  migrations. Do not rerun or edit either applied file.
+- Verified production application checkpoint: READY Vercel deployment
+  `dpl_7rkQm4eBqk8h34f6FQD8M9UVWdCK`, main SHA
+  `6eb82d523c6bbd3bcf5fef0b3f9dd09e4fa26cb1`. Connector calls need empty `teamId`
   for the connected account scope; passing the account's team ID returns 403.
-- Fresh production Client and Admin logins, client dashboard, Fit detail and MAKE
-  THIS MINE navigation passed. A transient old-chunk 404 during the deployment switch
-  cleared in a fresh session. Complete workflow testing is still in progress.
-- Four isolated temporary Auth users exist for browser tests. Their exact identities
-  and generated credentials are in ignored `supabase/.temp/phase4-browser-fixtures.json`.
-  Never commit that manifest. Cleanup SQL is exact-ID/tag guarded, locally validated,
-  and restores the immutable-revision trigger inside an exclusive-lock transaction.
+- Production Client/Admin/CEO authentication, dashboard, Fit detail, MAKE THIS MINE,
+  submission, changes requested, client resubmission, revision-2 approval, conversion,
+  production stages through completion and wardrobe creation passed. Other clients
+  cannot read the request/order. CEO Staff access remains denied to Admin.
+- All four temporary Auth users and their sessions are removed. Exact-ID/tag guarded,
+  locally validated cleanup removed only their request, order, revisions, events,
+  notifications, wardrobe entry and staff memberships. The immutable revision trigger
+  was restored inside the locked cleanup transaction; RLS remained enabled throughout.
+- Cleanup fingerprints matched across 13 tables. Remaining legitimate records include
+  2 requests, 1 order, 4 profiles, 2 staff, 24 Fits and 6 Saved Looks. No temporary
+  Phase 4 SQL-suite users remain. Temporary credentials must never be committed.
 - A legitimate existing staff member converted an original request while testing was
   in progress. Preserve that new live order; do not try to restore the earlier zero
   orders baseline. Our browser tests operate only on tagged temporary customers.
@@ -131,9 +139,15 @@ The private `catalogue-media` bucket is configured for JPEG, PNG, and WebP objec
   a rolled-back transaction. The final native replay passed 48 security + 58 lifecycle
   assertions and eight real concurrent storage/workflow race cases.
 - Contact input focus fix: TypeScript, ESLint, 20 tests and production build passed.
-- Post-expansion advisors: intentional deny-all private operation ledger and guarded
-  SECURITY DEFINER RPC notices; preexisting leaked-password protection warning;
-  four unrelated missing FK indexes and low-usage index notices. Recheck after contract.
+- Post-contract checks: 48 live security assertions and 58 live workflow assertions
+  passed inside rolled-back transactions. All 23 actual Supabase HTTP authentication/
+  RLS checks passed, including forbidden client actions and duplicate conversion.
+- Final application checks after the navigation correction: TypeScript, ESLint,
+  20 tests and optimized production build (67 routes) passed on 2026-10-01.
+- Post-contract advisors rerun: intentional deny-all private operation ledger and six
+  guarded authenticated SECURITY DEFINER RPC notices; preexisting leaked-password
+  protection warning; four unrelated missing FK indexes and 14 unused-index notices.
+  No Phase 4 blocking regression identified. Details: `PHASE4_ROLLOUT_REPORT.md`.
 - Supabase migration rollback tests: passed before application.
 - Supabase catalogue security checks: anonymous insert denied; browser Fit deletion denied; gallery RPC uses invoker rights.
 - Supabase advisors: no Phase 3 security issue; catalogue policy duplication and uploader index findings were remediated.
@@ -141,7 +155,9 @@ The private `catalogue-media` bucket is configured for JPEG, PNG, and WebP objec
 - Cleanup check: zero temporary Phase 3 validation records remain.
 - Public browser verification on port 3001: all 24 Fits rendered; a real Fit detail loaded its three-image gallery and live option data; mobile collection layout was visually checked.
 
-Full authenticated Admin UI browser verification still needs a valid staff sign-in password. The project/database password provided previously is not an Auth user password, and no staff credentials were changed during verification.
+Authenticated Phase 4 Client/Admin/CEO browser checks used isolated temporary accounts,
+not existing staff passwords. Existing users' credentials were not changed. The final
+one-line navigation fix does not change authentication, authorization or database code.
 
 ## Key files
 
