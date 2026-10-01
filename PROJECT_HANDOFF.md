@@ -4,18 +4,20 @@ Last updated: 2026-10-01
 
 ## Current status
 
-Phase 3 is deployed. Phase 4's backward-compatible database expansion is now live;
-the application deployment and final security contract are still pending. Phase 5
-must not start until production workflow verification and the contract are complete.
+Phase 4's backward-compatible expansion, application, and security contract are live.
+The final contact-input fix deployment and browser fixture cleanup are pending.
+The user has now authorized Phase 5 after Phase 4 is genuinely finished; do not
+start its implementation before completing this gate. Phase 6 remains out of scope.
 
 The primary Phase 3 implementation is present on `main` in commit `26f8f82` (`Acc Migrations`).
 
 The public catalogue still uses stable Fit IDs, while active Admin and CEO staff can manage catalogue records through the protected `/admin/collections` area. Existing customer Saved Looks remain intact.
 
 Worker2's isolated database checkpoint was merged into local `main` as `1271b2c`.
-The later application/integration fixes are still uncommitted at this checkpoint.
-The required backward-compatible expansion has been applied, so the reviewed and
-verified Phase 4 application can now be committed and pushed.
+The Phase 4 application checkpoint is committed and pushed as `2b5697c`.
+Production testing found a preexisting contact input focus loss: a nested Field
+component remounted per keystroke. Its narrow stable-component fix is being verified
+for the next checkpoint. No bank details have been supplied for the queued Phase 5.
 
 ## Completed architecture
 
@@ -57,10 +59,22 @@ verified Phase 4 application can now be committed and pushed.
 - Next: finish local app checks, commit/push main, verify the actual production SHA
   and real browser workflows, then dry-run/apply the security contract. Rerun live
   authorization tests/advisors and clean temporary tests before the final checkpoint.
-- Current production is still Phase 3: Vercel deployment
-  `dpl_FPzoLhcxA31zWThyc5TGkCBC9gXa`, main SHA
-  `9d6894f70c70f001aa6ffbd4ec517087dbe9c5e3`. Connector calls need empty `teamId`
+- Current production is Phase 4: READY Vercel deployment
+  `dpl_BU4fDJL198X932rb5dBCgQRUfsdD`, main SHA
+  `2b5697cd39a2a88a75b9ab41d09287b32e07a670`. Connector calls need empty `teamId`
   for the connected account scope; passing the account's team ID returns 403.
+- Fresh production Client and Admin logins, client dashboard, Fit detail and MAKE
+  THIS MINE navigation passed. A transient old-chunk 404 during the deployment switch
+  cleared in a fresh session. Complete workflow testing is still in progress.
+- Four isolated temporary Auth users exist for browser tests. Their exact identities
+  and generated credentials are in ignored `supabase/.temp/phase4-browser-fixtures.json`.
+  Never commit that manifest. Cleanup SQL is exact-ID/tag guarded, locally validated,
+  and restores the immutable-revision trigger inside an exclusive-lock transaction.
+- A legitimate existing staff member converted an original request while testing was
+  in progress. Preserve that new live order; do not try to restore the earlier zero
+  orders baseline. Our browser tests operate only on tagged temporary customers.
+- Worker2's second isolated read-only review of `2b5697c` found no concrete remaining
+  Phase 4 RPC/authorization/retry/locking blockers. This is static, not runtime proof.
 
 ## Phase 3 functionality
 
@@ -78,6 +92,7 @@ verified Phase 4 application can now be committed and pushed.
 - `20260929131433_phase3_catalogue_management.sql`
 - `20260929131721_phase3_catalogue_policy_optimization.sql`
 - `20260929140000_phase4_commission_core.sql`
+- `20260929140100_phase4_commission_contract.sql`
 
 Post-migration preservation check:
 
@@ -108,6 +123,14 @@ The private `catalogue-media` bucket is configured for JPEG, PNG, and WebP objec
 - Worker2 performed an isolated read-only review. Retry keys now survive interrupted
   transport within each form, saved measurement intent is deterministic, measurement
   provenance is visible, and resubmitted special instructions map correctly.
+- Production browser workflow passed creation, changes requested, client resubmission,
+  current-revision approval, conversion, and Admin/CEO stage updates. Unrelated clients
+  cannot view the request/order; Admin is denied CEO-only Staff while CEO is allowed.
+- Contract dry-run listed only `20260929140100`; application succeeded and remote
+  history confirms it. The complete 58-assertion lifecycle suite passed live inside
+  a rolled-back transaction. The final native replay passed 48 security + 58 lifecycle
+  assertions and eight real concurrent storage/workflow race cases.
+- Contact input focus fix: TypeScript, ESLint, 20 tests and production build passed.
 - Post-expansion advisors: intentional deny-all private operation ledger and guarded
   SECURITY DEFINER RPC notices; preexisting leaked-password protection warning;
   four unrelated missing FK indexes and low-usage index notices. Recheck after contract.

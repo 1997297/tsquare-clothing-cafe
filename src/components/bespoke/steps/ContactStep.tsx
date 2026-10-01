@@ -29,6 +29,49 @@ function isValidPhone(phone: string) {
   return digits.length >= 10;
 }
 
+// Keep the component identity stable while the parent updates the draft.
+// Defining this inside ContactStep remounts the input on each keystroke.
+function ContactField({
+  id, label, type = "text", value, fieldKey, placeholder, autoComplete,
+  error, onChange, onBlur,
+}: {
+  id: string;
+  label: string;
+  type?: string;
+  value: string;
+  fieldKey: keyof ContactInfo;
+  placeholder?: string;
+  autoComplete?: string;
+  error?: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-[10px] uppercase tracking-widest text-stone-500 mb-2">
+        {label}
+      </label>
+      <input
+        id={id}
+        name={fieldKey}
+        type={type}
+        value={value}
+        autoComplete={autoComplete}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+        onBlur={onBlur}
+        className={cn(
+          "w-full bg-stone-950 border rounded-xl text-sm text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none transition-colors",
+          error
+            ? "border-amber-700/60 focus:border-amber-500/60"
+            : "border-stone-800 focus:border-champagne/50"
+        )}
+      />
+      {error && <p className="text-[10px] text-amber-500 mt-1.5">{error}</p>}
+    </div>
+  );
+}
+
 export function ContactStep({
   config,
   onUpdate,
@@ -107,50 +150,6 @@ export function ContactStep({
     if (!hasErrors) onContinue();
   }
 
-  function Field({
-    id,
-    label,
-    type = "text",
-    value,
-    fieldKey,
-    placeholder,
-    autoComplete,
-  }: {
-    id: string;
-    label: string;
-    type?: string;
-    value: string;
-    fieldKey: keyof ContactInfo;
-    placeholder?: string;
-    autoComplete?: string;
-  }) {
-    const err = touched[fieldKey] ? errors[fieldKey] : "";
-    return (
-      <div>
-        <label htmlFor={id} className="block text-[10px] uppercase tracking-widest text-stone-500 mb-2">
-          {label}
-        </label>
-        <input
-          id={id}
-          name={fieldKey}
-          type={type}
-          value={value}
-          autoComplete={autoComplete}
-          placeholder={placeholder}
-          onChange={(e) => set(fieldKey, e.target.value as ContactInfo[typeof fieldKey])}
-          onBlur={() => touch(fieldKey)}
-          className={cn(
-            "w-full bg-stone-950 border rounded-xl text-sm text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none transition-colors",
-            err
-              ? "border-amber-700/60 focus:border-amber-500/60"
-              : "border-stone-800 focus:border-champagne/50"
-          )}
-        />
-        {err && <p className="text-[10px] text-amber-500 mt-1.5">{err}</p>}
-      </div>
-    );
-  }
-
   return (
     <div className="animate-in fade-in duration-300">
       <p className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne mb-3">
@@ -190,24 +189,30 @@ export function ContactStep({
 
       <div className="space-y-5 mb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <Field
+          <ContactField
             id="contact-firstname"
             label="First Name"
             value={contact.firstName}
             fieldKey="firstName"
             placeholder="Adewale"
             autoComplete="given-name"
+            error={touched.firstName ? errors.firstName : ""}
+            onChange={(value) => set("firstName", value)}
+            onBlur={() => touch("firstName")}
           />
-          <Field
+          <ContactField
             id="contact-lastname"
             label="Last Name"
             value={contact.lastName}
             fieldKey="lastName"
             placeholder="Okonkwo"
             autoComplete="family-name"
+            error={touched.lastName ? errors.lastName : ""}
+            onChange={(value) => set("lastName", value)}
+            onBlur={() => touch("lastName")}
           />
         </div>
-        <Field
+        <ContactField
           id="contact-phone"
           label="Phone Number"
           type="tel"
@@ -215,8 +220,11 @@ export function ContactStep({
           fieldKey="phone"
           placeholder="+234 800 000 0000"
           autoComplete="tel"
+          error={touched.phone ? errors.phone : ""}
+          onChange={(value) => set("phone", value)}
+          onBlur={() => touch("phone")}
         />
-        <Field
+        <ContactField
           id="contact-email"
           label="Email Address"
           type="email"
@@ -224,6 +232,9 @@ export function ContactStep({
           fieldKey="email"
           placeholder="your@email.com"
           autoComplete="email"
+          error={touched.email ? errors.email : ""}
+          onChange={(value) => set("email", value)}
+          onBlur={() => touch("email")}
         />
 
         {/* Preferred contact */}

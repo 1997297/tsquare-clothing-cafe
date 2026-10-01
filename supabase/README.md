@@ -37,8 +37,8 @@ Never place the service-role key in a `NEXT_PUBLIC_` variable. Deployment is a s
 
 ## Phase 4 database expansion and contract
 
-Rollout checkpoint (2026-10-01): the compatible core expansion is live. The security
-contract is pending application deployment and production verification. Consult
+Rollout checkpoint (2026-10-01): the compatible core expansion and security contract
+are live; the contract followed verified Phase 4 application deployment. Consult
 `PROJECT_HANDOFF.md` for the current deployment checkpoint before applying anything.
 
 `20260929140000_phase4_commission_core.sql` follows `20260929131721` and is the

@@ -7,6 +7,7 @@ import { pathToFileURL } from 'node:url';
 import { tmpdir } from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { verifyPhase4Storage } from './verify-phase4-storage.mjs';
+import { verifyPhase4Concurrency } from './verify-phase4-concurrency.mjs';
 
 const runtime = process.argv[2];
 if (!runtime) throw new Error('Pass the isolated embedded-postgres installation directory.');
@@ -69,6 +70,8 @@ try {
   }
   activeFile = 'scripts/verify-phase4-storage.mjs';
   await verifyPhase4Storage(client, () => new pgModule.Client({ host:'127.0.0.1',port:55439,user:'postgres',database:'postgres' }));
+  activeFile = 'scripts/verify-phase4-concurrency.mjs';
+  await verifyPhase4Concurrency(client, () => new pgModule.Client({ host:'127.0.0.1',port:55439,user:'postgres',database:'postgres' }));
   console.log('All local SQL suites passed. This is not production/browser verification.');
 } catch (error) {
   console.error(JSON.stringify({ file: activeFile, code: error.code, message: error.message, position: error.position, internalPosition: error.internalPosition, internalQuery: error.internalQuery, where: error.where }, null, 2));
