@@ -1,6 +1,6 @@
 # TSquare Clothing Cafe — Project Handoff
 
-Last updated: 2026-10-01
+Last updated: 2026-10-05
 
 ## Current status
 
@@ -9,8 +9,55 @@ and the authenticated request-to-completed-order workflow has passed production 
 The contact-input fix is verified live. Temporary production records, Auth users and
 sessions have been removed with legitimate data preserved. The final navigation fix
 is pushed and verified on production as `3c7d4a9`; this follow-up is documentation only.
-Phase 4 is complete and ready for Phase 5. Phase 5 is authorized next but has not
-been implemented; Phase 6 remains out of scope.
+Phase 4 is complete. Phase 5 is in progress: its database migration is live, but
+the application is not yet pushed/deployed or authenticated-browser verified.
+Phase 6 remains out of scope. Do not describe Phase 5 as complete.
+
+## Phase 5 current checkpoint
+
+- Phase 4 is complete. Phase 5 local implementation and database are verified;
+  application push/deployment, production workflow and cleanup are next. No Phase 6.
+- User approved CEO-editable bank fields with placeholder hints. Real bank details
+  are not supplied: the singleton remains empty/unconfigured. Issuance is blocked
+  until CEO deliberately saves official details after approval.
+- Worker2 database work in codex/phase5-db was committed as 8d9ca7a and cherry-picked
+  as a5d7a6c. Its separate codex/phase5-security-review worktree produced reviews and
+  the narrow timezone fix. Accounts did not edit the same worktree.
+- BOTH migrations are live: 20261002074022_phase5_payments.sql and
+  20261005075136_phase5_transfer_date_lagos.sql. NEVER edit/reapply them. Dry runs
+  listed only the intended migration each time; data fingerprints matched.
+- Native PG17.6 replay passed 48 security + 58 Phase 4 + 79 Phase 5 assertions
+  and 16 observed concurrent races. Live rollback suite passed 79 assertions;
+  timezone follow-up passed exact-body/ACL/identity/calendar/RPC rollback checks.
+- Worker2's mixed-read-snapshot and two legacy-voucher findings are fixed. The
+  follow-up fixes the UTC/Lagos midnight mismatch without changing RPC permissions.
+- Final TypeScript, ESLint, 28 tests and optimized production build passed.
+  Browser Client/Admin/CEO authentication, pricing, deposit, partial recognition,
+  remainder, rejection/resubmission, instalment and final-balance actions passed.
+  Fully-paid display shows NGN 500,000 verified and zero balance, with no transfer
+  form. Mobile/tablet/desktop and both themes fit; light feedback contrast refined.
+- Actual HTTP verifies owner/staff private receipt access, other/anonymous denial,
+  signed URL expiry, MIME/size/origin rejection, immutable upload retry, Storage
+  deletion denial, client verification denial, Admin bank-edit denial and duplicate
+  verification rejection. Never describe these as actual bank transfers.
+- Request creation and CEO configuration were exercised in a guarded SQL transaction
+  that restored the original bank row before commit; only QA request snapshots
+  contain conspicuous synthetic NO TRANSFERS instructions. Global settings stayed
+  unconfigured for all other sessions. Positive issuance UI awaits real CEO setup.
+- Advisors: two intentional deny-all private ledgers, 13 guarded definer RPC notices,
+  existing leaked-password warning, four unrelated missing FK indexes and sixteen
+  unused-index INFO notices. RLS remains enabled throughout.
+- TEMPORARY LIVE FIXTURES MUST BE REMOVED: four Auth users tagged
+  tcc-phase5-127c78d96e81, two TCC-QA5-127C78-* orders and synthetic financial rows/
+  receipt objects. Credentials are in ignored supabase/.temp/phase5-browser-fixtures.json.
+  Exact-tag locked cleanup passed a rollback dry run; do not run old Phase 4 cleanup.
+- Legitimate data: one order, two requests, four profiles, two staff, 24 Fits,
+  26 catalogue images and six Saved Looks. Do not use these as test fixtures.
+- Parent disposable PG cluster is removed. Worker2's stopped test-only cluster
+  AppData/Local/Temp/tcc-phase5-db-worker2 remains for validated exact-path cleanup.
+- Remaining: push main, verify READY deployment's exact SHA, authenticated production
+  upload/review/read workflow, cleanup Auth/sessions/objects/screenshots, final docs.
+  See PHASE5_ROLLOUT_REPORT.md and supabase/PHASE5_DATABASE.md.
 
 The primary Phase 3 implementation is present on `main` in commit `26f8f82` (`Acc Migrations`).
 

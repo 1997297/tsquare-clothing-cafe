@@ -172,3 +172,12 @@ a.bg-champagne {
   border-color: #FECDD3 !important;
   color: #9F1239 !important;
 }
+
+/* Payment feedback must remain readable on the light financial surfaces. */
+:root[data-theme="light"] .payment-panel .text-rose-400 {
+  color: #be123c;
+}
+
+:root[data-theme="light"] .payment-panel .text-amber-400 {
+  color: #92400e;
+}

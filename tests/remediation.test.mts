@@ -9,7 +9,10 @@ import {
   nextMeasurementVersionNumber,
   paymentIdempotencyKey,
 } from "../src/lib/business-rules.ts";
-import { minorToNaira, nairaToMinor, sumMinorUnits } from "../src/lib/payments/money.ts";
+import { minorToNaira, nairaToMinor, sumMinorUnits, parseNairaInput, formatMinor, MAX_MONEY_MINOR } from "../src/lib/payments/money.ts";
+import { requestPosition, paymentPercent, type PaymentRequest, type PaymentSubmission, type VerifiedPayment } from "../src/lib/payments/manual.ts";
+import { validateReceiptBytes, RECEIPT_MAX_BYTES } from "../src/lib/payments/receipt-validation.ts";
+import { readStablePaymentSnapshot } from "../src/lib/payments/snapshot.ts";
 import { calculateOrderPaymentPosition } from "../src/lib/payments/service.ts";
 import {
   sanitizeInternalPath,
@@ -37,6 +40,85 @@ import {
   normalizeRequestStatus,
   requestActionNeedsMessage,
 } from "../src/lib/atelier-workflow.ts";
+
+test("manual payment input uses exact minor units and rejects rounding/ambiguous amounts", () => {
+  assert.equal(parseNairaInput("150000.01"), 15000001);
+  assert.equal(parseNairaInput("0.29"), 29);
+  assert.equal(parseNairaInput(" 100.1 "), 10010);
+  assert.equal(parseNairaInput("9999999999.99"), MAX_MONEY_MINOR);
+  for (const input of ["1.005", "-1", "1e5", "1,000", "NaN", "Infinity", ".50", "01.00", "", "10000000000", "0x10"]) assert.throws(() => parseNairaInput(input), input);
+  assert.match(formatMinor(10001), /100\.01/);
+  assert.equal(formatMinor(null), "Not agreed");
+  assert.throws(() => formatMinor(-1));
+  assert.throws(() => sumMinorUnits([Number.MAX_SAFE_INTEGER, 1]));
+});
+
+test("financial reads retry verification races instead of publishing mixed snapshots", async () => {
+  let version = 1, reads = 0;
+  const result = await readStablePaymentSnapshot(
+    async () => [{ id: "order", lock_version: version }],
+    async () => {
+      reads++;
+      if (reads === 1) { version++; return { verified: 0, submission: "verified" }; }
+      return { verified: 10050, submission: "verified" };
+    },
+  );
+  assert.equal(reads, 2);
+  assert.deepEqual(result.data, { verified: 10050, submission: "verified" });
+  assert.equal(result.orders[0].lock_version, 2);
+});
+
+test("financial reads detect new orders and fail closed during sustained changes", async () => {
+  let calls = 0;
+  const result = await readStablePaymentSnapshot(
+    async () => ++calls === 1 ? [] : [{ id: "new-order", lock_version: 1 }],
+    async orders => orders.length,
+  );
+  assert.equal(result.data, 1);
+  let version = 0;
+  await assert.rejects(readStablePaymentSnapshot(
+    async () => [{ id: "order", lock_version: ++version }],
+    async () => ({ verified: 0 }),
+  ), /Financial records are changing/);
+});
+
+test("pending and rejected evidence never contribute to verified request funds", () => {
+  const request = { id: "r1", requested_amount_minor: 20000000, status: "active" } as PaymentRequest;
+  const pending = { request_id: "r1", reported_amount_minor: 20000000, status: "awaiting_verification" } as PaymentSubmission;
+  assert.deepEqual(requestPosition(request, [], [pending]), { verified: 0, pending: 20000000, remaining: 20000000, status: "Awaiting verification" });
+  const rejected = { ...pending, status: "rejected" } as PaymentSubmission;
+  assert.equal(requestPosition(request, [], [rejected]).verified, 0);
+  assert.equal(requestPosition(request, [], [rejected]).pending, 0);
+  const payment = { payment_request_id: "r1", amount_minor: 15000000, status: "successful" } as VerifiedPayment;
+  assert.deepEqual(requestPosition(request, [payment], [rejected]), { verified: 15000000, pending: 0, remaining: 5000000, status: "Partially satisfied" });
+  assert.equal(requestPosition(request, [payment, { ...payment, amount_minor: 5000000 }], []).status, "Satisfied");
+  assert.equal(requestPosition(request, [{ ...payment, status: "pending" }], []).verified, 0);
+});
+
+test("verified payment percentage cannot round an outstanding balance up to fully paid", () => {
+  assert.equal(paymentPercent(40000000, 10000000), 25);
+  assert.equal(paymentPercent(50000000, 50000000), 100);
+  assert.equal(paymentPercent(MAX_MONEY_MINOR, MAX_MONEY_MINOR - 1), 99.99);
+  assert.equal(paymentPercent(null, 0), 0);
+});
+
+test("receipt validation checks bytes, declared MIME, extension and bounded size", () => {
+  const png = new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
+  const jpg = new Uint8Array([255,216,255,224,0,0,0,0,0,0,0,0]);
+  const webp = new TextEncoder().encode("RIFF0000WEBPmore");
+  const pdf = new TextEncoder().encode("%PDF-1.4\n%%EOF\n");
+  assert.equal(validateReceiptBytes("receipt.PNG", "image/png", png), "png");
+  assert.equal(validateReceiptBytes("receipt.jpeg", "image/jpeg", jpg), "jpeg");
+  assert.equal(validateReceiptBytes("receipt.webp", "image/webp", webp), "webp");
+  assert.equal(validateReceiptBytes("receipt.pdf", "application/pdf", pdf), "pdf");
+  assert.throws(() => validateReceiptBytes("receipt.png", "image/png", pdf));
+  assert.throws(() => validateReceiptBytes("receipt.pdf", "image/png", png));
+  assert.throws(() => validateReceiptBytes("receipt.svg", "image/svg+xml", png));
+  assert.throws(() => validateReceiptBytes("receipt.png.exe", "image/png", png));
+  assert.throws(() => validateReceiptBytes("receipt.png", "image/png", png.slice(0, 4)));
+  const huge = new Uint8Array(RECEIPT_MAX_BYTES + 1); huge.set(png);
+  assert.throws(() => validateReceiptBytes("receipt.png", "image/png", huge));
+});
 
 test("workflow retries retain their key until the operation intent changes", () => {
   let keys = 0;

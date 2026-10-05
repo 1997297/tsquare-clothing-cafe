@@ -35,9 +35,9 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
       .select("id", { count: "exact", head: true })
       .neq("status", "completed"),
     supabase
-      .from("payments")
+      .from("payment_submissions")
       .select("id", { count: "exact", head: true })
-      .eq("status", "pending"),
+      .eq("status", "awaiting_verification"),
     supabase
       .from("appointments")
       .select("id", { count: "exact", head: true })
@@ -67,7 +67,7 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
     metrics: [
       { label: "Pending Requests", value: requests.error ? null : requests.count ?? 0, detail: "Awaiting atelier action" },
       { label: "Active Orders", value: orders.error ? null : orders.count ?? 0, detail: "Not yet completed" },
-      { label: "Payment Review", value: payments.error ? null : payments.count ?? 0, detail: "Pending verification" },
+      { label: "Payments Awaiting Verification", value: payments.error ? null : payments.count ?? 0, detail: "Client evidence requiring staff review" },
       { label: "Appointments", value: appointments.error ? null : appointments.count ?? 0, detail: "Upcoming and active" },
       { label: "Concierge", value: concierge.error ? null : concierge.count ?? 0, detail: "Open conversations" },
     ],

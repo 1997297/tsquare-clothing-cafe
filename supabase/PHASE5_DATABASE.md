@@ -1,6 +1,14 @@
 # Phase 5 database integration
 
 Worker2 database module on `codex/phase5-db`, based on `74b05f6`.
+Parent integration update (2026-10-05): the original four files were committed as
+Worker2 `8d9ca7a` and cherry-picked to main as `a5d7a6c`; the Git limitation below
+describes the historical worker handoff, not current state. Core migration is live.
+Follow-up `20261005075136_phase5_transfer_date_lagos.sql` is also live, preserving
+the evidence RPC except its upper date bound now uses the Africa/Lagos calendar.
+Both migrations passed dry runs, row-preservation checks and rollback verification.
+See `../PHASE5_ROLLOUT_REPORT.md` for application/HTTP/advisor/deployment status.
+
 Migration: `20261002074022_phase5_payments.sql`, generated with the supplied native
 Supabase CLI after `migration new --help`. Process-only `DO_NOT_TRACK=1` and
 `SUPABASE_NO_UPDATE_NOTIFIER=1` avoided an otherwise forbidden telemetry write.
@@ -27,7 +35,7 @@ notes/instructions/reasons are at most 2,000 characters, transaction references
 200, bank name 120, account name 160. Account numbers must be ten digits;
 common placeholders, sequential test numbers and repeated digits fail. This is
 input validation, not external bank-account verification. Transfer dates must be
-between 2000-01-01 and the database current date. Reject with
+between 2000-01-01 and today's Africa/Lagos date (follow-up migration). Reject with
 `p_verified_amount_minor = null`; verify with a positive recognized amount.
 
 ## Tables and ledger

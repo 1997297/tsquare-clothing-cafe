@@ -18,6 +18,7 @@ import {
   Check,
 } from "lucide-react";
 import { cn, formatOfficeLocation } from "@/lib/utils";
+import { ClientOrderFinance } from "@/components/payments/ClientOrderFinance";
 
 const CRAFTSMANSHIP_STAGES = [
   { id: "order_confirmed", label: "Confirmed" },
@@ -104,7 +105,7 @@ export default function AccountOverviewPage() {
         </div>
       </div>
 
-      {/* ── Commercial Position Highlight (When balance is due) ── */}
+      {activeOrder && <ClientOrderFinance orderId={activeOrder.id} compact />}
       {/* ── Section 1: Priority Active Garment Focus ── */}
       {activeOrder ? (
         <div className="p-6 sm:p-8 bg-stone-950 fine-border rounded-3xl space-y-6">

@@ -6,6 +6,7 @@ import { OrderStatusBadge, WorkflowTimeline } from "@/components/atelier/Workflo
 import { getAdminOrder } from "@/lib/server/atelier-workflow";
 import { isUuid } from "@/lib/validation";
 import { OrderStageControl } from "./OrderStageControl";
+import { StaffOrderFinance } from "@/components/payments/StaffOrderFinance";
 
 function RecordGrid({ title, values }: { title: string; values: Record<string, unknown> }) {
   const entries = Object.entries(values).filter(([, value]) => value !== null && value !== undefined && value !== "");
@@ -31,6 +32,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         verificationStatus: order.measurementsSnapshot.verificationStatus,
       }} />
       <RecordGrid title="Approved customization" values={{ ...order.preferences, specialInstructions: order.specialInstructions }} />
+      <StaffOrderFinance orderId={order.id} />
       <WorkflowTimeline events={order.timeline} />
     </div><div className="xl:sticky xl:top-28 xl:self-start"><OrderStageControl order={order} /></div></div>
   </div>;

@@ -12,6 +12,7 @@ import { useAccountData } from "@/lib/account-store";
 import { cn, formatOfficeLocation } from "@/lib/utils";
 import { ReturnLink } from "@/components/common/ReturnLink";
 import { WorkflowTimeline } from "@/components/atelier/WorkflowUI";
+import { ClientOrderFinance } from "@/components/payments/ClientOrderFinance";
 
 const STAGES = [
   ["order_confirmed", "Order Confirmed"],
@@ -117,11 +118,6 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         <div className="space-y-6">
-          <section className="p-6 rounded-3xl bg-stone-950 fine-border space-y-3 text-xs">
-            <h2 className="font-mono uppercase tracking-[0.25em] text-champagne">Payment</h2>
-            <p className="leading-6 text-stone-400">Payment requests and balance tracking are not active in this phase. Your production record does not imply that any amount is due or settled.</p>
-          </section>
-
           <section className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4 text-xs">
             <h2 className="uppercase tracking-[0.25em] text-champagne font-mono">Fitting Checkpoints</h2>
             {relatedAppointments.length === 0 && <p className="text-stone-500">No appointments are linked to this order.</p>}
@@ -135,6 +131,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           </section>
         </div>
       </div>
+      <ClientOrderFinance orderId={order.id} />
       <WorkflowTimeline events={order.timeline ?? []} />
     </div>
   );
