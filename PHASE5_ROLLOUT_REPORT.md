@@ -1,13 +1,16 @@
 # Phase 5 rollout report
 
-Updated: 2026-10-05. Scope: manual bank-transfer requests, private receipts,
+Updated: 2026-10-06 (Africa/Lagos). Scope: manual bank-transfer requests, private receipts,
 staff verification, deposits, instalments and balances. No Phase 6 work.
 
 ## Current checkpoint
 
-PHASE 5 IS NOT COMPLETE. Database and local authenticated workflow are verified;
-the application Git push, exact-SHA production deployment and removal of temporary
-fixtures are still pending at this checkpoint.
+Phase 5 implementation, migrations, authenticated production workflow and test-data
+cleanup are complete. Application commit `f9ad898a97dd1a4e8430b3d12621c9cc62957f88`
+is pushed on main and verified in READY production deployment
+`dpl_LBia5c4QhdyGXVhQtY8b8sShS77T`. This report is its documentation-only closure
+checkpoint; the delivery message records the follow-up commit/deployment verification.
+Real bank activation remains deliberately deferred until CEO setup after approval.
 
 ## Implementation
 
@@ -30,6 +33,21 @@ payment forms/history/list/details, authenticated server actions and receipt/sum
 API routes, money/receipt/snapshot helpers, server workspace reads, admin pending
 counts, versioned migrations and tests. See the Git checkpoint for the exact list.
 
+## Financial calculations
+
+- Order Total: existing `orders.total_amount_minor`, integer kobo; null means unpriced.
+- Verified Paid: sum of successful immutable `payments.amount_minor` for the order.
+- Pending Verification: sum of reported amounts on `awaiting_verification` submissions.
+- Remaining Balance: agreed total minus verified paid; pending is never deducted.
+- Payment %: integer division of `verified * 10000 / total`, then divide by 100 for
+  display. It floors to two decimals so a nearly paid order cannot display 100%.
+- Balance %: 100 minus displayed Payment %. Unpriced orders have no balance percentage.
+- Fully Paid: an agreed positive total exists and verified funds cover it. Verification
+  cannot exceed the outstanding request/order balance; no money is silently clamped.
+- Active request reservations reduce the amount available for additional requests.
+  A 200,000 request with 150,000 verified retains 50,000 outstanding. Multiple verified
+  ledger entries aggregate without replacing earlier payments or rejected evidence.
+
 ## Database and security
 
 Applied migrations (never edit/reapply):
@@ -48,6 +66,20 @@ customer ownership are checked inside each privileged RPC. Receipt registration 
 service-only; signed downloads use the authenticated user's RLS client, not service.
 Legacy service `record_verified_payment` execution is revoked. Private operation
 ledgers deliberately have no public policies or grants. RLS was never disabled.
+
+New tables: `payment_bank_settings`, `payment_requests`, `payment_submissions`,
+`payment_receipts`, and `private.payment_operation_results`. Existing `payments` gains
+request/submission provenance, verifier and verification time; submission linkage is
+unique. Positive-amount, ownership, supported-state and immutable-history constraints
+are enforced. Five immutable triggers protect requests, submissions, ledger entries,
+receipt metadata and registered Storage objects. Restrictive Storage policies prohibit
+browser insert/update/delete; registered receipts are owner/active-staff readable.
+
+RPCs: `set_order_agreed_total`, `set_payment_bank_details`, `issue_payment_request`,
+`cancel_payment_request`, `submit_payment_evidence`, `review_payment_submission`,
+`get_order_financials`, and service-only `register_payment_receipt`. Exact signatures,
+locking and constraints are documented in `supabase/PHASE5_DATABASE.md` and the
+implementation contract. Client IDs and verified status are never trusted from UI.
 
 Native PostgreSQL 17.6 full replay: 48 security + 58 Phase 4 + 79 Phase 5 assertions,
 eight Phase 4 and eight Phase 5 observed concurrent races passed. Legacy columns
@@ -99,7 +131,28 @@ Application: TypeScript, ESLint, 28 tests (including two timezone tests), and th
 final optimized production build passed. Build generated all 68 static pages and
 retained dynamic authenticated financial/receipt routes.
 
-## Supabase advisors (2026-10-05)
+## Production verification (2026-10-06 Africa/Lagos)
+
+The full browser workflow above was repeated against
+https://tsquare-clothing-cafe.vercel.app on a separate explicitly synthetic order.
+Real browser Client/Admin/CEO logins succeeded. Partial recognition, deposit remainder,
+rejected evidence, corrected instalment and final balance all passed. Final state was
+NGN 500,000 verified, zero pending, zero balance, 100% paid and no further-transfer form.
+The complete HTTP security/receipt/upload suite also passed against this production
+origin, including private PDF bytes, denial paths and actual expiry after 66 seconds.
+
+Production display checks passed 390/768/1440 widths in dark/light themes, CEO blank
+fields, rejection history and mobile confirmation dialogs. Screenshots were inspected;
+light rejection text is rgb(190,18,60), warning text rgb(146,64,14). No browser page
+exceptions occurred. No actual funds were transferred and no real order was modified.
+
+Vercel runtime-log reads are unavailable to this connection: empty team scope returns
+"Team ID is required", team listing is empty, and the observed account slug returns
+403. Do not interpret this as a clean runtime-log audit. No log Drains are configured.
+Application correctness is evidenced by actual authenticated browser/HTTP results,
+SQL assertions and exact-SHA READY deployment metadata, not inferred from absent logs.
+
+## Supabase advisors (2026-10-06 Africa/Lagos)
 
 - Two INFO no-policy findings are intentional deny-all private operation ledgers.
 - Thirteen WARN authenticated SECURITY DEFINER endpoints are intentional guarded
@@ -108,7 +161,7 @@ retained dynamic authenticated financial/receipt routes.
 - Pre-existing leaked-password protection warning remains. Owner can enable it in
   Supabase Authentication password-security settings, subject to project plan support.
 - Four pre-existing missing FK indexes concern appointment/concierge tables, outside
-  this phase. No Phase 5 missing FK index. Sixteen unused-index INFO notices remain;
+  this phase. No Phase 5 missing FK index. Ten unused-index INFO notices remain;
   do not remove integrity/query indexes merely because the project is small/new.
 
 References: [definer notice](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable),
@@ -123,9 +176,11 @@ Required: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 (legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY` fallback), and server-only
 `SUPABASE_SECRET_KEY` (legacy `SUPABASE_SERVICE_ROLE_KEY` fallback).
 Existing `NEXT_PUBLIC_SITE_URL` must match the deployment origin; demo mode remains off.
-No secrets or `.env.local` are committed. Production receipt runtime still needs checking.
-The connector exposes deployment metadata but not an environment-value inventory;
-do not claim every production variable was inspected from dashboard configuration.
+Production-scope presence was confirmed for `NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `NEXT_PUBLIC_SITE_URL`
+and `NEXT_PUBLIC_TCC_DEMO_MODE`. Values were not decrypted or displayed. Actual production
+authentication and server-side receipt upload/download passed. No environment changes,
+new secrets or `.env.local` commit were necessary.
 
 After project approval, CEO signs in, opens `/admin/payments`, fills Official bank
 details with TCC's actual bank name, account name, 10-digit number and optional
@@ -137,13 +192,33 @@ No manual SQL or Storage changes are currently required; both migrations are app
 ## Git, deployment and cleanup
 
 Branch main; database checkpoint `a5d7a6c`, derived from Worker2 `8d9ca7a`.
-Remote main is still Phase 4 `74b05f6` at this checkpoint. Final application commit,
-push, `HEAD == origin/main`, clean worktree and production verification are pending.
+Application checkpoint `f9ad898a97dd1a4e8430b3d12621c9cc62957f88` is on GitHub main,
+with Vercel's main branch/SHA, READY state and production alias confirmed. Final
+closure changes only documentation; its exact commit, clean worktree, remote equality
+and production promotion are checked after pushing and recorded in the delivery reply.
 
-Four temporary Auth accounts, two QA orders and their synthetic financial records
-currently remain for production verification. Secret manifest and proof files are
-gitignored under `supabase/.temp`. Exact-tag cleanup and session revocation are
-mandatory before closure. Real customer data, catalogue IDs and Saved Looks are untouched.
+Exact-ID/tag cleanup removed four temporary Auth accounts and globally revoked their
+sessions, two test staff memberships, three synthetic orders, six requests, ten
+submissions, nine ledger entries (including the 100.50 legacy fixture), and twelve
+receipt objects/metadata rows. Related test events, notifications and replay records
+were removed. SQL confirmed zero remaining QA Auth users, sessions, profiles, staff,
+orders or Storage objects, and zero financial fixture rows.
+
+The owner cleanup transaction used exclusive table locks and restored all immutable
+guards before commit; RLS stayed enabled. Storage objects were removed through the
+Storage API after metadata cleanup, not by SQL deletion. All five guards remain active
+and all five payment tables retain RLS. The receipt bucket remains private and 3 MB.
+Before/after full-row fingerprints match across all 31 public/private tables, preserving
+271 non-test rows: one order, two bespoke requests, four profiles, two staff, 24 Fits,
+28 current catalogue images and six Saved Looks. The earlier 26-image count was stale;
+current live images were preserved, never reset to an older baseline. The complete
+empty bank singleton also retains its original fingerprint.
+
+Disposable browser contexts were closed; temporary credentials, proof files,
+screenshots and one-run verification helpers are removed before the closure push.
+Both disposable PostgreSQL data directories are removed; existing Worker2 worktrees
+and PostgreSQL distribution files are preserved. Removed fixtures were synthetic,
+not business records; they were intentionally deleted, not archived.
 
 Worker2 used separate `codex/phase5-db` and `codex/phase5-security-review` worktrees.
 Its static review identified the financial read race and legacy voucher issues fixed

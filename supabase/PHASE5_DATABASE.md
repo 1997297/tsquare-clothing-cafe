@@ -1,13 +1,18 @@
 # Phase 5 database integration
 
 Worker2 database module on `codex/phase5-db`, based on `74b05f6`.
-Parent integration update (2026-10-05): the original four files were committed as
+Parent integration update (2026-10-06): the original four files were committed as
 Worker2 `8d9ca7a` and cherry-picked to main as `a5d7a6c`; the Git limitation below
 describes the historical worker handoff, not current state. Core migration is live.
 Follow-up `20261005075136_phase5_transfer_date_lagos.sql` is also live, preserving
 the evidence RPC except its upper date bound now uses the Africa/Lagos calendar.
 Both migrations passed dry runs, row-preservation checks and rollback verification.
 See `../PHASE5_ROLLOUT_REPORT.md` for application/HTTP/advisor/deployment status.
+Parent has now completed production browser/HTTP verification and exact-fixture
+cleanup. The stopped Worker2 disposable cluster was removed after exact-path and
+no-running-PostgreSQL checks. The limitations below are historical Worker2 handoff
+notes, resolved by parent integration. Real bank activation is intentionally deferred
+for CEO configuration after project approval, not an unfinished database task.
 
 Migration: `20261002074022_phase5_payments.sql`, generated with the supplied native
 Supabase CLI after `migration new --help`. Process-only `DO_NOT_TRACK=1` and
@@ -213,5 +218,6 @@ by tool policy (`blocked by policy`). The stopped test-only cluster remains at
 `C:/Users/Young Duke/AppData/Local/Temp/tcc-phase5-db-worker2` for authorized cleanup.
 It contains synthetic local data only, never credentials or production records.
 
-**PHASE 5 IS NOT COMPLETE.** This is the locally verified database module only;
-parent integration, real bank configuration and production verification remain.
+Historical Worker2 status at handoff: database module locally verified, full Phase 5
+not yet complete. Parent integration and production verification have since completed;
+see the dated parent update above and the rollout report. No Phase 6 work was performed.

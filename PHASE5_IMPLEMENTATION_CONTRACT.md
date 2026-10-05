@@ -1,11 +1,14 @@
 # Phase 5 implementation contract (2026-10-02)
 
-Status: in progress, not deployed. Phase 4 base: 74b05f6.
+Status (2026-10-06): implemented and production-verified on main application
+commit f9ad898. This document preserves the original contract and preflight below;
+see PHASE5_ROLLOUT_REPORT.md for final verification, cleanup and deployment evidence.
+Phase 4 base: 74b05f6.
 User approved CEO-editable bank fields with placeholders. Placeholders are UI hints,
 not payable instructions. Bank configuration starts incomplete; issuing a request
 requires real bank details deliberately saved by CEO. No Phase 6.
 
-## Audit and ownership
+## Original pre-implementation audit and ownership
 
 Live preflight: one legitimate order, zero payments. Existing orders.total_amount_minor
 and payments.amount_minor remain authoritative integer minor units. Legacy numeric
