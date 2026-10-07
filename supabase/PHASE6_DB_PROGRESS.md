@@ -52,3 +52,8 @@ reviewed and integrated on main as 5c57452 and b8cd908. Parent independently rer
 the native suite and all 55 live expansion HTTP checks successfully. Expansion is
 live; contract waits for the verified application deployment. See the root rollout
 report for current completion/cleanup status; this worker log is historical.
+
+Parent cleanup update: the exact failed-launch log-only directory above was
+verified stopped and removed on October 7. The Worker2 worktree and PostgreSQL
+distribution were preserved. Both reviewed migrations are now live; all 19
+production browser checks and all 55 post-contract HTTP checks passed.

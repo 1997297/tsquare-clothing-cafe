@@ -1,8 +1,8 @@
 # Phase 6 implementation contract
 
 Started 2026-10-06 (Africa/Lagos), from deployed main `b84c4bb`.
-Status: application and database implementation verified locally; expansion live.
-Production application rollout, contract and fixture cleanup remain; NOT complete.
+Status: application and both migrations deployed; production verification and
+exact-fixture cleanup passed. Final documentation Git/READY checkpoint follows.
 Scope: appointments/fittings and Concierge communication only. No Phase 7.
 
 ## Verified preflight
@@ -95,11 +95,19 @@ Actual Worker2 database and HTTP harness changes were reviewed and integrated as
 all 55 live HTTP expansion checks pass. Application typecheck, lint, 38 tests and
 optimized build pass. See PHASE6_ROLLOUT_REPORT.md for current rollout evidence.
 
-## Required completion gates
+## Completed rollout (2026-10-07)
 
-Finalize reviewed RPC/schema contract; implement versioned migration(s), security,
-concurrency and legacy-row preservation tests; build application flows and dashboard
-integration; run typecheck/lint/unit/database tests/build; test synthetic local and
-production workflows; apply reviewed migration(s) in compatible rollout order; rerun
-advisors; clean only synthetic fixtures; commit/push main, verify exact deployed SHA,
-remote equality and clean worktree; deliver report and STOP before Phase 7.
+Application b4744b2 is READY on the production domain. Expansion and contract are
+live. All 19 production browser checks, nine post-contract browser checks and
+55 checks in each live HTTP mode passed. Exact QA cleanup is complete; all 303
+original rows across 33 baseline tables retain matching original-field hashes.
+RLS/storage policies and all immutable guards remain enabled. See the final rollout
+report and delivery message for the documentation-only Git/deployment checkpoint.
+
+## Completion gates used
+
+Reviewed RPC/schema contract, versioned migrations, security/concurrency/preservation
+tests, application flows/dashboard integration, static checks/build, synthetic local
+and production workflows, compatible migration order, advisors and exact-fixture
+cleanup all passed. Commit/push the documentation closure, verify its exact READY
+deployment SHA, remote equality and clean worktree, then STOP before Phase 7.
