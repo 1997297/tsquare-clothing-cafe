@@ -1,14 +1,24 @@
 # TSquare Clothing Cafe — Project Handoff
 
-Last updated: 2026-10-07 (Africa/Lagos)
+Last updated: 2026-10-08 (Africa/Lagos)
 
 ## Current status
 
 Phases 1–5 are complete. Phase 6 application b4744b2 is pushed to main and live on
 https://tsquare-clothing-cafe.vercel.app. Its migrations, authenticated production
-workflows, security checks and exact-fixture cleanup passed. This closure checkpoint
-changes documentation only; verify its Git SHA/READY promotion after push.
+workflows, security checks and exact-fixture cleanup passed. Documentation closure
+c308b64 also reached READY. Verify the final HTTP-status patch SHA/READY after push.
 Phase 7 has not begun and requires explicit user authorization.
+
+Final HTTP-status correction: after c308b64 reached READY, a read-only
+logged-out probe found /api/atelier/counts returned 503 for AUTH_REQUIRED. The narrow
+response adapter now distinguishes 401/403 from genuine 503 outages, keeps private
+no-store and leaves getAtelierCounts authentication/data loading unchanged. Three
+regression tests were added; typecheck/lint/all 41 tests/optimized build passed.
+Local HTTP verification passed: 401 Authentication required, private/no-store and
+no exposed counts. Verify the same response on the final READY production SHA.
+Do not recreate cleaned QA data; authenticated success output is unchanged and
+regression-tested. The final commit/SHA check is recorded in the delivery message.
 
 ## Phase 6 completed rollout
 
@@ -39,7 +49,7 @@ Phase 7 has not begun and requires explicit user authorization.
   After exact QA cleanup, all 303 original rows across 33 baseline tables retain
   identical original-field fingerprints. Existing policies hash remains
   ca9adf5be9bc5d9090d96717b9ff3001; every public/private table retains RLS.
-- Verification: typecheck, lint, 38 tests, optimized build/68 pages; 321 unique
+- Verification: typecheck, lint, 41 tests, optimized build/68 pages; 321 unique
   native SQL assertions, 23 Phase 6 concurrency/replay checks, eight Phase 4 races;
   55 live expansion and 55 live contract HTTP checks; full 19-check production
   browser workflow and nine-check post-contract recheck all passed.

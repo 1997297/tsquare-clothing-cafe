@@ -95,6 +95,10 @@ Actual Worker2 database and HTTP harness changes were reviewed and integrated as
 all 55 live HTTP expansion checks pass. Application typecheck, lint, 38 tests and
 optimized build pass. See PHASE6_ROLLOUT_REPORT.md for current rollout evidence.
 
+October 8 final HTTP correction: counts now distinguishes logged-out 401 and denied
+staff 403 from genuine 503 failures without changing the existing authenticated
+loader. All 41 application tests, typecheck, lint and the rebuilt app pass.
+
 ## Completed rollout (2026-10-07)
 
 Application b4744b2 is READY on the production domain. Expansion and contract are

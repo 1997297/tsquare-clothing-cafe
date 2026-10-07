@@ -1,8 +1,8 @@
 # Phase 6 rollout report
 
-Verified 2026-10-07 (Africa/Lagos). Application, database, security, production
+Verified 2026-10-07–08 (Africa/Lagos). Application, database, security, production
 workflows and exact-fixture cleanup passed. Phase 7 has not begun. This final
-documentation-only checkpoint is checked for Git equality and READY deployment
+HTTP-status checkpoint is checked for Git equality and READY deployment
 after push; its exact SHA is provided in the delivery message.
 
 ## Implemented
@@ -65,9 +65,10 @@ Application commit `b4744b20e1ebd26449e544df107b1c27021827ed` is pushed to main.
 Vercel deployment `dpl_FGqDdzhCLnR1pXt7hnBnVLA5Y9AT` is READY on the production
 domain, built from that exact Git SHA in about 64 seconds. All 19 authenticated
 production browser checks passed, followed by a nine-check post-contract browser
-recheck. Contract and exact-fixture cleanup are complete. The closure commit changes
-documentation only; remote equality, clean worktree and its READY deployment are
-verified after push before delivery.
+recheck. Contract and exact-fixture cleanup are complete. Documentation closure
+`c308b64` also reached READY. The final narrow counts-endpoint HTTP-status correction
+leaves the authenticated loader and business workflows unchanged. Remote equality,
+clean worktree, its READY deployment and logged-out 401 are checked before delivery.
 
 Production URL: https://tsquare-clothing-cafe.vercel.app
 Framework: Next.js. Target: production. Worker2 never received project credentials
@@ -108,7 +109,7 @@ Existing RLS/storage policies and stable catalogue/Saved Look references are pre
   assertions, 23 Phase 6 concurrency/replay checks and eight Phase 4 regression
   races passed. Both migration rollbacks, original-row preservation and unchanged
   RLS/storage policies passed. Native tests are not an Auth/Storage HTTP emulator.
-- TypeScript, ESLint, 38 application tests and the fresh final optimized build passed,
+- TypeScript, ESLint, 41 application tests and the fresh final optimized build passed,
   including all 68 generated pages. No lint rules or type errors were disabled.
 - Live HTTP expansion suite: all 55 checks passed October 7. Includes four exact
   tagged QA identities, Client isolation, anonymous denial, staff authority,
@@ -147,6 +148,14 @@ Existing RLS/storage policies and stable catalogue/Saved Look references are pre
   immutable/direct-DML denial, intent conflicts, pagination, new-RPC service-key
   denial, retired signatures and raw sender identity denial. Native regression
   suites also cover the earlier security/Phase 4/Phase 5 boundaries.
+- The final read-only logged-out probe found counts returned 503 for missing
+  authentication. A narrow response adapter now returns 401 for AUTH_REQUIRED,
+  403 for STAFF_ACCESS_DENIED and safe 503 for genuine service errors. It preserves
+  private no-store caching, the existing verified-session loader and success data.
+  Three regression tests cover 200/401/403/503 and sanitized error bodies. Final
+  typecheck/lint/all 41 tests/build passed October 8. Actual localhost verification
+  returns 401 Authentication required with private/no-store and no count data.
+  The final production HTTP check uses the same assertion; no QA records were recreated.
 
 ## Supabase advisors after cleanup
 
