@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getAtelierCounts } from "@/lib/server/atelier-service";
 
 export interface AdminOverviewMetric {
   label: string;
@@ -23,9 +24,7 @@ export interface AdminOverviewData {
 
 export async function getAdminOverviewData(): Promise<AdminOverviewData> {
   const supabase = await createServerSupabaseClient();
-  const today = new Date().toISOString().slice(0, 10);
-
-  const [requests, orders, payments, appointments, concierge, activity] = await Promise.all([
+  const [requests, orders, payments, atelier, activity] = await Promise.all([
     supabase
       .from("bespoke_requests")
       .select("id", { count: "exact", head: true })
@@ -38,15 +37,7 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
       .from("payment_submissions")
       .select("id", { count: "exact", head: true })
       .eq("status", "awaiting_verification"),
-    supabase
-      .from("appointments")
-      .select("id", { count: "exact", head: true })
-      .in("status", ["requested", "scheduled", "confirmed"])
-      .gte("preferred_date", today),
-    supabase
-      .from("concierge_requests")
-      .select("id", { count: "exact", head: true })
-      .in("status", ["open", "in_review", "awaiting_customer"]),
+    getAtelierCounts().catch(() => null),
     supabase
       .from("lifecycle_events")
       .select("id, entity_type, event_type, created_at")
@@ -54,7 +45,7 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
       .limit(6),
   ]);
 
-  const results = [requests, orders, payments, appointments, concierge, activity];
+  const results = [requests, orders, payments, activity];
   const errors = results.flatMap((result) => result.error ? [result.error] : []);
   if (errors.length > 0) {
     console.error(
@@ -68,8 +59,9 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
       { label: "Pending Requests", value: requests.error ? null : requests.count ?? 0, detail: "Awaiting atelier action" },
       { label: "Active Orders", value: orders.error ? null : orders.count ?? 0, detail: "Not yet completed" },
       { label: "Payments Awaiting Verification", value: payments.error ? null : payments.count ?? 0, detail: "Client evidence requiring staff review" },
-      { label: "Appointments", value: appointments.error ? null : appointments.count ?? 0, detail: "Upcoming and active" },
-      { label: "Concierge", value: concierge.error ? null : concierge.count ?? 0, detail: "Open conversations" },
+      { label: "Pending Appointments", value: atelier?.pending_appointments ?? null, detail: "New visits and changes awaiting review" },
+      { label: "Today's Appointments", value: atelier?.today_confirmed_appointments ?? null, detail: "Confirmed schedules in Nigeria time" },
+      { label: "Unread Concierge Messages", value: atelier?.unread_concierge_messages ?? null, detail: "Client messages not yet read by TCC" },
     ],
     activity: activity.error
       ? []
@@ -79,6 +71,6 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
           eventType: item.event_type,
           createdAt: item.created_at,
         })),
-    hasQueryError: errors.length > 0,
+    hasQueryError: errors.length > 0 || !atelier,
   };
 }

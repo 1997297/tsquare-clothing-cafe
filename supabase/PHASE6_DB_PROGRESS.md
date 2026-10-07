@@ -43,5 +43,12 @@ Commit blocker: git add could not create
 `C:/Users/Young Duke/Documents/VS Codes Doc/TCC/.git/worktrees/TCC-worker2-phase6-db/index.lock`
 (Permission denied). Shared Git metadata is outside this session's writable root,
 and approval policy permits no escalation. No commit/SHA/push/merge was made. The
-twelve completed owned files remain untracked and need normal Git metadata access
-to commit; no alternative metadata/repository was created to bypass the restriction.
+twelve completed owned files remained untracked at that worker checkpoint; no
+alternative metadata/repository was created to bypass the restriction.
+
+Parent integration update (2026-10-07): normal approved Git access resolved that
+historical blocker. Worker2 database commit c6fa347 and HTTP harness f51c7a1 were
+reviewed and integrated on main as 5c57452 and b8cd908. Parent independently reran
+the native suite and all 55 live expansion HTTP checks successfully. Expansion is
+live; contract waits for the verified application deployment. See the root rollout
+report for current completion/cleanup status; this worker log is historical.

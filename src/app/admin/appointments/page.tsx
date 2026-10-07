@@ -1,5 +1,5 @@
-import { AdminModulePlaceholder } from "@/components/admin/AdminModulePlaceholder";
+import { AppointmentListPage } from "@/components/atelier/AppointmentPages";
 
-export default function AdminAppointmentsPage() {
-  return <AdminModulePlaceholder eyebrow="Salon Diary" title="Appointments" description="The private scheduling workspace is protected and ready for the later appointment-management workflow." nextPhase="Future Appointments workflow phase" />;
+export default function AdminAppointmentsPage({ searchParams }: { searchParams: Promise<{ status?: string; page?: string; q?: string }> }) {
+  return <AppointmentListPage staff searchParams={searchParams} />;
 }

@@ -13,6 +13,8 @@ import { cn, formatOfficeLocation } from "@/lib/utils";
 import { ReturnLink } from "@/components/common/ReturnLink";
 import { WorkflowTimeline } from "@/components/atelier/WorkflowUI";
 import { ClientOrderFinance } from "@/components/payments/ClientOrderFinance";
+import { formatAtelierInstant } from "@/lib/atelier-time";
+import { APPOINTMENT_STATUS_LABELS } from "@/lib/atelier-service";
 
 const STAGES = [
   ["order_confirmed", "Order Confirmed"],
@@ -124,8 +126,10 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             {relatedAppointments.map((appointment) => (
               <div key={appointment.id} className="p-3 rounded-xl bg-stone-900/50 border border-stone-800">
                 <p className="text-warm-ivory capitalize">{appointment.type.replace(/-/g, " ")}</p>
-                <p className="text-stone-400">{appointment.confirmedDate ?? appointment.preferredDate} · {appointment.confirmedTime ?? appointment.preferredTime}</p>
+                <p className="text-stone-400">{appointment.scheduledStartAt ? formatAtelierInstant(appointment.scheduledStartAt) : `Preferred: ${appointment.preferredDate} · ${appointment.preferredTime}`}</p>
+                <p className="mt-2 text-xs text-champagne">{APPOINTMENT_STATUS_LABELS[appointment.status] ?? appointment.status}</p>
                 <p className="text-stone-500">{formatOfficeLocation(appointment.location)}</p>
+                <Link href={`/account/appointments/${appointment.id}`} className="mt-2 inline-block text-xs text-champagne">Appointment details →</Link>
               </div>
             ))}
           </section>

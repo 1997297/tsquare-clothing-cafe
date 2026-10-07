@@ -187,6 +187,8 @@ export interface CustomerAppointment {
   preferredTime: string;
   confirmedDate?: string;
   confirmedTime?: string;
+  scheduledStartAt?: string;
+  scheduledEndAt?: string;
   status: CustomerAppointmentStatus;
   location: string;
   notes?: string;
@@ -218,7 +220,7 @@ export interface CustomerNotification {
   type: NotificationType;
   title: string;
   message: string;
-  relatedEntityType?: "request" | "order" | "appointment" | "payment" | "wardrobe" | "concierge";
+  relatedEntityType?: "request" | "order" | "appointment" | "payment" | "wardrobe" | "concierge" | "concierge_request";
   relatedEntityId?: string;
   isRead: boolean;
   readAt?: string;

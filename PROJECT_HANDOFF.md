@@ -1,6 +1,6 @@
 # TSquare Clothing Cafe — Project Handoff
 
-Last updated: 2026-10-06 (Africa/Lagos)
+Last updated: 2026-10-07 (Africa/Lagos)
 
 ## Current status
 
@@ -9,7 +9,65 @@ on https://tsquare-clothing-cafe.vercel.app in READY production deployment
 dpl_LBia5c4QhdyGXVhQtY8b8sShS77T. Authenticated production workflow, security tests
 and exact-fixture cleanup passed. Phase 5 implementation is complete. This closure
 checkpoint changes documentation only; verify its Git SHA/READY promotion after push.
-Phase 6 has NOT begun and requires a separate user instruction.
+Phase 6 is now authorized and in progress. Phase 7 is out of scope.
+
+## Phase 6 active handoff
+
+- User directive: attachment 885a6256-56a0-4d5c-b81d-60099803a25c, appointments,
+  fittings and Concierge; complete only Phase 6, verify production and stop.
+- Phase 5 closure b84c4bb was pushed and deployed READY (dpl_7VTqkjQXiSxFL5HtnhcJGdbtng9F).
+  Current Phase 6 work is not deployed; do not report completion.
+- Main was clean at b84c4bb and pulled before creating codex/phase6-db at
+  C:/Users/Young Duke/Documents/VS Codes Doc/TCC-worker2-phase6-db.
+- Actual second-account Worker2 completed its local proposal. Parent reviewed it
+  and authorized database implementation in thread 01a10ed7-bd33-7cb3-8532-56464033910f.
+  It owns new Phase 6 migrations/tests/native runner/database docs in its worktree.
+  Main owns application integration and this handoff. No shared-worktree edits.
+- Existing appointments/change requests and Concierge threads/messages are reusable.
+  Admin pages are placeholders; current client writes use service-only RPCs.
+  Preserve older public-fitting and Phase 4 appointment creation during rollout.
+- Main added Lagos scheduling/priority helpers, authenticated server actions, shared
+  Client/Admin appointment and Concierge screens, internal-note and lifecycle UI,
+  safe paginated messages/read acknowledgments, dashboard/navigation/order integration.
+  Old service-based appointment/Concierge application wrappers were removed. Account
+  loader no longer fetches raw message sender identity. None of this is deployed.
+- Worker2 database commit c6fa347 was reviewed and cherry-picked as 5c57452 on main.
+  The parent independently reran native PG17.6: 321 unique SQL assertions, 23 Phase 6
+  concurrency/replay checks and eight Phase 4 races pass; both migrations roll back
+  cleanly and preserve original fields, RLS and storage policies.
+- Expansion 20261006063802 was applied live on 2026-10-06 after expansion-only dry
+  run. All 303 original rows across 33 tables retain matching original-field hashes.
+  Contract 20261006063803 MUST wait until the new application is deployed and tested.
+  Application typecheck, lint, 38 tests and the final production build passed,
+  including all 68 generated pages. Worker2 HTTP commit f51c7a1 was reviewed and
+  integrated as b8cd908; its live expansion suite passed all 55 checks on October 7.
+  Main application/tests/docs (50 files) are staged but not yet committed or pushed.
+- Local browser checks passed four account logins, owned Order/Request context,
+  confirmation, reviewed rescheduling, CEO decline/approval, cancellation, Concierge
+  round trip, unread dashboard, closure/reopening and second-client isolation.
+  Related Order links, all 12 Concierge viewport/theme combinations and navigation
+  regressions also passed. A final check exposed a pre-hydration native GET form
+  fallback; AtelierForm now uses POST and disables controls until hydration. The
+  regression test, independent review and fresh production build pass.
+  Disabled-JavaScript privacy and CEO completion also pass; SQL confirms the linked
+  Order status and financial fields remain unchanged. Production workflow, contract,
+  cleanup and final Git checkpoint remain.
+- Exact QA context Request/Order IDs end f40da55a5120/f40da55a5121 and belong to
+  the tagged QA client. Do not remove or alter any real business data. Current
+  legitimate bank/payment activity postdates the historical Phase 5 empty-bank note.
+- Tagged QA accounts are temporarily present for live/local browser verification;
+  their exact IDs and generated credentials are in ignored
+  supabase/.temp/phase6-browser-fixtures.json. Never print or commit that manifest.
+  Clean only those tagged fixtures after verification, then recheck baseline hashes.
+- Expansion advisors: zero missing-FK warnings, 24 unused-index INFO, six intentional
+  private deny-all/no-policy INFO, 26 guarded-definer notices and the pre-existing
+  leaked-password protection warning. RLS and all existing policies remain enabled.
+- Live Supabase read preflight initially hit approval-service usage limits, then
+  succeeded through the normal connector review on retry. Three appointments, zero
+  changes, one Concierge conversation and three messages exist. Ownership/active-staff
+  SELECT policies are live. Preserve these legitimate records; do not use as fixtures.
+- Worker2 launch prompt/helper/log are ignored under supabase/.temp/phase6-worker2*.
+  No secrets were read or supplied to Worker2. Read its proposal before implementation.
 
 ## Phase 5 current checkpoint
 

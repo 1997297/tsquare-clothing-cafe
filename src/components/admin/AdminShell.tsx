@@ -40,6 +40,7 @@ const OPERATIONAL_NAV = [
 
 interface AdminShellProps {
   children: ReactNode;
+  conciergeUnread?: number | null;
   identity: {
     displayName: string;
     email: string;
@@ -50,7 +51,7 @@ interface AdminShellProps {
   };
 }
 
-export function AdminShell({ children, identity }: AdminShellProps) {
+export function AdminShell({ children, identity, conciergeUnread }: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { signOut } = useAuth();
@@ -89,6 +90,7 @@ export function AdminShell({ children, identity }: AdminShellProps) {
           >
             <Icon className="h-4 w-4 shrink-0" />
             <span>{item.label}</span>
+            {item.href === "/admin/concierge" && conciergeUnread != null && conciergeUnread > 0 && <span aria-label={`${conciergeUnread} messages unread by TCC`} className="rounded-full bg-champagne/15 px-2 py-0.5 text-[10px] text-champagne">{conciergeUnread > 99 ? "99+" : conciergeUnread}</span>}
             <ChevronRight className={cn("ml-auto h-3.5 w-3.5", active ? "opacity-100" : "opacity-0 group-hover:opacity-70")} />
           </Link>
         );

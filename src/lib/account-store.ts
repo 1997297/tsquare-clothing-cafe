@@ -13,15 +13,11 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "./auth-context";
 import { isDemoMode, isSupabaseConfigured, supabase } from "./supabase/client";
 import {
-  addConciergeMessageAction,
-  createConciergeRequestAction,
-  requestAppointmentChangeAction,
   saveMeasurementProfileAction,
   submitBespokeRequestAction,
 } from "@/app/account/actions";
 import type {
   AppointmentChangeRequest,
-  ConciergeCategory,
   ConciergeMessage,
   ConciergeRequest,
   CustomerAppointment,
@@ -33,6 +29,7 @@ import type {
 } from "@/types";
 import type { BespokeRequestPayload } from "@/types/bespoke";
 import type { WorkflowEvent } from "@/lib/atelier-workflow";
+import { APPOINTMENT_COLUMNS, APPOINTMENT_CHANGE_COLUMNS, CONCIERGE_COLUMNS } from "@/lib/atelier-service";
 
 // PostgREST rows are mapped at this boundary into the application's typed domain models.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -380,6 +377,8 @@ function mapAppointment(row: Row): CustomerAppointment {
     preferredTime: row.preferred_time,
     confirmedDate: row.confirmed_date ?? undefined,
     confirmedTime: row.confirmed_time ?? undefined,
+    scheduledStartAt: row.scheduled_start_at ?? undefined,
+    scheduledEndAt: row.scheduled_end_at ?? undefined,
     status: row.status,
     location: row.location,
     notes: row.notes ?? undefined,
@@ -463,17 +462,6 @@ function mapConciergeRequest(row: Row): ConciergeRequest {
   };
 }
 
-function mapConciergeMessage(row: Row): ConciergeMessage {
-  return {
-    id: row.id,
-    requestId: row.request_id,
-    senderType: row.sender_type,
-    senderId: row.sender_id ?? undefined,
-    senderName: row.sender_name,
-    message: row.message,
-    createdAt: row.created_at,
-  };
-}
 
 function mapAppointmentChange(row: Row): AppointmentChangeRequest {
   return {
@@ -507,22 +495,6 @@ interface AccountDataContextValue extends AccountData {
   addBespokeRequest: (payload: BespokeRequestPayload) => Promise<BespokeRequestPayload>;
   markNotificationAsRead: (id: string) => Promise<void>;
   markAllNotificationsAsRead: () => Promise<void>;
-  requestAppointmentReschedule: (
-    appointmentId: string,
-    proposedDate: string,
-    proposedTime: string,
-    reason: string
-  ) => Promise<void>;
-  requestAppointmentCancellation: (appointmentId: string, reason: string) => Promise<void>;
-  createConciergeRequest: (payload: {
-    category: ConciergeCategory;
-    subject: string;
-    message: string;
-    relatedRequestId?: string;
-    relatedOrderId?: string;
-    relatedAppointmentId?: string;
-  }) => Promise<ConciergeRequest>;
-  addConciergeMessage: (requestId: string, message: string) => Promise<ConciergeMessage>;
 }
 
 const AccountDataContext = createContext<AccountDataContextValue | undefined>(undefined);
@@ -561,25 +533,17 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
       supabase.from("measurement_profiles").select("*").eq("customer_id", userId).order("version", { ascending: false }),
       supabase.from("bespoke_requests").select("id,request_reference,customer_id,style_id,style_code,style_name,style_image,style_image_snapshot,garment_category,is_idea_path,fabric,colour,preferences,fit_preference,measurements_snapshot,measurement_confidence,occasion,event_name,event_date,required_date,appointment_request,reference_images,special_instructions,contact_info,status,quoted_price_minor,clarification_notes,submitted_at,last_submitted_at,reviewed_at,reviewed_by,approved_at,approved_by,approved_revision,revision,lock_version,created_at,updated_at").eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("orders").select("id,order_reference,customer_id,bespoke_request_id,style_id,style_code,style_name,style_image,garment_category,fabric_details,colour_details,preferences,measurements_snapshot,accepted_request_snapshot,status,total_amount_minor,target_completion_date,production_stage_updated_at,special_instructions,lock_version,created_at,updated_at").eq("customer_id", userId).order("created_at", { ascending: false }),
-      supabase.from("appointments").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("appointments").select(APPOINTMENT_COLUMNS).eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("notifications").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("payments").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("wardrobe_items").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
-      supabase.from("concierge_requests").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
-      supabase.from("appointment_change_requests").select("*").eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("concierge_requests").select(CONCIERGE_COLUMNS).eq("customer_id", userId).order("created_at", { ascending: false }),
+      supabase.from("appointment_change_requests").select(APPOINTMENT_CHANGE_COLUMNS).eq("customer_id", userId).order("created_at", { ascending: false }),
       supabase.from("lifecycle_events").select("id,entity_type,entity_id,event_type,actor_type,actor_id,metadata,created_at").eq("customer_id", userId).in("entity_type", ["bespoke_request", "order"]).order("created_at", { ascending: true }),
     ]);
 
-    const conciergeRequestIds = (results[7].data ?? []).map((request) => request.id);
-    const messageResult = conciergeRequestIds.length > 0
-      ? await supabase
-          .from("concierge_messages")
-          .select("*")
-          .in("request_id", conciergeRequestIds)
-          .order("created_at", { ascending: true })
-      : { data: [] as Row[], error: null };
-
-    const queryError = results.find((result) => result.error)?.error ?? messageResult.error;
+    // Concierge pages load paginated safe RPC projections, never raw staff identity.
+    const queryError = results.find((result) => result.error)?.error;
     if (queryError) {
       console.error("Account data query failed", queryError);
       if (isDemoMode) {
@@ -639,7 +603,7 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
       payments: (results[5].data ?? []).map(mapPayment),
       wardrobe: (results[6].data ?? []).map(mapWardrobe),
       conciergeRequests: (results[7].data ?? []).map(mapConciergeRequest),
-      conciergeMessages: (messageResult.data ?? []).map(mapConciergeMessage),
+      conciergeMessages: [],
       appointmentChanges: (results[8].data ?? []).map(mapAppointmentChange),
     });
     setIsLoading(false);
@@ -647,7 +611,7 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     void reloadData();
-  }, [reloadData]);
+  }, [reloadData, pathname]);
 
   const requireSuccess = <T,>(result: { ok: true; data: T } | { ok: false; error: string }) => {
     if (!result.ok) throw new Error(result.error);
@@ -699,52 +663,6 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const requestAppointmentReschedule = async (
-    appointmentId: string,
-    proposedDate: string,
-    proposedTime: string,
-    reason: string
-  ) => {
-    requireSuccess(
-      await requestAppointmentChangeAction({
-        appointmentId,
-        changeType: "reschedule",
-        proposedDate,
-        proposedTime,
-        reason,
-      })
-    );
-    await reloadData();
-  };
-
-  const requestAppointmentCancellation = async (appointmentId: string, reason: string) => {
-    requireSuccess(
-      await requestAppointmentChangeAction({ appointmentId, changeType: "cancellation", reason })
-    );
-    await reloadData();
-  };
-
-  const createConciergeRequest = async (payload: {
-    category: ConciergeCategory;
-    subject: string;
-    message: string;
-    relatedRequestId?: string;
-    relatedOrderId?: string;
-    relatedAppointmentId?: string;
-  }) => {
-    const created = mapConciergeRequest(requireSuccess(await createConciergeRequestAction(payload)) as Row);
-    await reloadData();
-    return created;
-  };
-
-  const addConciergeMessage = async (requestId: string, message: string) => {
-    const created = mapConciergeMessage(
-      requireSuccess(await addConciergeMessageAction(requestId, message)) as Row
-    );
-    await reloadData();
-    return created;
-  };
-
   const value: AccountDataContextValue = {
       ...data,
       data,
@@ -758,10 +676,6 @@ export function AccountDataProvider({ children }: { children: ReactNode }) {
       addBespokeRequest,
       markNotificationAsRead,
       markAllNotificationsAsRead,
-      requestAppointmentReschedule,
-      requestAppointmentCancellation,
-      createConciergeRequest,
-      addConciergeMessage,
   };
 
   return createElement(AccountDataContext.Provider, { value }, children);

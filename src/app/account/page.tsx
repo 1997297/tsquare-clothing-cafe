@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import { cn, formatOfficeLocation } from "@/lib/utils";
 import { ClientOrderFinance } from "@/components/payments/ClientOrderFinance";
+import { ClientAtelierSummary } from "@/components/atelier/ClientAtelierSummary";
+import { nextAtelierAppointment } from "@/lib/atelier-priority";
+import { formatAtelierInstant } from "@/lib/atelier-time";
 
 const CRAFTSMANSHIP_STAGES = [
   { id: "order_confirmed", label: "Confirmed" },
@@ -56,9 +59,7 @@ export default function AccountOverviewPage() {
   ) || orders[0];
 
   const recentRequest = requests[0];
-  const upcomingAppointment = appointments.find(
-    (a) => a.status === "confirmed" || a.status === "scheduled" || a.status === "requested"
-  );
+  const upcomingAppointment = nextAtelierAppointment(appointments);
   // Stage index for progress bar
   const currentStageIndex = activeOrder
     ? CRAFTSMANSHIP_STAGES.findIndex((s) => s.id === activeOrder.status)
@@ -72,6 +73,7 @@ export default function AccountOverviewPage() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-300">
+      <ClientAtelierSummary />
       {/* ── Personalized Greeting Header ── */}
       <div className="border-b border-stone-800/60 pb-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -355,8 +357,7 @@ export default function AccountOverviewPage() {
                 <div className="flex items-center gap-2 text-xs text-warm-ivory">
                   <Clock className="w-3.5 h-3.5 text-champagne shrink-0" />
                   <span className="font-mono">
-                    {upcomingAppointment.confirmedDate || upcomingAppointment.preferredDate} at{" "}
-                    {upcomingAppointment.confirmedTime || upcomingAppointment.preferredTime}
+                    {upcomingAppointment.scheduledStartAt ? formatAtelierInstant(upcomingAppointment.scheduledStartAt) : `Preferred: ${upcomingAppointment.preferredDate} · ${upcomingAppointment.preferredTime} (awaiting TCC)`}
                   </span>
                 </div>
                 <p className="text-[11px] text-stone-400 pl-5.5">
@@ -376,7 +377,7 @@ export default function AccountOverviewPage() {
                 You have no upcoming atelier visits scheduled. Book a fitting or consultation anytime.
               </p>
               <Link
-                href="/book-a-fitting"
+                href="/account/appointments/new"
                 className="inline-flex items-center gap-1.5 text-xs text-champagne uppercase font-mono tracking-wider font-semibold"
               >
                 <span>Reserve A Fitting Session</span>

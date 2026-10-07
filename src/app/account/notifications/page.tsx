@@ -70,13 +70,13 @@ export default function AccountNotificationsPage() {
             } else if (notif.relatedEntityType === "order" && notif.relatedEntityId) {
               targetUrl = `/account/orders/${notif.relatedEntityId}`;
             } else if (notif.relatedEntityType === "appointment") {
-              targetUrl = "/account/appointments";
+              targetUrl = notif.relatedEntityId ? `/account/appointments/${encodeURIComponent(notif.relatedEntityId)}` : "/account/appointments";
             } else if (notif.relatedEntityType === "payment") {
               targetUrl = notif.relatedEntityId ? `/account/payments/${notif.relatedEntityId}` : "/account/payments";
             } else if (notif.relatedEntityType === "wardrobe") {
               targetUrl = notif.relatedEntityId ? `/account/wardrobe/${notif.relatedEntityId}` : "/account/wardrobe";
-            } else if (notif.relatedEntityType === "concierge") {
-              targetUrl = "/account/concierge";
+            } else if (notif.relatedEntityType === "concierge" || notif.relatedEntityType === "concierge_request") {
+              targetUrl = notif.relatedEntityId ? `/account/concierge/${encodeURIComponent(notif.relatedEntityId)}` : "/account/concierge";
             }
 
             return (
