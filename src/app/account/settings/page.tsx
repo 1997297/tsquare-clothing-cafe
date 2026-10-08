@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
@@ -83,7 +85,7 @@ export default function AccountSettingsPage() {
       )}
 
       {/* Password Management */}
-      <form onSubmit={handlePasswordChange} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-5">
+      <ClientForm onSubmit={handlePasswordChange} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-5">
         <div className="flex items-center gap-2.5 pb-2">
           <Lock className="w-4 h-4 text-champagne" />
           <h2 className="font-display text-lg text-warm-ivory">
@@ -140,7 +142,7 @@ export default function AccountSettingsPage() {
             <span>Confirm New Password</span>
           </button>
         </div>
-      </form>
+      </ClientForm>
 
       {/* Confidentiality & Discretion Policy */}
       <div className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-3">

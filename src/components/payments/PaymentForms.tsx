@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { setBankAction, setPriceAction, issuePaymentAction, cancelPaymentAction, reviewPaymentAction, type PaymentActionResult } from "@/app/account/payments/actions";
@@ -36,7 +38,7 @@ function FinancialForm({ children, values, action, label, describe, disabled = f
       setConfirmation(null);
     });
   };
-  return <><form onSubmit={e => { e.preventDefault(); if (pending || disabled) return; setMessage(""); setConfirmation({ ...Object.fromEntries(new FormData(e.currentTarget)), ...values }); }} className="space-y-4"><fieldset disabled={pending || disabled} className="min-w-0 space-y-4">{children}<button type="submit" className={buttonClass}>{label}</button></fieldset>{message && <p role={failed ? "alert" : "status"} className={`text-sm leading-6 ${failed ? "text-rose-400" : "text-champagne"}`}>{message}</p>}</form>{confirmation && <Confirm description={describe(confirmation)} busy={pending} close={() => { if (!pending) setConfirmation(null); }} confirm={run} />}</>;
+  return <><ClientForm onSubmit={e => { e.preventDefault(); if (pending || disabled) return; setMessage(""); setConfirmation({ ...Object.fromEntries(new FormData(e.currentTarget)), ...values }); }} className="space-y-4"><fieldset disabled={pending || disabled} className="min-w-0 space-y-4">{children}<button type="submit" className={buttonClass}>{label}</button></fieldset>{message && <p role={failed ? "alert" : "status"} className={`text-sm leading-6 ${failed ? "text-rose-400" : "text-champagne"}`}>{message}</p>}</ClientForm>{confirmation && <Confirm description={describe(confirmation)} busy={pending} close={() => { if (!pending) setConfirmation(null); }} confirm={run} />}</>;
 }
 function Field({ label, children }: { label: string; children: ReactNode }) { return <label className="block min-w-0 text-xs text-stone-400">{label}{children}</label>; }
 function MoneyInput({ value }: { value?: number | null }) { return <input name="amount" inputMode="decimal" required maxLength={20} placeholder="0.00" defaultValue={value == null ? "" : `${Math.floor(value / 100)}.${String(value % 100).padStart(2, "0")}`} className={inputClass} />; }

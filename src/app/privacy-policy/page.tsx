@@ -25,6 +25,7 @@ export default function PrivacyPolicyPage() {
         <h1 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory mb-8">
           Privacy Policy
         </h1>
+        <p role="note" className="mb-8 rounded-xl border border-champagne/30 p-4 text-sm leading-6 text-stone-300">Draft for TCC and legal review. Final privacy disclosures, retention periods and contact details must be approved before commercial launch.</p>
 
         <div className="p-8 bg-stone-950 fine-border space-y-8 text-xs sm:text-sm text-stone-300 font-sans font-light leading-relaxed">
           <section className="space-y-3">
@@ -50,16 +51,16 @@ export default function PrivacyPolicyPage() {
               3. Client Communications
             </h2>
             <p>
-              Contact information provided through appointment bookings, inquiries, or account creation is employed strictly for scheduling confirmations, production milestones updates, and bespoke concierge correspondence via WhatsApp, telephone, or email. We never sell, rent, or trade client information to third-party marketing services.
+              The platform records contact details for account and atelier operations. Updates and conversations are available in the signed-in client area. Automated email, SMS and WhatsApp notifications are not part of the current service. TCC must confirm its final communication and information-sharing policies before launch.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="font-display text-lg text-warm-ivory uppercase tracking-wider">
-              4. Digital Wardrobe & Future Portal Storage
+              4. Account Records & Access
             </h2>
             <p>
-              As the TCC digital platform evolves into subsequent operational phases, client measurement profiles, historical commissions, and garment archives will be safeguarded via industry-standard encryption protocols within our private client vault.
+              Account records include profiles, measurements, saved Looks, requests, orders, payment evidence, appointments and Concierge conversations. Access to operational records is restricted to the owning client and authorized staff. Payment receipts are stored privately. Profile pictures use publicly accessible image URLs, so do not upload a private document as an avatar. TCC must confirm retention periods and the process for privacy requests.
             </p>
           </section>
 
@@ -68,10 +69,10 @@ export default function PrivacyPolicyPage() {
               5. Policy Inquiries
             </h2>
             <p>
-              For questions regarding client data privacy, please contact the concierge desk at the TCC office or via electronic mail at concierge@tsquareclothingcafe.com.
+              For questions about this draft, use the <Link href="/contact" className="text-champagne underline">Contact page</Link> or the signed-in Concierge area. TCC will confirm its formal privacy contact in the approved policy.
             </p>
             <p className="text-[10px] text-stone-500 font-mono pt-2">
-              [Note: This privacy policy establishes the baseline sartorial privacy principles for Phase 1. Final comprehensive legal disclosures will be ratified with local legal counsel prior to commercial transaction activation.]
+              This draft is provided for presentation and review; it is not a substitute for TCC-approved legal disclosures.
             </p>
           </section>
         </div>

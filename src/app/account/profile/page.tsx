@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { CheckCircle2, AlertCircle, Save, Loader2, ShieldCheck, Camera } from "lucide-react";
@@ -155,7 +157,7 @@ export default function AccountProfilePage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
+      <ClientForm onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
         <div className="flex flex-col gap-5 border-b border-stone-800 pb-6 sm:flex-row sm:items-center">
           <ProfileAvatar profile={profile} className="h-24 w-24 rounded-2xl text-xl" />
           <div className="space-y-2">
@@ -190,10 +192,11 @@ export default function AccountProfilePage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
+            <label htmlFor="profile-first-name" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
               First Name *
             </label>
             <input
+              id="profile-first-name"
               type="text"
               required
               value={firstName}
@@ -203,10 +206,11 @@ export default function AccountProfilePage() {
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
+            <label htmlFor="profile-last-name" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
               Last Name *
             </label>
             <input
+              id="profile-last-name"
               type="text"
               required
               value={lastName}
@@ -217,10 +221,11 @@ export default function AccountProfilePage() {
         </div>
 
         <div>
-          <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
+          <label htmlFor="profile-email" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
             Registered Email Address
           </label>
           <input
+            id="profile-email"
             type="email"
             disabled
             value={profile?.email || ""}
@@ -232,10 +237,11 @@ export default function AccountProfilePage() {
         </div>
 
         <div>
-          <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
+          <label htmlFor="profile-phone" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
             Phone / WhatsApp Number *
           </label>
           <input
+            id="profile-phone"
             type="tel"
             required
             value={phone}
@@ -246,14 +252,15 @@ export default function AccountProfilePage() {
         </div>
 
         <div>
-          <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-2">
+          <p id="profile-contact-label" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-2">
             Preferred Atelier Contact Channel
-          </label>
-          <div className="grid grid-cols-3 gap-2">
+          </p>
+          <div role="group" aria-labelledby="profile-contact-label" className="grid grid-cols-3 gap-2">
             {(["whatsapp", "phone", "email"] as const).map((method) => (
               <button
                 key={method}
                 type="button"
+                aria-pressed={preferredContact === method}
                 onClick={() => setPreferredContact(method)}
                 className={cn(
                   "py-2.5 rounded-xl text-xs uppercase font-mono tracking-wider border capitalize transition-colors",
@@ -294,7 +301,7 @@ export default function AccountProfilePage() {
             <span>{isSaving ? "Saving..." : "Save Profile Changes"}</span>
           </button>
         </div>
-      </form>
+      </ClientForm>
     </div>
   );
 }

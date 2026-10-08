@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -68,7 +70,7 @@ function SignInForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
+        <ClientForm onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
           <div>
             <label htmlFor="sign-in-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
               Email Address
@@ -142,7 +144,7 @@ function SignInForm() {
               Create an Account
             </Link>
           </div>
-        </form>
+        </ClientForm>
       </div>
     </div>
   );

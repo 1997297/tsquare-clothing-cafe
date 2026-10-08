@@ -96,7 +96,7 @@ export function MeasurementsStep({
     Object.values(measurements).some((v) => v !== undefined && v !== null);
 
   const canContinue =
-    measurementMethod === "saved" ||
+    (measurementMethod === "saved" && !!currentMeasurement) ||
     measurementMethod === "schedule" ||
     (measurementMethod === "manual" && hasManualMeasurements && Object.keys(errors).length === 0);
 
@@ -118,6 +118,7 @@ export function MeasurementsStep({
         {user || profile ? (
           <button
             type="button"
+            disabled={!currentMeasurement}
             aria-pressed={measurementMethod === "saved"}
             onClick={() => {
               onMethodSelect("saved");
@@ -127,7 +128,7 @@ export function MeasurementsStep({
               }
             }}
             className={cn(
-              "w-full flex items-start gap-4 p-5 rounded-2xl border text-left transition-all duration-200",
+              "w-full flex items-start gap-4 p-5 rounded-2xl border text-left transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50",
               measurementMethod === "saved"
                 ? "border-champagne/60 bg-stone-900/60 ring-1 ring-champagne/20"
                 : "border-stone-800 hover:border-stone-700 hover:bg-stone-900/30"
@@ -160,7 +161,7 @@ export function MeasurementsStep({
               <p className="text-xs text-stone-400">
                 {currentMeasurement
                   ? `Active profile recorded on ${new Date(currentMeasurement.createdAt).toLocaleDateString("en-NG", { month: "short", day: "numeric", year: "numeric" })} • ${currentMeasurement.verificationStatus.replace(/_/g, " ")}`
-                  : "Load your archived anatomical measurements from your client account."}
+                  : "No saved measurement profile yet. Enter measurements below, arrange a session, or save a profile in your account first."}
               </p>
             </div>
           </button>

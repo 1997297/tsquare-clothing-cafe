@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -79,7 +81,7 @@ function ForgotPasswordForm() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
+          <ClientForm onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
             <div>
               <label htmlFor="recovery-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                 Client Email Address
@@ -129,7 +131,7 @@ function ForgotPasswordForm() {
                 Back to Sign In
               </Link>
             </div>
-          </form>
+          </ClientForm>
         )}
       </div>
     </div>

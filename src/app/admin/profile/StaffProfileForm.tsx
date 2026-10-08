@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -195,7 +197,7 @@ export function StaffProfileForm({ profile }: StaffProfileFormProps) {
         ) : null}
       </div>
 
-      <form onSubmit={handleSubmit} className="atelier-surface overflow-hidden rounded-3xl">
+      <ClientForm onSubmit={handleSubmit} className="atelier-surface overflow-hidden rounded-3xl">
         <section className="flex flex-col gap-6 border-b border-stone-800 p-5 sm:flex-row sm:items-center sm:p-8">
           <ProfileAvatar profile={avatarIdentity} className="h-24 w-24 rounded-2xl text-xl" priority />
           <div className="min-w-0 space-y-3">
@@ -331,7 +333,7 @@ export function StaffProfileForm({ profile }: StaffProfileFormProps) {
             </p>
           </aside>
         </div>
-      </form>
+      </ClientForm>
     </div>
   );
 }

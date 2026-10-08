@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -217,7 +219,7 @@ export default function BookFittingClient() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-6 sm:p-12 bg-stone-950 fine-border rounded-3xl space-y-10 shadow-xl">
+          <ClientForm onSubmit={handleSubmit} className="p-6 sm:p-12 bg-stone-950 fine-border rounded-3xl space-y-10 shadow-xl">
             {/* 1. Appointment Type Selection */}
             <div>
               <div className="flex items-center gap-2 mb-4">
@@ -467,7 +469,7 @@ export default function BookFittingClient() {
                 No upfront booking fee • TCC office
               </p>
             </div>
-          </form>
+          </ClientForm>
         )}
       </div>
     </div>

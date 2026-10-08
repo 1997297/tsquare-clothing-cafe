@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useState } from "react";
 import Link from "next/link";
 import { BrandLogo } from "@/components/common/BrandLogo";
@@ -103,7 +105,7 @@ export default function ResetPasswordPage() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
+          <ClientForm onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
             <div>
               <label htmlFor="reset-password" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                 New Password *
@@ -168,7 +170,7 @@ export default function ResetPasswordPage() {
                 Cancel and return to Sign In
               </Link>
             </div>
-          </form>
+          </ClientForm>
         )}
       </div>
     </div>

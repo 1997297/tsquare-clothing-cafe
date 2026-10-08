@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useState } from "react";
 import {
   MapPin,
@@ -195,7 +197,7 @@ export default function ContactClient() {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <ClientForm onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                       <label htmlFor="contact-name" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
@@ -327,7 +329,7 @@ export default function ContactClient() {
                   <p className="text-[10px] text-stone-500 text-center font-mono">
                     All communications are handled with strict sartorial discretion.
                   </p>
-                </form>
+                </ClientForm>
               )}
             </div>
           </div>

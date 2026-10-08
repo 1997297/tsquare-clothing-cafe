@@ -38,12 +38,12 @@ export default async function AccessDeniedPage({
           {message}
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link
+          {!isInactive && <Link
             href="/account"
             className="inline-flex items-center justify-center rounded-xl bg-champagne px-5 py-3 text-xs font-bold uppercase tracking-widest text-near-black"
           >
             Client Area
-          </Link>
+          </Link>}
           <Link
             href="/"
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-stone-700 px-5 py-3 text-xs uppercase tracking-widest text-stone-300 hover:text-warm-ivory"

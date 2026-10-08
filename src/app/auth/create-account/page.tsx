@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -112,7 +114,7 @@ function CreateAccountForm() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-4">
+          <ClientForm onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label htmlFor="create-first-name" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1 font-medium">
@@ -272,7 +274,7 @@ function CreateAccountForm() {
                 Sign In
               </Link>
             </div>
-          </form>
+          </ClientForm>
         )}
       </div>
     </div>

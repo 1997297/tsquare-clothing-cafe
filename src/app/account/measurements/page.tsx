@@ -1,5 +1,7 @@
 "use client";
 
+import { ClientForm } from "@/components/common/ClientForm";
+
 import { useState } from "react";
 import { useAccountData } from "@/lib/account-store";
 import {
@@ -151,18 +153,19 @@ export default function AccountMeasurementsPage() {
 
       {/* Editing Form */}
       {isEditing ? (
-        <form onSubmit={handleSave} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
+        <ClientForm onSubmit={handleSave} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-stone-800">
             <div>
               <h2 className="font-display text-xl text-warm-ivory">
                 Draft New Measurement Version
               </h2>
               <p className="text-xs text-stone-400 font-light mt-0.5">
-                Saving will generate Version {(currentMeasurement?.version || 1) + 1}. Existing orders and history remain unchanged.
+                Saving will generate Version {Math.max(0, ...measurementHistory.map(item => item.version)) + 1}. Existing orders and history remain unchanged.
               </p>
             </div>
             <button
               type="button"
+              aria-label="Cancel measurement editing"
               onClick={() => setIsEditing(false)}
               className="p-2 text-stone-400 hover:text-warm-ivory rounded-full transition-colors"
             >
@@ -173,14 +176,15 @@ export default function AccountMeasurementsPage() {
           {/* Unit & Fit Selectors */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-2">
+              <p id="measurement-unit-label" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-2">
                 Measurement Unit
-              </label>
-              <div className="flex rounded-xl border border-stone-800 overflow-hidden bg-near-black w-fit">
+              </p>
+              <div role="group" aria-labelledby="measurement-unit-label" className="flex rounded-xl border border-stone-800 overflow-hidden bg-near-black w-fit">
                 {(["cm", "inches"] as const).map((u) => (
                   <button
                     key={u}
                     type="button"
+                    aria-pressed={formUnit === u}
                     onClick={() => setFormUnit(u)}
                     className={cn(
                       "px-4 py-2 text-xs uppercase font-mono tracking-wider transition-colors",
@@ -194,14 +198,15 @@ export default function AccountMeasurementsPage() {
             </div>
 
             <div>
-              <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-2">
+              <p id="measurement-fit-label" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-2">
                 Preferred Fit Archetype
-              </label>
-              <div className="flex gap-2">
+              </p>
+              <div role="group" aria-labelledby="measurement-fit-label" className="flex gap-2">
                 {(["tailored", "regular", "relaxed"] as const).map((fit) => (
                   <button
                     key={fit}
                     type="button"
+                    aria-pressed={formFit === fit}
                     onClick={() => setFormFit(fit)}
                     className={cn(
                       "px-3.5 py-2 rounded-xl text-xs uppercase font-mono tracking-wider border capitalize transition-colors",
@@ -223,6 +228,7 @@ export default function AccountMeasurementsPage() {
               <div key={section.id} className="border border-stone-800/80 rounded-2xl overflow-hidden bg-near-black/60">
                 <button
                   type="button"
+                  aria-expanded={openSection === section.id}
                   onClick={() => setOpenSection(openSection === section.id ? "upper" : section.id)}
                   className="w-full flex items-center justify-between p-4 text-left hover:bg-stone-900/30 transition-colors"
                 >
@@ -240,11 +246,12 @@ export default function AccountMeasurementsPage() {
                   <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 border-t border-stone-800/60">
                     {section.fields.map((field) => (
                       <div key={field.key}>
-                        <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1">
+                        <label htmlFor={`measurement-${field.key}`} className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1">
                           {field.label}
                         </label>
                         <div className="relative">
                           <input
+                            id={`measurement-${field.key}`}
                             type="number"
                             step="0.5"
                             value={formMeasurements[field.key] ?? ""}
@@ -266,10 +273,11 @@ export default function AccountMeasurementsPage() {
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
+            <label htmlFor="measurement-note" className="block text-[10px] uppercase font-mono tracking-widest text-stone-400 mb-1.5">
               Version Annotation / Tailor Note
             </label>
             <input
+              id="measurement-note"
               type="text"
               value={formNotes}
               onChange={(e) => setFormNotes(e.target.value)}
@@ -295,7 +303,7 @@ export default function AccountMeasurementsPage() {
               Cancel
             </button>
           </div>
-        </form>
+        </ClientForm>
       ) : (
         /* Display Mode: Active Profile and History Selector */
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

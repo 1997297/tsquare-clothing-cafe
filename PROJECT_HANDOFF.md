@@ -4,11 +4,37 @@ Last updated: 2026-10-08 (Africa/Lagos)
 
 ## Current status
 
-Phases 1–5 are complete. Phase 6 application b4744b2 is pushed to main and live on
-https://tsquare-clothing-cafe.vercel.app. Its migrations, authenticated production
-workflows, security checks and exact-fixture cleanup passed. Documentation closure
-c308b64 also reached READY. Verify the final HTTP-status patch SHA/READY after push.
-Phase 7 has not begun and requires explicit user authorization.
+Phases 1–6 are complete. The Phase 7 entry gate freshly verified clean `main`,
+HEAD/origin/main/remote equality at `76bbb53318cff0ac541dc5354e42fa4bfdcc7712`,
+and production alias https://tsquare-clothing-cafe.vercel.app assigned to READY
+deployment `dpl_FK3c3Fc7dtRtecTF5rt1CpbZDKsQ` at that exact SHA.
+Phase 7 is explicitly authorized and in progress. This is the final phase; no Phase 8.
+
+### Phase 7 unfinished checkpoint
+
+- Local Client directory/dossier and CEO Admin onboarding/status/history are implemented.
+  They reuse existing staff authorization and authoritative business modules. Staff
+  onboarding uses an existing verified work account, not a new invitation service.
+- Additive migration `20261008002757_phase7_people_management.sql` passed the native
+  PostgreSQL replay: 377 unique SQL assertions, seven new staff concurrency/replay
+  checks, eight Phase 4 races and 23 Phase 6 checks. It was then applied live after
+  an exact single-migration CLI dry run; remote history now contains all 16 files.
+  All 37 pre-migration tables retained identical original-field fingerprints (326
+  existing rows, including legitimate activity added since the entry audit).
+- Initial application typecheck/lint/build passed; after the form privacy hardening,
+  typecheck, lint and all 46 tests pass. The sandbox blocked build worker creation
+  (spawn EPERM); a normal-permission build is running. Browser verification remains.
+- Shared ClientForm makes JS-only forms POST-only and inert until hydration, with
+  a synchronous duplicate-submit guard. Auth logic remains unchanged. New Phase 7
+  and existing Phase 6 forms retain their explicit disabled-until-ready boundaries.
+- The production baseline contains configured bank details AND legitimate financial
+  activity. Preserve every original row; never restore the historical Phase 5 empty
+  bank state. The ignored Phase 7 baseline contains only counts/fingerprints.
+- Still required: synthetic full-system
+  workflow/isolation/browser/responsive/theme checks, advisors, exact QA cleanup,
+  final documentation, reviewed commit/push and exact READY production verification.
+- Only the additive migration has been applied; no Phase 7 QA identities have yet
+  been created. Do not claim Phase 7 complete. See PHASE7_IMPLEMENTATION_CONTRACT.md.
 
 Final HTTP-status correction: after c308b64 reached READY, a read-only
 logged-out probe found /api/atelier/counts returned 503 for AUTH_REQUIRED. The narrow
@@ -16,7 +42,7 @@ response adapter now distinguishes 401/403 from genuine 503 outages, keeps priva
 no-store and leaves getAtelierCounts authentication/data loading unchanged. Three
 regression tests were added; typecheck/lint/all 41 tests/optimized build passed.
 Local HTTP verification passed: 401 Authentication required, private/no-store and
-no exposed counts. Verify the same response on the final READY production SHA.
+no exposed counts. The final Phase 6 SHA/READY equality was verified at Phase 7 entry.
 Do not recreate cleaned QA data; authenticated success output is unchanged and
 regression-tested. The final commit/SHA check is recorded in the delivery message.
 

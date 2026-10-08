@@ -19,12 +19,12 @@ export default async function AdminOverviewPage() {
           <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-champagne-dark">Atelier Overview</p>
           <h1 className="mt-3 font-display text-3xl sm:text-4xl">Operational Pulse</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-400">
-            A live, read-only view of the work currently moving through TSquare Clothing Cafe.
+            Review current atelier work and open the next operation that needs your attention.
           </p>
         </div>
         <div className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-800/40 bg-emerald-950/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-emerald-400">
           <Radio className="h-3.5 w-3.5" />
-          Live records only
+          Atelier operations
         </div>
       </div>
 
@@ -34,7 +34,11 @@ export default async function AdminOverviewPage() {
         </div>
       )}
 
-      <section aria-label="Operational summaries" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <nav aria-label="Quick actions" className="flex flex-wrap gap-3">
+        {[["Add Fit", "/admin/collections/new"], ["Review requests", "/admin/requests"], ["View orders", "/admin/orders"], ["Verify payments", "/admin/payments"], ["Appointments", "/admin/appointments"], ["Concierge", "/admin/concierge"], ["Find client", "/admin/clients"]].map(([label, href]) => <Link key={href} href={href} className="rounded-xl border border-stone-700 px-4 py-3 text-xs text-champagne hover:border-champagne">{label}</Link>)}
+      </nav>
+
+      <section aria-label="Operational summaries" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {overview.metrics.map((metric) => (
           <div key={metric.label} className="rounded-2xl border border-stone-800 bg-stone-950/60 p-5">
             <p className="text-[9px] font-mono uppercase tracking-[0.22em] text-stone-500">{metric.label}</p>
@@ -70,7 +74,7 @@ export default async function AdminOverviewPage() {
                   <div className="min-w-0">
                     <p className="text-sm text-stone-200">{humanize(item.eventType)}</p>
                     <p className="mt-1 text-[10px] uppercase tracking-wider text-stone-600">
-                      {humanize(item.entityType)} · {new Intl.DateTimeFormat("en-NG", { dateStyle: "medium", timeStyle: "short" }).format(new Date(item.createdAt))}
+                      {humanize(item.entityType)} · {new Intl.DateTimeFormat("en-NG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Lagos" }).format(new Date(item.createdAt))} WAT
                     </p>
                   </div>
                 </div>
@@ -81,9 +85,9 @@ export default async function AdminOverviewPage() {
 
         <div className="rounded-3xl border border-stone-800 bg-stone-950/60 p-6 sm:p-8">
           <p className="text-[9px] font-mono uppercase tracking-[0.22em] text-champagne-dark">Catalogue Operations</p>
-          <h2 className="mt-2 font-display text-2xl">Collections are live</h2>
+          <h2 className="mt-2 font-display text-2xl">Shape the Collection</h2>
           <p className="mt-4 text-sm leading-7 text-stone-400">
-            Authorized staff can now manage categories, Fits, galleries, fabrics, colours and publication status without weakening the client-facing catalogue boundary.
+            Review Fit details, galleries and available fabrics before publishing. Archive a Fit to remove it from the public Collection while retaining its history.
           </p>
           <Link
             href="/admin/collections"

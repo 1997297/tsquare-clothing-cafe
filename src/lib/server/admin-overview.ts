@@ -28,7 +28,7 @@ export async function getAdminOverviewData(): Promise<AdminOverviewData> {
     supabase
       .from("bespoke_requests")
       .select("id", { count: "exact", head: true })
-      .in("status", ["submitted", "under_review", "needs_clarification", "pricing_ready"]),
+      .in("status", ["submitted", "under_review"]),
     supabase
       .from("orders")
       .select("id", { count: "exact", head: true })
