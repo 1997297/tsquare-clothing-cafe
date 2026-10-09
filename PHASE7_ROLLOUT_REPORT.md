@@ -5,19 +5,20 @@ Updated 2026-10-09 (Africa/Lagos). **In-progress checkpoint, not release certifi
 ## 1. Final System Status
 
 **TCC DEVELOPMENT IS NOT YET COMPLETE.** Phases 1-6 are complete; final Phase 7
-implementation is present but release gates remain. Actual blockers are email
-ownership confirmation (hosted Auth currently automatically confirms signup), final
-production deployment/recheck of the local fixes and exact
-synthetic-data cleanup. These are not optional post-approval configuration.
+implementation is deployed and its application/database/browser gates have passed.
+The remaining blocker is actual email ownership confirmation: hosted Auth still
+automatically confirms signup. Real confirmation/callback and recovery-email testing
+must follow correction of the Auth settings. This is not optional owner branding.
+Final documentation Git/READY equality is checked after this report's commit.
 
 ## 2. Public Website
 
 Home, Collections, published Fit details, navigation, public information pages and
-both themes passed the local route/responsive checks. Removed the dummy WhatsApp
+both themes passed the local and production route/responsive checks. Removed the dummy WhatsApp
 destination and bracketed telephone/address placeholders; contact success no longer
 promises automatic email/WhatsApp delivery. Existing reference imagery is retained.
 Owner must approve business information and image rights. Root 404 hydration fix is
-local and passed the browser recheck; no redesign was introduced.
+deployed and passed the production browser recheck; no redesign was introduced.
 
 ## 3. Client Platform
 
@@ -33,10 +34,11 @@ No other-client record becomes accessible through the resolver.
 Overview uses live actionable counts. Collection Management, Requests, Orders,
 Payments, Appointments, Concierge, Clients and Profile remain existing operational
 modules. Client dossiers now query the actual `saved_styles.saved_at` column instead
-of nonexistent `created_at`. This fix is currently local; the published earlier
-Phase 7 checkpoint does not yet contain it. Shared confirmation dialogs now use
+of nonexistent `created_at`. This repair is included in production `5ed6919` and
+the deployed dossier recheck passed. Shared confirmation dialogs now use
 native modal behavior. The catalogue option editor also uses native modality. Actual
-Tab containment, Escape and trigger-focus restoration checks passed for both dialogs.
+Tab containment, Escape and trigger-focus restoration passed for both dialogs locally
+and on production, without submitting any catalogue changes.
 
 ## 5. CEO Platform
 
@@ -75,8 +77,8 @@ URL works. SECURITY DEFINER functions have pinned search paths, explicit grants 
 actor/role guards; no blanket RLS bypass was introduced.
 
 The latest exact secret scan covered 436 source/build assets with zero matches for
-known environment secrets or QA passwords. Repeat after final documentation. `.env.local`
-and ignored QA credentials must remain untracked. Production dependency audit: zero
+known environment secrets or QA passwords. `.env.local` and temporary QA credentials
+were never tracked. Production dependency audit: zero
 vulnerabilities after compatible Next/PostCSS/source-map-js/Sharp updates. Full audit:
 nine development-tool findings (seven high, two moderate); see technical handover for
 trusted-build scope and maintenance limitations. Email confirmation is a must-fix gate.
@@ -91,12 +93,26 @@ checks, eight Phase 4 races and 23 Phase 6 checks. Existing indexes/constraints 
 
 Fresh pre-migration fingerprints preserved all 326 original rows across 37 tables,
 including bank and legitimate financial activity added after Phase 5. Original policy
-hash remained `d3e81225b9be4b85816821f6e99d42a9`. Final post-cleanup comparison is pending;
-never restore an old baseline over later legitimate activity.
+hash remained `d3e81225b9be4b85816821f6e99d42a9` across the migration. Final post-cleanup
+comparison confirms every original-field fingerprint, excluding only the newly added
+staff lock-version field. One additional legitimate profile created during testing
+was retained; its inclusion explains the only aggregate baseline count change.
+Current state: 38 tables/327 rows, five real Auth users. No old snapshot was restored.
+
+Cleanup passed a rollback rehearsal, then an atomic exact-ID/tag transaction with
+before/after equality for all 316 non-test rows across 36 application/private tables.
+It removed only synthetic records, restored all 15 affected immutable guards and left
+RLS enabled. QA sessions were revoked before deleting all six temporary Auth users.
+Final checks: zero QA users/sessions/refresh tokens/profiles/staff memberships and zero
+disabled application triggers. The fixture data was permanently removed; it can be
+recreated for testing if needed, not recovered through the UI. No real data was removed.
+All 29 generated local Phase 7 artifacts (including credential manifest, screenshots,
+receipt, proof files and helpers) were removed afterward. QA browsers/helpers were
+closed; unrelated temporary files, worker worktrees and PostgreSQL runtime retained.
 
 October 9 advisors: seven private deny-all RLS INFO, 31 guarded authenticated-definer
 WARN, 14 unused-index INFO and one existing leaked-password-protection warning. No
-missing-FK category appeared. Rerun after cleanup. Relevant explanations:
+missing-FK category appeared. These counts were rerun after cleanup. Relevant explanations:
 [private deny-all](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy),
 [definer grants](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable),
 [unused indexes](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index),
@@ -108,8 +124,9 @@ Retained `catalogue-media` private/8 MB, `bespoke-references` private/10 MB,
 `payment-receipts` private/3 MB and `profile-avatars` public-read/5 MB buckets.
 Images allow JPEG/PNG/WebP; receipt evidence also allows PDF. Live receipt bytes were
 available to the owner and active Admin/CEO, denied to anonymous/other-client users.
-Public read access is not public write access. Exact synthetic receipt removal and
-final original-object preservation check are still required.
+Public read access is not public write access. The exact synthetic receipt was removed
+through the Storage API. All seven original objects and four buckets retain identical
+fingerprints; the removed object is absent. Bank configuration is unchanged.
 
 ## 11. Complete Workflow
 
@@ -122,7 +139,9 @@ confirmation -> Concierge round trip -> production stages -> completed wardrobe.
 The synthetic order total was NGN 100,000; verified QA amount NGN 40,000; remaining
 balance NGN 60,000. No actual transfer occurred. Pending evidence did not count as
 money; repeated conversion/payment verification did not duplicate records. Private
-notes were not shown to the client. Final production-site recheck remains pending.
+notes were not shown to the client. The deployed completed-workflow recheck passed
+11 checks, including correct financial position, private-note hiding, Concierge reply,
+completed wardrobe, dossier integration and duplicate conversion/verification denial.
 
 ## 12. Quality Assurance
 
@@ -133,8 +152,8 @@ notes were not shown to the client. Final production-site recheck remains pendin
 - Matrix: 20 routes x 390/768/1440 x Dark/Light = 120 combinations, plus public,
   invalid-reference, receipt endpoint and JavaScript-disabled checks: 151 total.
   Layout/access checks passed; one React 418 exception on unknown Admin URL led to
-  the local route-tree shell fix. Full local rerun: 151 checks passed, no exceptions.
-  Reviewed redacted mobile CEO/dossier screenshots; keyboard modal checks passed.
+  route-tree shell fix. Local AND production reruns: 151 checks each passed, no exceptions.
+  Reviewed redacted mobile CEO/dossier screenshots; local/production modal checks passed.
 - JS-only private forms are POST-only and inert/disabled before hydration. Duplicate
   submissions are synchronously guarded. No browser token/password is published.
 - Actual inbox confirmation and recovery-email delivery are not yet verified.
@@ -145,16 +164,22 @@ Branch `main`. Phase 6 entry checkpoint was clean and exactly equal locally/remo
 `76bbb53318cff0ac541dc5354e42fa4bfdcc7712`.
 An external checkpoint committed/pushed the first 45 Phase 7 files as
 `8865e485f5ac373ba548f319aedf7ee1a65e16c2` (remote equality checked October 8).
-Latest repairs and handover documents are still local/uncommitted. Final commit,
-fresh `HEAD == origin/main == GitHub main` and clean worktree are NOT yet certified.
+Repair checkpoint `5ed69195fb06e227cb8e9ff2c226c25292f85e31` is pushed to main;
+HEAD/origin equality and clean worktree were verified immediately after push. The
+documentation-only follow-up must also have remote equality, clean status and exact
+READY deployment verified; its SHA is supplied in the delivery message to avoid a
+self-referential commit hash in this file.
 
 ## 14. Production
 
 Current alias: `https://tsquare-clothing-cafe.vercel.app`.
-October 9 read: READY `dpl_GVT5DnDbmpenaycoNeC4dGFZRKD8`, Git branch `main`, commit
-`8865e485f5ac373ba548f319aedf7ee1a65e16c2`. Latest local repairs are not included yet.
-Required final deployment and authenticated smoke/negative-path rechecks are pending.
-No claim of a clean final runtime-log audit or continuous monitoring is made.
+Verified READY application deployment: `dpl_EqyPVXKxR8a1prv7ossWHJexXayu`, branch
+`main`, commit `5ed69195fb06e227cb8e9ff2c226c25292f85e31`, with production alias assigned.
+All-role matrix, completed-workflow and keyboard checks passed on this deployment.
+The connector denied build-log access (403); authenticated scoped CLI inspection
+confirmed the deployment. A bounded one-hour error-log scan for this exact deployment
+returned zero error rows. This is not continuous monitoring or an audit of older builds.
+The documentation-only follow-up deployment is verified separately after its push.
 
 ## 15. Client Information Still Required
 
@@ -174,10 +199,11 @@ test. Verify Auth Site URL and callback allowlist; exact entries are in
 diagnose the returned error before deciding what owner action is necessary; do not
 disable verification. Existing users/passwords must not be reset as a test.
 
-Agent-owned remaining gates: fix verification findings, final deployment and all-role
-smoke, session revocation/exact tagged QA cleanup, original-row/object preservation,
-final advisor/secret checks and clean pushed Git. Six temporary identities and their
-synthetic journey currently remain; the ignored manifest is the cleanup inventory.
+Application fixes, production smoke, session revocation, exact tagged QA cleanup,
+row/object preservation and final advisors have passed. All six temporary identities
+and the synthetic journey are removed. After correcting Auth, repeat only the approved
+isolated email test and its cleanup; do not recreate the completed workflow fixtures.
+Documentation-only Git/READY checkpoint verification follows this report's commit.
 
 ### Required only after TCC approves the project
 

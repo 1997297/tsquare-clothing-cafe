@@ -10,69 +10,68 @@ and production alias https://tsquare-clothing-cafe.vercel.app assigned to READY
 deployment `dpl_FK3c3Fc7dtRtecTF5rt1CpbZDKsQ` at that exact SHA.
 Phase 7 is explicitly authorized and in progress. This is the final phase; no Phase 8.
 
-### Phase 7 unfinished checkpoint
+### Phase 7 release checkpoint — one Auth gate remains
 
-- Local Client directory/dossier and CEO Admin onboarding/status/history are implemented.
-  They reuse existing staff authorization and authoritative business modules. Staff
-  onboarding uses an existing verified work account, not a new invitation service.
-- Additive migration `20261008002757_phase7_people_management.sql` passed the native
-  PostgreSQL replay: 377 unique SQL assertions, seven new staff concurrency/replay
-  checks, eight Phase 4 races and 23 Phase 6 checks. It was then applied live after
-  an exact single-migration CLI dry run; remote history now contains all 16 files.
-  All 37 pre-migration tables retained identical original-field fingerprints (326
-  existing rows, including legitimate activity added since the entry audit).
-- Application typecheck/lint/optimized build (68 pages) and all 52 tests passed
-  after the request-link/dossier, signup callback, root-404 and modal fixes, plus
-  compatible security dependency updates. Latest scan: 436 source/browser assets,
-  zero known-secret matches, no private files tracked; production audit zero findings.
-- Live browser checks passed CEO onboarding, Admin deactivation/reactivation and
-  denial of the existing deactivated session. Client profile, measurements, Saved
-  Look, request submission and Admin change request passed. Linked request pages
-  incorrectly rejected owned database UUIDs; a local fix supports both UUID and
-  readable reference within the already-authorized request list. Verification continues.
-- Shared ClientForm makes JS-only forms POST-only and inert until hydration, with
-  a synchronous duplicate-submit guard. Auth logic remains unchanged. New Phase 7
-  and existing Phase 6 forms retain their explicit disabled-until-ready boundaries.
-- The production baseline contains configured bank details AND legitimate financial
-  activity. Preserve every original row; never restore the historical Phase 5 empty
-  bank state. The ignored Phase 7 baseline contains only counts/fingerprints.
-- The complete 32-step synthetic browser journey passed locally against live Supabase:
-  request revision/approval/conversion, partial payment with synthetic receipt (no
-  real transfer), appointment confirmation, Concierge round trip, completed wardrobe.
-  All 38 live HTTP owner/other-client/role/receipt-storage isolation checks passed.
-  Bank configuration retained the same whole-row hash. The client dossier queried
-  nonexistent saved_styles.created_at; the local fix uses the preserved saved_at.
-- Responsive/theme matrix: 120 combinations (20 routes at three widths in both
-  themes) plus public/invalid/receipt/JavaScript-disabled checks, 151 total. Layout
-  and access checks passed, but /admin/not-a-module raised React 418. Read-only
-  SSR/browser comparison found the root 404 server shell included public navigation
-  while pathname-based hydration removed it. SiteLayout now uses rendered route
-  segments; the complete 151-check local matrix rerun passed with no exceptions.
-  Shared confirmation and catalogue option dialogs now trap Tab, support Escape and
-  restore trigger focus; actual keyboard checks passed without changing catalogue rows.
-- Actual release blocker: hosted Auth reports mailer_autoconfirm=true. The permitted
-  real-email registration signed in immediately; no email confirmation was sent.
-  Owner was asked to enable Confirm email. Do not claim inbox ownership verified.
-  Signup now explicitly targets the existing same-origin PKCE callback; this change
-  is still local and awaits the actual email-delivery/callback test. Do not overwrite
-  SMTP settings, alter existing user passwords or invent email infrastructure.
-- Dependencies patched to Next 15.5.27, PostCSS 8.5.29, source-map-js 1.2.2 and
-  Sharp 0.35.5. Production audit: zero vulnerabilities. Full audit: nine development
-  tool findings (seven high, two moderate); see TCC_TECHNICAL_HANDOVER.md.
-- Still required: final callback/404 verification, production browser recheck,
-  advisors, exact QA cleanup/preservation, final report and reviewed Git push with
-  exact READY production verification. Guides exist but are not release certification.
-- IMPORTANT: SIX tagged synthetic Phase 7 Auth identities and related test records
-  currently exist. The ignored `supabase/.temp/phase7-qa-manifest.json` is the exact
-  cleanup inventory and contains credentials; NEVER print or commit it. Preserve it
-  until the synthetic workflow and reviewed exact cleanup are finished. No real
-  credentials, bank configuration or financial activity were changed. The sixth
-  identity is the explicitly permitted real-email registration, UUID
-  694c4e01-f3e4-4429-95fe-3714db374e54; it did not exist before the QA signup.
-- An external checkpoint committed/pushed the first 45 Phase 7 files as
-  `8865e485f5ac373ba548f319aedf7ee1a65e16c2`; GitHub equality was checked. Latest
-  request-link/dialog fixes remain local. Exact final production verification is
-  still required. Do not claim Phase 7 complete. See PHASE7_IMPLEMENTATION_CONTRACT.md.
+- Client directory/dossier and CEO Admin onboarding/status/history are implemented
+  and deployed. No Phase 8 or new messaging/payment infrastructure was introduced.
+- Application repair commit `5ed69195fb06e227cb8e9ff2c226c25292f85e31` is pushed
+  to main. Exact production alias was verified READY on
+  `dpl_EqyPVXKxR8a1prv7ossWHJexXayu`. Local and origin/main were equal/clean after
+  this push. The documentation-only follow-up also requires exact Git/READY equality.
+- Typecheck, lint, all 52 tests and optimized Next 15.5.27 build (68 pages) passed.
+  Production dependency audit is clear. Nine development-tool findings remain
+  classified in TCC_TECHNICAL_HANDOVER.md; no forced major upgrade was made.
+- Additive migration `20261008002757_phase7_people_management.sql` is live; all 16
+  migration files are applied. Native PostgreSQL replay passed 377 SQL assertions,
+  seven staff concurrency/replay checks, eight Phase 4 races and 23 Phase 6 checks.
+- Full synthetic browser journey passed locally against live Supabase: profile,
+  measurements, Saved Look, request/change/revision/approval/conversion, partial
+  payment/synthetic receipt/exact balance, appointment, Concierge, completed wardrobe.
+  No real bank transfer occurred. All 38 live HTTP security/isolation checks passed.
+- Exact repaired production passed the 151-check all-role responsive/theme/invalid
+  reference/private receipt/SSR-form matrix, 11 completed-journey rechecks, and both
+  modal keyboard tests. No browser exceptions or horizontal overflow were recorded.
+  Bounded CLI error scan of that deployment over one hour returned no error rows.
+  Connector build-log access returned 403; scoped CLI inspection/logs succeeded.
+  This is not continuous monitoring or a guarantee about older deployments.
+- Repairs include owned UUID/readable Request links, saved_styles.saved_at in the
+  dossier, route-tree-based SiteLayout for root 404 hydration, focus containment/
+  restoration in confirmation and catalogue option dialogs, truthful contact copy,
+  explicit same-origin signup callback and compatible dependency security patches.
+- FINAL QA CLEANUP COMPLETE: six tagged Auth users, sessions/refresh tokens, three
+  test staff memberships, synthetic business/financial records and one receipt object
+  were removed after an exact rollback rehearsal. Do not recreate the completed
+  workflow fixtures. All 15 affected immutable guards are enabled; no RLS was weakened.
+  A transaction verified all 316 non-QA rows across 36 public/private tables unchanged.
+- Final comparison preserves all 326 original-field row fingerprints across the
+  37 pre-migration tables, including all seven original storage objects/four buckets.
+  One additional legitimate profile/Auth user created during testing was also retained:
+  five real users remain. Final table set has 38 tables/327 rows. Bank whole-row hash
+  remains `e2b0df408ebbf436fc113d2ca10ffcc0`. Never restore the older empty bank state.
+- Final advisors: seven intentional private deny-all INFO, 31 guarded-definer WARN,
+  14 unused-index INFO and one existing leaked-password warning; no missing-FK finding.
+  Secret scan: 436 source/browser assets, zero known-secret matches, private files
+  untracked. Rerun if source changes. All 29 generated Phase 7 temporary files
+  (credential manifest, screenshots, receipt, helpers and proofs) were removed after
+  documenting results; unrelated temp files/runtime/worktrees were preserved. All QA
+  browsers closed, including the two stale helper processes. Port 3001 serves the
+  verified local production build for the user.
+- ACTUAL BLOCKER: hosted Auth still reports `mailer_autoconfirm=true` on October 9.
+  The permitted email test signed in immediately; no confirmation email was sent.
+  Owner was asked to enable Confirm email. Signup callback fix is deployed, but
+  real delivery/confirmation and recovery-email testing remain unverified.
+- The permitted temporary real-email account was absent before testing and has now
+  been deleted with the other fixtures. After owner fixes Auth settings, a new isolated
+  test may use the previously approved address. Do not reset an existing account or
+  use an admin-generated link as proof of actual email delivery.
+- Required owner action: Authentication > Sign In / Providers > Email > Confirm email
+  ON; verify Site URL/callback allowlist using TCC_TECHNICAL_HANDOVER.md. Preserve
+  existing SMTP settings. Previously autoconfirmed accounts are not retroactively
+  inbox-verified; CEO must independently verify intended staff identities.
+- PHASE7_ROLLOUT_REPORT.md contains the requested 17 sections and separates this
+  blocker from owner-approved business/legal information and future enhancements.
+  TCC_OPERATIONS_GUIDE.md and TCC_TECHNICAL_HANDOVER.md are current.
+  TCC DEVELOPMENT IS NOT YET COMPLETE until the real Auth gate is verified.
 
 Final HTTP-status correction: after c308b64 reached READY, a read-only
 logged-out probe found /api/atelier/counts returned 503 for AUTH_REQUIRED. The narrow

@@ -29,17 +29,21 @@ Started 2026-10-08 (Africa/Lagos). This is the final phase, not a new product ar
   and practical links to the existing operations modules.
 - [x] Removed the public footer's dummy WhatsApp destination;
   preserve reference fashion imagery. Audit all business/legal copy without inventing facts.
-- [ ] Final public/client/staff route audit, input stability, auth persistence, invalid
-  IDs, error/loading states, themes, accessibility and responsive verification pending.
+- [x] Public/client/staff route matrix, input stability, existing-session auth,
+  invalid IDs, themes, modal accessibility and responsive production checks passed.
+- [ ] Actual email delivery, inbox confirmation/callback and recovery-email verification
+  await owner correction of hosted Auth configuration.
 - [x] Full 32-step synthetic journey passed through localhost against live Supabase;
   38 live HTTP owner/second-client/staff/CEO/private-receipt checks passed. This is
   not yet final production-site verification of the latest code.
-- [ ] Complete migration/RLS/storage/definer/secret/dependency review and advisor
-  classification pending. Current security baseline: six private deny-all INFO,
-  26 guarded-definer notices, pre-existing leaked-password configuration warning.
-- [ ] Final static/unit/native SQL/concurrency/build tests; safe synthetic production
-  test, exact cleanup, row preservation; exact final Git and deployment pending.
-- [ ] Presentation report, owner-information list, CEO/Admin guides and technical handover.
+- [x] Migration/RLS/storage/definer/secret/dependency review and advisors classified.
+  Final: seven private deny-all INFO, 31 guarded-definer WARN, 14 unused-index INFO,
+  existing leaked-password warning. Confirm-email blocker is separate and mandatory.
+- [x] Static/unit/native SQL/concurrency/build tests, production matrix/recheck,
+  exact QA cleanup and original-row/object preservation passed.
+- [ ] Documentation-only final Git/READY checkpoint, then isolated Auth verification
+  after the owner's configuration change; not yet an unconditional release sign-off.
+- [x] Seventeen-section report, owner-information list, CEO/Admin guides and handover.
 
 ## Release gates and boundaries
 
@@ -70,7 +74,10 @@ READY production deployment gates pass.
 - BLOCKER: Supabase mailer_autoconfirm=true allowed the permitted email-test account
   to sign in without verification. Owner asked to enable Confirm email. Added explicit
   same-origin signup callback. Actual email delivery/confirmation remains unverified.
-- Six QA identities and the synthetic journey still require exact reviewed cleanup.
-  Preserve the ignored secret manifest and all legitimate current financial records.
-- Operations/technical guides drafted. Final 17-section rollout report must distinguish
-  the Auth blocker from post-approval business information and future enhancements.
+- Six QA identities and their sessions/business fixtures were exactly cleaned after a
+  rollback rehearsal; 15 immutable guards restored, original records/storage preserved.
+  A fifth legitimate Auth/profile account created during testing was retained.
+- Operations/technical guides and the 17-section report distinguish the Auth blocker
+  from post-approval business information and future enhancements. Application repairs
+  are on main at 5ed69195fb06e227cb8e9ff2c226c25292f85e31 and production READY
+  dpl_EqyPVXKxR8a1prv7ossWHJexXayu; all 151 deployed matrix checks passed.
