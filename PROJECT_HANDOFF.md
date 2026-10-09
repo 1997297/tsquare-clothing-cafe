@@ -1,6 +1,6 @@
 # TSquare Clothing Cafe — Project Handoff
 
-Last updated: 2026-10-08 (Africa/Lagos)
+Last updated: 2026-10-09 (Africa/Lagos)
 
 ## Current status
 
@@ -21,20 +21,58 @@ Phase 7 is explicitly authorized and in progress. This is the final phase; no Ph
   an exact single-migration CLI dry run; remote history now contains all 16 files.
   All 37 pre-migration tables retained identical original-field fingerprints (326
   existing rows, including legitimate activity added since the entry audit).
-- Initial application typecheck/lint/build passed; after the form privacy hardening,
-  typecheck, lint and all 46 tests pass. The sandbox blocked build worker creation
-  (spawn EPERM); a normal-permission build is running. Browser verification remains.
+- Application typecheck/lint/optimized build (68 pages) and all 52 tests passed
+  after the request-link/dossier, signup callback, root-404 and modal fixes, plus
+  compatible security dependency updates. Latest scan: 436 source/browser assets,
+  zero known-secret matches, no private files tracked; production audit zero findings.
+- Live browser checks passed CEO onboarding, Admin deactivation/reactivation and
+  denial of the existing deactivated session. Client profile, measurements, Saved
+  Look, request submission and Admin change request passed. Linked request pages
+  incorrectly rejected owned database UUIDs; a local fix supports both UUID and
+  readable reference within the already-authorized request list. Verification continues.
 - Shared ClientForm makes JS-only forms POST-only and inert until hydration, with
   a synchronous duplicate-submit guard. Auth logic remains unchanged. New Phase 7
   and existing Phase 6 forms retain their explicit disabled-until-ready boundaries.
 - The production baseline contains configured bank details AND legitimate financial
   activity. Preserve every original row; never restore the historical Phase 5 empty
   bank state. The ignored Phase 7 baseline contains only counts/fingerprints.
-- Still required: synthetic full-system
-  workflow/isolation/browser/responsive/theme checks, advisors, exact QA cleanup,
-  final documentation, reviewed commit/push and exact READY production verification.
-- Only the additive migration has been applied; no Phase 7 QA identities have yet
-  been created. Do not claim Phase 7 complete. See PHASE7_IMPLEMENTATION_CONTRACT.md.
+- The complete 32-step synthetic browser journey passed locally against live Supabase:
+  request revision/approval/conversion, partial payment with synthetic receipt (no
+  real transfer), appointment confirmation, Concierge round trip, completed wardrobe.
+  All 38 live HTTP owner/other-client/role/receipt-storage isolation checks passed.
+  Bank configuration retained the same whole-row hash. The client dossier queried
+  nonexistent saved_styles.created_at; the local fix uses the preserved saved_at.
+- Responsive/theme matrix: 120 combinations (20 routes at three widths in both
+  themes) plus public/invalid/receipt/JavaScript-disabled checks, 151 total. Layout
+  and access checks passed, but /admin/not-a-module raised React 418. Read-only
+  SSR/browser comparison found the root 404 server shell included public navigation
+  while pathname-based hydration removed it. SiteLayout now uses rendered route
+  segments; the complete 151-check local matrix rerun passed with no exceptions.
+  Shared confirmation and catalogue option dialogs now trap Tab, support Escape and
+  restore trigger focus; actual keyboard checks passed without changing catalogue rows.
+- Actual release blocker: hosted Auth reports mailer_autoconfirm=true. The permitted
+  real-email registration signed in immediately; no email confirmation was sent.
+  Owner was asked to enable Confirm email. Do not claim inbox ownership verified.
+  Signup now explicitly targets the existing same-origin PKCE callback; this change
+  is still local and awaits the actual email-delivery/callback test. Do not overwrite
+  SMTP settings, alter existing user passwords or invent email infrastructure.
+- Dependencies patched to Next 15.5.27, PostCSS 8.5.29, source-map-js 1.2.2 and
+  Sharp 0.35.5. Production audit: zero vulnerabilities. Full audit: nine development
+  tool findings (seven high, two moderate); see TCC_TECHNICAL_HANDOVER.md.
+- Still required: final callback/404 verification, production browser recheck,
+  advisors, exact QA cleanup/preservation, final report and reviewed Git push with
+  exact READY production verification. Guides exist but are not release certification.
+- IMPORTANT: SIX tagged synthetic Phase 7 Auth identities and related test records
+  currently exist. The ignored `supabase/.temp/phase7-qa-manifest.json` is the exact
+  cleanup inventory and contains credentials; NEVER print or commit it. Preserve it
+  until the synthetic workflow and reviewed exact cleanup are finished. No real
+  credentials, bank configuration or financial activity were changed. The sixth
+  identity is the explicitly permitted real-email registration, UUID
+  694c4e01-f3e4-4429-95fe-3714db374e54; it did not exist before the QA signup.
+- An external checkpoint committed/pushed the first 45 Phase 7 files as
+  `8865e485f5ac373ba548f319aedf7ee1a65e16c2`; GitHub equality was checked. Latest
+  request-link/dialog fixes remain local. Exact final production verification is
+  still required. Do not claim Phase 7 complete. See PHASE7_IMPLEMENTATION_CONTRACT.md.
 
 Final HTTP-status correction: after c308b64 reached READY, a read-only
 logged-out probe found /api/atelier/counts returned 503 for AUTH_REQUIRED. The narrow

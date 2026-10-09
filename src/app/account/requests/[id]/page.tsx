@@ -10,6 +10,7 @@ import {
 import { formatNaira } from "@/lib/payments/service";
 import { ReturnLink } from "@/components/common/ReturnLink";
 import { RequestStatusBadge, WorkflowTimeline } from "@/components/atelier/WorkflowUI";
+import { findOwnedRequest } from "@/lib/atelier-workflow";
 import { RequestResubmissionForm } from "./RequestResubmissionForm";
 
 export default function RequestDetailPage({
@@ -20,7 +21,7 @@ export default function RequestDetailPage({
   const { id } = use(params);
   const { requests, reloadData } = useAccountData();
 
-  const request = requests.find((r) => r.requestId === id);
+  const request = findOwnedRequest(requests, id);
 
   if (!request) {
     return (

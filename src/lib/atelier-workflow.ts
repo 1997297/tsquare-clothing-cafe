@@ -9,6 +9,12 @@ export const REQUEST_WORKFLOW_STATUSES = [
 
 export type RequestWorkflowStatus = typeof REQUEST_WORKFLOW_STATUSES[number];
 
+// Client list links use the readable reference; linked appointment/Concierge
+// context uses the database UUID. Resolve either inside the already-owned list.
+export function findOwnedRequest<T extends { requestId: string; databaseId?: string }>(requests: readonly T[], reference: string): T | undefined {
+  return requests.find(request => request.requestId === reference || request.databaseId === reference);
+}
+
 export const REQUEST_STAFF_ACTIONS = [
   "start_review",
   "request_changes",

@@ -50,7 +50,7 @@ export async function getClientDossier(id: string, params: Record<string, string
     client.from('payments').select('id,order_id,internal_reference,amount_minor,status,created_at', { count: 'exact' }).eq('customer_id', id).order('created_at', { ascending: false }).order('id').range(...range(pages.payments)),
     client.from('appointments').select('id,type,status,preferred_date,preferred_time,scheduled_start_at,created_at', { count: 'exact' }).eq('customer_id', id).order('created_at', { ascending: false }).order('id').range(...range(pages.appointments)),
     client.from('concierge_requests').select('id,subject,status,created_at', { count: 'exact' }).eq('customer_id', id).order('created_at', { ascending: false }).order('id').range(...range(pages.concierge)),
-    client.from('saved_styles').select('id,style_id,created_at', { count: 'exact' }).eq('customer_id', id).order('created_at', { ascending: false }).order('id').range(...range(pages.saved)),
+    client.from('saved_styles').select('id,style_id,saved_at', { count: 'exact' }).eq('customer_id', id).order('saved_at', { ascending: false }).order('id').range(...range(pages.saved)),
   ]);
   if ([measurements, requests, orders, payments, appointments, concierge, saved].some(result => result.error)) throw new Error('CLIENT_DOSSIER_UNAVAILABLE');
   const [financials, fits] = await Promise.all([

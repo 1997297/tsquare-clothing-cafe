@@ -73,7 +73,7 @@ export default function ContactClient() {
                     </span>
                     <p className="text-stone-400">Abeokuta, Ogun State, Nigeria</p>
                     <p className="text-[10px] text-stone-500 font-mono mt-0.5">
-                      [Exact atelier street address provided upon consultation confirmation]
+                      Confirm the visit location with TCC before travelling.
                     </p>
                   </div>
                 </div>
@@ -98,7 +98,7 @@ export default function ContactClient() {
                       Direct Inquiries
                     </span>
                     <p className="text-stone-400 font-mono">
-                      [Official House Telephone, Reserved for Direct Concierge]
+                      Use the enquiry form below to contact TCC.
                     </p>
                   </div>
                 </div>
@@ -174,7 +174,7 @@ export default function ContactClient() {
                     Inquiry Received
                   </h4>
                   <p className="text-sm text-stone-300 font-light max-w-md mx-auto leading-relaxed">
-                    Thank you, <strong className="text-warm-ivory">{formData.name}</strong>. Your message has been logged with the TCC office. A team member will respond via email/WhatsApp shortly.
+                    Thank you, <strong className="text-warm-ivory">{formData.name}</strong>. Your message has been received by the TCC office for review. Keep the contact details you supplied available for a reply.
                   </p>
                   <div className="pt-4">
                     <Button

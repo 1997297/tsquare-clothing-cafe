@@ -2,14 +2,52 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { peopleEmail, peoplePage, staffMutationInput } from '../src/lib/people.ts';
+import { findOwnedRequest } from '../src/lib/atelier-workflow.ts';
 
 const valid = { targetId: 'ba166ba5-558a-4c80-aeac-8baee3ce73c2', email: ' STAFF@example.invalid ', action: 'add_admin', expectedVersion: 0, operationKey: '2ab02f73-52b7-42fa-b587-68437c84c18e' };
+test('public shell follows the rendered route tree, including root not-found', () => {
+  const source = readFileSync(new URL('../src/components/layout/SiteLayout.tsx', import.meta.url), 'utf8');
+  assert.match(source, /useSelectedLayoutSegments\(\)/);
+  assert.doesNotMatch(source, /usePathname|window\.location/);
+  for (const section of ['account', 'admin', 'auth', 'bespoke']) assert.ok(source.includes(`section === "${section}"`));
+});
+test('signup confirmation explicitly returns to the existing same-origin PKCE callback', () => {
+  const source = readFileSync(new URL('../src/lib/auth-context.tsx', import.meta.url), 'utf8');
+  assert.ok(source.includes('emailRedirectTo: `${window.location.origin}/auth/callback?next=/account`'));
+  const callback = readFileSync(new URL('../src/app/auth/callback/route.ts', import.meta.url), 'utf8');
+  assert.match(callback, /exchangeCodeForSession\(code\)/);
+  assert.match(callback, /getSafeAuthRedirect\(requestUrl.searchParams.get\("next"\)\)/);
+});
+test('catalogue dialogs trap keyboard focus, restore the trigger and guard busy dismissal', () => {
+  for (const path of ['src/components/admin/ConfirmDialog.tsx', 'src/app/admin/collections/CatalogueManager.tsx']) {
+    const source = readFileSync(new URL('../' + path, import.meta.url), 'utf8');
+    assert.match(source, /dialog.showModal\(\)/);
+    assert.match(source, /previousFocus\?\.focus\(\)/);
+    assert.match(source, /trapTabKey\(event.nativeEvent, dialogRef.current\)/);
+    assert.match(source, /event.preventDefault\(\); if \(!(busy|pending)\)/);
+  }
+});
+test('client request links resolve UUID and readable reference only within owned records', () => {
+  const request = { requestId: 'TCC-REQ-TEST', databaseId: valid.targetId };
+  assert.equal(findOwnedRequest([request], request.requestId), request);
+  assert.equal(findOwnedRequest([request], request.databaseId), request);
+  assert.equal(findOwnedRequest([request], 'another-client-record'), undefined);
+  assert.equal(findOwnedRequest([], request.databaseId), undefined);
+  assert.equal(findOwnedRequest([{ requestId: 'LOCAL-REFERENCE' }], 'LOCAL-REFERENCE')?.requestId, 'LOCAL-REFERENCE');
+});
 test('people pagination is bounded and literal email lookup is normalized', () => {
   assert.equal(peopleEmail(valid.email), 'staff@example.invalid');
   for (const value of [null, [], 'staff', 'staff@example.invalid\nBcc: someone']) assert.throws(() => peopleEmail(value));
   for (const value of [null, [], '-1', 'Infinity', '1e2', '999999']) assert.equal(peoplePage(value), 0);
   assert.equal(peoplePage('10001'), 10000);
   assert.equal(peoplePage('12'), 12);
+});
+test('client dossier queries the preserved Saved Look timestamp', () => {
+  const source = readFileSync(new URL('../src/lib/server/people.ts', import.meta.url), 'utf8');
+  assert.match(source, /from\('saved_styles'\)\.select\('id,style_id,saved_at'/);
+  assert.match(source, /order\('saved_at', \{ ascending: false \}\)/);
+  const page = readFileSync(new URL('../src/app/admin/clients/[clientId]/page.tsx', import.meta.url), 'utf8');
+  assert.match(page, /Saved \{peopleDate\(row.saved_at\)\}/);
 });
 test('staff actions reject forged authority and unexpected fields', () => {
   assert.equal(staffMutationInput(valid).email, 'staff@example.invalid');

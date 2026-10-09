@@ -1,20 +1,19 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useSelectedLayoutSegments } from "next/navigation";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
+  const [section, page] = useSelectedLayoutSegments();
+  // Match the rendered route tree, not the requested URL: unmatched URLs render
+  // the root not-found tree on the server, even under an /admin/... URL.
   const hasDedicatedLayout =
-    pathname === "/account" ||
-    pathname.startsWith("/account/") ||
-    pathname === "/admin" ||
-    pathname.startsWith("/admin/") ||
-    pathname === "/auth/access-denied" ||
-    pathname === "/bespoke/create" ||
-    pathname.startsWith("/bespoke/create/");
+    section === "account" ||
+    section === "admin" ||
+    (section === "auth" && page === "access-denied") ||
+    (section === "bespoke" && page === "create");
 
   // These routes own their header and main content landmark.
   if (hasDedicatedLayout) return <>{children}</>;
