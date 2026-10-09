@@ -8,9 +8,43 @@ Phases 1–6 are complete. The Phase 7 entry gate freshly verified clean `main`,
 HEAD/origin/main/remote equality at `76bbb53318cff0ac541dc5354e42fa4bfdcc7712`,
 and production alias https://tsquare-clothing-cafe.vercel.app assigned to READY
 deployment `dpl_FK3c3Fc7dtRtecTF5rt1CpbZDKsQ` at that exact SHA.
-Phase 7 is explicitly authorized and in progress. This is the final phase; no Phase 8.
+Phase 7 implementation and its final authentication release gate have passed.
+This is the final phase; no Phase 8 or post-Phase-7 corrections were begun.
 
-### Phase 7 release checkpoint — one Auth gate remains
+### Phase 7 release checkpoint — authentication gate passed
+
+- EMAIL-GATE COMPLETE, October 9: Confirm email is verified ON by public Auth
+  settings (`mailer_autoconfirm=false`) and authenticated CLI `config pull --dry-run`.
+  Live Site URL is `https://tsquare-clothing-cafe.vercel.app`; live redirect list
+  contains `https://tsquare-clothing-cafe.vercel.app/auth/callback`. No config was
+  changed. HEAD/origin/GitHub main equal `97de604fa048771c5d257557f9ffa91e621fd519`;
+  production alias was verified READY on `dpl_3J2RrL5Q27Tv32Hrz9CzdjHHRkgA` at that
+  SHA for the actual email tests. The final docs-only SHA/READY checkpoint is recorded
+  in the delivery message after its push; do not confuse these two checkpoints.
+- Approved real-mailbox signup used the production UI after checking the address was
+  absent. Signup returned 200/no session; password login returned 400/email_not_confirmed;
+  protected /account redirected to sign-in. SQL verified zero pre-confirmation sessions
+  and refresh tokens. Actual user-supplied confirmation-email link then passed the
+  production PKCE callback (307 to /account) at 16:40:37 UTC / 17:40:37 WAT. Session
+  survived reload; fresh password login and protected SSR/API access also passed.
+- Production Forgot Password sent an actual email at 16:41:38 UTC / 17:41:38 WAT.
+  Its delivered link passed the callback (307 to /auth/reset-password); the authenticated
+  reset form was displayed. No password was changed, including the QA password.
+  No admin-generated link was used. Earlier consumed/expired email links were identified
+  through Auth logs; a normal resend with fresh PKCE resolved that test-link issue.
+- Exact Auth IDs `f9659c33-6b8b-473d-a573-1e5f04049c9e` and
+  `bf6e9296-4a73-4ed6-b95e-dad29f282940` are now deleted through the Auth API after
+  global session revocation. SQL confirms zero users/profiles/sessions/refresh tokens
+  for both. No staff/business fixture was created. The disposable browsers closed and
+  all four local email-test files, including credentials and consumed links, were removed.
+  Do not recreate fixtures or try to resume the deleted helper/session manifest.
+- Fresh post-cleanup comparison matched all 38 tables/327 legitimate rows exactly,
+  including bank configuration, payments, four buckets and seven storage objects.
+  All five existing passwords remain unchanged; five legitimate Auth users remain.
+  Zero public/private application tables lack RLS; zero application triggers are disabled.
+  Existing Client/Admin/CEO dashboards were explicitly confirmed accessible by the user
+  on October 9: user-verified access, not automated use of legitimate credentials.
+  No code, environment, schema, RLS, bank or SMTP changes were made in this closure pass.
 
 - Client directory/dossier and CEO Admin onboarding/status/history are implemented
   and deployed. No Phase 8 or new messaging/payment infrastructure was introduced.
@@ -46,8 +80,9 @@ Phase 7 is explicitly authorized and in progress. This is the final phase; no Ph
 - Final comparison preserves all 326 original-field row fingerprints across the
   37 pre-migration tables, including all seven original storage objects/four buckets.
   One additional legitimate profile/Auth user created during testing was also retained:
-  five real users remain. Final table set has 38 tables/327 rows. Bank whole-row hash
-  remains `e2b0df408ebbf436fc113d2ca10ffcc0`. Never restore the older empty bank state.
+  five real users remain. Final table set has 38 tables/327 rows. Final email-pass
+  bank aggregate full-row hash is `1ac370f4d4507fa6d601704f1199046a` (the earlier
+  Phase 7 hash used a different serialization). Never restore the older empty bank state.
 - Final advisors: seven intentional private deny-all INFO, 31 guarded-definer WARN,
   14 unused-index INFO and one existing leaked-password warning; no missing-FK finding.
   Secret scan: 436 source/browser assets, zero known-secret matches, private files
@@ -56,22 +91,15 @@ Phase 7 is explicitly authorized and in progress. This is the final phase; no Ph
   documenting results; unrelated temp files/runtime/worktrees were preserved. All QA
   browsers closed, including the two stale helper processes. Port 3001 serves the
   verified local production build for the user.
-- ACTUAL BLOCKER: hosted Auth still reports `mailer_autoconfirm=true` on October 9.
-  The permitted email test signed in immediately; no confirmation email was sent.
-  Owner was asked to enable Confirm email. Signup callback fix is deployed, but
-  real delivery/confirmation and recovery-email testing remain unverified.
-- The permitted temporary real-email account was absent before testing and has now
-  been deleted with the other fixtures. After owner fixes Auth settings, a new isolated
-  test may use the previously approved address. Do not reset an existing account or
-  use an admin-generated link as proof of actual email delivery.
-- Required owner action: Authentication > Sign In / Providers > Email > Confirm email
-  ON; verify Site URL/callback allowlist using TCC_TECHNICAL_HANDOVER.md. Preserve
-  existing SMTP settings. Previously autoconfirmed accounts are not retroactively
-  inbox-verified; CEO must independently verify intended staff identities.
-- PHASE7_ROLLOUT_REPORT.md contains the requested 17 sections and separates this
-  blocker from owner-approved business/legal information and future enhancements.
-  TCC_OPERATIONS_GUIDE.md and TCC_TECHNICAL_HANDOVER.md are current.
-  TCC DEVELOPMENT IS NOT YET COMPLETE until the real Auth gate is verified.
+- RESOLVED BLOCKER: hosted Auth previously had `mailer_autoconfirm=true`; the owner
+  enabled Confirm email and actual inbox/callback/login/recovery testing now passes.
+  Preserve current SMTP and URL settings. Previously autoconfirmed accounts are not
+  retroactively inbox-verified; CEO must independently verify intended staff identities.
+- PHASE7_ROLLOUT_REPORT.md contains all 17 sections and distinguishes no remaining
+  functional blockers from post-approval business/legal decisions, accepted security
+  maintenance and future enhancements. Technical handover reflects verified live Auth.
+  Final docs-only Git equality, clean worktree and exact READY deployment are checked
+  after this commit; the delivery message records that checkpoint and completion.
 
 Final HTTP-status correction: after c308b64 reached READY, a read-only
 logged-out probe found /api/atelier/counts returned 503 for AUTH_REQUIRED. The narrow

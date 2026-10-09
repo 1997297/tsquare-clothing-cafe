@@ -31,18 +31,20 @@ Started 2026-10-08 (Africa/Lagos). This is the final phase, not a new product ar
   preserve reference fashion imagery. Audit all business/legal copy without inventing facts.
 - [x] Public/client/staff route matrix, input stability, existing-session auth,
   invalid IDs, themes, modal accessibility and responsive production checks passed.
-- [ ] Actual email delivery, inbox confirmation/callback and recovery-email verification
-  await owner correction of hosted Auth configuration.
+- [x] Live Confirm email ON, Site URL/allowlist, actual email delivery, inbox
+  confirmation/callback, pre-confirmation denial, post-confirmation password login
+  and recovery-email/callback verified October 9 after the owner's setting change.
 - [x] Full 32-step synthetic journey passed through localhost against live Supabase;
   38 live HTTP owner/second-client/staff/CEO/private-receipt checks passed. This is
-  not yet final production-site verification of the latest code.
+  followed by the repaired production matrix and completed-workflow recheck.
 - [x] Migration/RLS/storage/definer/secret/dependency review and advisors classified.
   Final: seven private deny-all INFO, 31 guarded-definer WARN, 14 unused-index INFO,
-  existing leaked-password warning. Confirm-email blocker is separate and mandatory.
+  existing leaked-password warning. The separate mandatory Confirm-email gate passed.
 - [x] Static/unit/native SQL/concurrency/build tests, production matrix/recheck,
   exact QA cleanup and original-row/object preservation passed.
-- [ ] Documentation-only final Git/READY checkpoint, then isolated Auth verification
-  after the owner's configuration change; not yet an unconditional release sign-off.
+- [x] Application and email-test checkpoints verified equal to GitHub main and exact
+  READY production deployments. Final docs-only commit equality/clean/READY is checked
+  after this file's commit and recorded in the delivery message before release sign-off.
 - [x] Seventeen-section report, owner-information list, CEO/Admin guides and handover.
 
 ## Release gates and boundaries
@@ -71,13 +73,21 @@ READY production deployment gates pass.
   patched compatible vulnerable dependencies. Production dependency audit is clear.
 - 151-check browser matrix passed layout/access checks but exposed one Admin root-404
   hydration exception. SiteLayout now follows rendered route segments; clean rerun passed.
-- BLOCKER: Supabase mailer_autoconfirm=true allowed the permitted email-test account
-  to sign in without verification. Owner asked to enable Confirm email. Added explicit
-  same-origin signup callback. Actual email delivery/confirmation remains unverified.
+- RESOLVED BLOCKER: Supabase mailer_autoconfirm=true initially allowed a temporary
+  account to sign in without verification. Owner enabled Confirm email; live settings,
+  pre-confirmation login/session denial and both actual-email callbacks now pass.
+  Confirmation recorded at 16:40:37 UTC; fresh password login/SSR/API also passed.
+  Recovery email sent 16:41:38 UTC and its callback displayed the reset form; no password
+  was changed. Existing Client/Admin/CEO access was explicitly user-verified.
 - Six QA identities and their sessions/business fixtures were exactly cleaned after a
   rollback rehearsal; 15 immutable guards restored, original records/storage preserved.
   A fifth legitimate Auth/profile account created during testing was retained.
-- Operations/technical guides and the 17-section report distinguish the Auth blocker
+- Operations/technical guides and the 17-section report distinguish the resolved Auth gate
   from post-approval business information and future enhancements. Application repairs
   are on main at 5ed69195fb06e227cb8e9ff2c226c25292f85e31 and production READY
   dpl_EqyPVXKxR8a1prv7ossWHJexXayu; all 151 deployed matrix checks passed.
+- Final email tests ran on READY dpl_3J2RrL5Q27Tv32Hrz9CzdjHHRkgA at docs-only
+  97de604fa048771c5d257557f9ffa91e621fd519, with unchanged application code. Both
+  isolated email-test accounts were session-revoked/deleted; zero identities/profiles/
+  sessions/refresh tokens remain. All 38 tables/327 legitimate rows and five existing
+  passwords are unchanged. All four local email-test files were removed. No backlog work.

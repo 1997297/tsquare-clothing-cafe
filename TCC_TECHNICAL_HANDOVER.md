@@ -31,31 +31,41 @@ Project reference: `egahodxarflluctmnkqu`. Auth sessions are cookie-backed throu
 the browser/server clients and middleware. Server actions and database APIs enforce
 their own authorization; navigation is not a security boundary.
 
-### Outstanding authentication release gate
+### Authentication release gate verified October 9
 
-On October 9 the live Auth settings reported `mailer_autoconfirm: true`. A permitted
-temporary registration received a session immediately, without an email being sent.
-This is NOT proof of inbox ownership and is a production readiness blocker for the
-verified-email onboarding requirement. Existing accounts and passwords are unchanged.
+The remaining blocker was hosted Auth configuration: `mailer_autoconfirm: true`
+previously allowed registration without proving mailbox ownership. The owner enabled
+**Confirm email**. Public Auth settings and authenticated Supabase CLI
+`config pull --dry-run` independently verified the following live values without writes:
 
-In the project's Authentication > Sign In / Providers > Email, enable **Confirm email**.
-In Authentication > URL Configuration, use Site URL
-`https://tsquare-clothing-cafe.vercel.app` and retain/add the exact redirect URLs:
+- Confirm email: ON (`auth.email.enable_confirmations=true`, `mailer_autoconfirm=false`).
+- Site URL: `https://tsquare-clothing-cafe.vercel.app`.
+- Callback allowlist: `https://tsquare-clothing-cafe.vercel.app/auth/callback`.
 
-- `https://tsquare-clothing-cafe.vercel.app/auth/callback?next=/account`
-- `https://tsquare-clothing-cafe.vercel.app/auth/callback?next=/auth/reset-password`
-- `http://localhost:3001/auth/callback?next=/account`
-- `http://localhost:3001/auth/callback?next=/auth/reset-password`
+The production application supplies the callback's `next=/account` or
+`next=/auth/reset-password`; both were retained by the verified actual-email callbacks.
+Do not confuse desired development entries with live configuration: localhost entries
+were not present in this observed allowlist. No localhost code/auth flow was modified.
+Any later local email-callback configuration is separate from this passed production gate.
 
-The application uses the existing PKCE code-exchange callback, not a newly invented
-email service. Preserve existing SMTP configuration; do not reset templates or
-credentials blindly. Confirm actual delivery, verification and session persistence
-with the approved temporary account before sign-off. If SMTP configuration is absent
-or delivery is restricted, document the observed failure and obtain owner-supplied
-provider settings; never bypass confirmation to pass testing. Current settings beyond
-the public Auth response still require inspection. Previously autoconfirmed accounts
-are not retroactively inbox-verified when the setting is enabled; CEO must verify the
-work identity through a trusted channel before granting access.
+Controlled signup received no session and could not access `/account` or sign in before
+confirmation. The actual delivered confirmation link completed PKCE, established a
+persistent session, and allowed a fresh password login plus protected SSR/API access.
+The production Forgot Password form delivered an actual recovery email; its real link
+reached the authenticated reset form. No password was changed. No admin-generated
+link substituted for inbox delivery. Both temporary email-test accounts were globally
+session-revoked/deleted and verified absent; local cookies/credentials/links were removed.
+All five legitimate passwords and all 327 production rows across 38 tables are unchanged.
+Existing Client/Admin/CEO dashboard access was user-verified, not automated with their
+legitimate credentials. Detailed timestamps/evidence are in PHASE7_ROLLOUT_REPORT.md.
+
+The application uses its existing PKCE code-exchange callback. Preserve SMTP and URL
+settings; no new email service, environment change or code repair was needed in this
+final pass. Confirmation/recovery links are one-use and expire; complete them promptly
+with the initiating browser's PKCE state. Earlier reused/expired links were diagnosed
+from Auth logs, and a normal resend produced the successful confirmation link.
+Previously autoconfirmed accounts are not retroactively inbox-verified; the CEO must
+verify staff work identity through a trusted channel before granting access.
 
 Client owns their profile and business records. Active Admin can operate the atelier.
 CEO additionally manages Admin access and official bank configuration. Authority

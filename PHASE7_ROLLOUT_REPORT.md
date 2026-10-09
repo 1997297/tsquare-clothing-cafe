@@ -1,15 +1,22 @@
 # TCC Phase 7 rollout report
 
-Updated 2026-10-09 (Africa/Lagos). **In-progress checkpoint, not release certification.**
+Updated 2026-10-09 (Africa/Lagos). **Final authentication verification and release report.**
 
 ## 1. Final System Status
 
-**TCC DEVELOPMENT IS NOT YET COMPLETE.** Phases 1-6 are complete; final Phase 7
-implementation is deployed and its application/database/browser gates have passed.
-The remaining blocker is actual email ownership confirmation: hosted Auth still
-automatically confirms signup. Real confirmation/callback and recovery-email testing
-must follow correction of the Auth settings. This is not optional owner branding.
-Final documentation Git/READY equality is checked after this report's commit.
+Phases 1-7 implementation, application/database/browser checks and the final real-email
+authentication gate have passed. No outstanding functional production blocker remains.
+The owner enabled Confirm email; this was the remaining hosted Auth configuration
+issue. Live settings, delivered confirmation/recovery emails, both production callbacks,
+pre-confirmation denial and post-confirmation login are now verified. No application,
+environment-variable, schema, RLS or SMTP change was needed in this final pass.
+Temporary accounts/sessions and local test artifacts are removed; all 327 legitimate
+rows across 38 tables and all five existing users' passwords are preserved.
+
+The final documentation commit's Git equality, clean worktree and exact READY production
+deployment must be checked after committing this file. The delivery message records that
+SHA/deployment and declares **TCC DEVELOPMENT — COMPLETE** only once they also pass;
+this report cannot self-reference its own commit hash. No corrections backlog was begun.
 
 ## 2. Public Website
 
@@ -64,8 +71,8 @@ access, and reactivation restored access. SQL covers role/self escalation, stale
 versions, retry semantics and final-active-CEO serialization. Accounts with existing
 client business history cannot be repurposed as staff.
 
-The required verified-email premise is currently blocked by Supabase automatic
-confirmation. Enabling Confirm email does not retroactively prove ownership for
+Confirm email is now ON; pre-confirmation login denial passed in production.
+Enabling Confirm email does not retroactively prove ownership for
 earlier accounts. CEO must independently verify the intended staff identity.
 
 ## 8. Security
@@ -78,10 +85,13 @@ actor/role guards; no blanket RLS bypass was introduced.
 
 The latest exact secret scan covered 436 source/build assets with zero matches for
 known environment secrets or QA passwords. `.env.local` and temporary QA credentials
-were never tracked. Production dependency audit: zero
+were never tracked. The closure's four changed documents also passed a known-secret
+and token-pattern scan with zero matches; zero local email-test artifacts remain.
+Production dependency audit: zero
 vulnerabilities after compatible Next/PostCSS/source-map-js/Sharp updates. Full audit:
 nine development-tool findings (seven high, two moderate); see technical handover for
-trusted-build scope and maintenance limitations. Email confirmation is a must-fix gate.
+trusted-build scope and maintenance limitations. The mandatory email-confirmation gate
+has now passed; accepted maintenance findings are not hidden or reclassified as fixes.
 
 ## 9. Database
 
@@ -110,9 +120,21 @@ All 29 generated local Phase 7 artifacts (including credential manifest, screens
 receipt, proof files and helpers) were removed afterward. QA browsers/helpers were
 closed; unrelated temporary files, worker worktrees and PostgreSQL runtime retained.
 
+Final email-gate cleanup separately revoked and deleted its two exact tagged Auth
+identities, `f9659c33-6b8b-473d-a573-1e5f04049c9e` and
+`bf6e9296-4a73-4ed6-b95e-dad29f282940`. SQL verified zero remaining users, profiles,
+sessions or refresh tokens for both IDs. No staff or business fixture was created.
+The post-cleanup full-row fingerprint comparison matched every one of 38 tables and
+327 rows, including the configured bank row, legitimate financial history, all four
+buckets and seven storage objects. Five legitimate Auth users remain; their existing
+password fingerprint is unchanged. Zero tables lack RLS; zero application triggers
+are disabled. The four ignored email-test files (helper, credential/cookie manifest,
+consumed email link and fingerprint baseline) were removed; no secret entered Git.
+
 October 9 advisors: seven private deny-all RLS INFO, 31 guarded authenticated-definer
 WARN, 14 unused-index INFO and one existing leaked-password-protection warning. No
-missing-FK category appeared. These counts were rerun after cleanup. Relevant explanations:
+missing-FK category appeared. These counts were rerun after final email cleanup at
+20:37 UTC on October 9 and were unchanged. Relevant explanations:
 [private deny-all](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy),
 [definer grants](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable),
 [unused indexes](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index),
@@ -156,7 +178,34 @@ completed wardrobe, dossier integration and duplicate conversion/verification de
   Reviewed redacted mobile CEO/dossier screenshots; local/production modal checks passed.
 - JS-only private forms are POST-only and inert/disabled before hydration. Duplicate
   submissions are synchronously guarded. No browser token/password is published.
-- Actual inbox confirmation and recovery-email delivery are not yet verified.
+- Final real-email gate passed on the production alias at application-identical
+  documentation commit `97de604fa048771c5d257557f9ffa91e621fd519`:
+  - Public Auth settings reported `mailer_autoconfirm=false`; authenticated Supabase
+    CLI config dry run independently verified Confirm email ON, Site URL
+    `https://tsquare-clothing-cafe.vercel.app` and callback allowlist
+    `https://tsquare-clothing-cafe.vercel.app/auth/callback`. The dry run wrote nothing.
+  - Signup used the approved accessible mailbox only after verifying it had no existing
+    account. Production registration returned HTTP 200 without a session; `/account`
+    redirected to sign-in; correct-password login returned HTTP 400
+    `email_not_confirmed`. SQL confirmed zero pre-confirmation sessions/refresh tokens.
+  - The user opened the actual email and supplied its link via an ignored local file.
+    Automation followed that link with the matching isolated browser PKCE state.
+    Production callback returned 307 to `/account`; Supabase recorded confirmation at
+    **2026-10-09 16:40:37 UTC (17:40:37 WAT)**. The authenticated session survived reload.
+  - A fresh password login returned 200 and passed protected SSR `/account` and the
+    authenticated `/api/atelier/counts` endpoint (200).
+  - After logout, the production Forgot Password form sent a real recovery email at
+    **16:41:38 UTC (17:41:38 WAT)**. The user supplied that actual delivered link; its
+    token fingerprint matched the pending recovery token. Production callback returned
+    307 to `/auth/reset-password` and displayed the authenticated reset form. No password
+    was changed, including the test password. No admin-generated link was used as proof.
+  - Earlier failed links were diagnosed as already consumed (`One-time token not found`)
+    and expired (`email link has expired`), not an application callback defect. Normal
+    resend with fresh PKCE at 16:35:57 UTC produced the successful confirmation link.
+  - Existing Client/Admin/CEO dashboard access was explicitly confirmed by the user on
+    October 9: this is user-verified access, not automated use of legitimate credentials.
+- This closure changed documentation only. Earlier typecheck/lint/test/build results
+  above apply to the unchanged application source; they were not rerun for prose edits.
 
 ## 13. Git
 
@@ -165,10 +214,13 @@ Branch `main`. Phase 6 entry checkpoint was clean and exactly equal locally/remo
 An external checkpoint committed/pushed the first 45 Phase 7 files as
 `8865e485f5ac373ba548f319aedf7ee1a65e16c2` (remote equality checked October 8).
 Repair checkpoint `5ed69195fb06e227cb8e9ff2c226c25292f85e31` is pushed to main;
-HEAD/origin equality and clean worktree were verified immediately after push. The
-documentation-only follow-up must also have remote equality, clean status and exact
-READY deployment verified; its SHA is supplied in the delivery message to avoid a
-self-referential commit hash in this file.
+HEAD/origin equality and clean worktree were verified immediately after push.
+Documentation checkpoint `97de604fa048771c5d257557f9ffa91e621fd519` was also verified
+equal to GitHub main and deployed READY before final email verification. Only this
+report, PROJECT_HANDOFF.md, PHASE7_IMPLEMENTATION_CONTRACT.md and
+TCC_TECHNICAL_HANDOVER.md change in the final closure commit. Its post-push remote
+equality, clean status and READY deployment are recorded in the delivery message to
+avoid a self-referential commit hash in this file. No application repair is outstanding.
 
 ## 14. Production
 
@@ -179,7 +231,10 @@ All-role matrix, completed-workflow and keyboard checks passed on this deploymen
 The connector denied build-log access (403); authenticated scoped CLI inspection
 confirmed the deployment. A bounded one-hour error-log scan for this exact deployment
 returned zero error rows. This is not continuous monitoring or an audit of older builds.
-The documentation-only follow-up deployment is verified separately after its push.
+The actual email confirmation/login/recovery tests passed on READY
+`dpl_3J2RrL5Q27Tv32Hrz9CzdjHHRkgA`, branch `main`, commit
+`97de604fa048771c5d257557f9ffa91e621fd519`, with the same production alias and unchanged
+application source. The final documentation-only deployment is verified after its push.
 
 ## 15. Client Information Still Required
 
@@ -191,26 +246,23 @@ are routine TCC operations, not new infrastructure requirements.
 
 ## 16. Manual Actions
 
-### Required before presentation
+### Actual production blockers
 
-Enable Supabase Confirm email and complete the permitted real-email confirmation
-test. Verify Auth Site URL and callback allowlist; exact entries are in
-`TCC_TECHNICAL_HANDOVER.md`. Preserve existing SMTP settings. If delivery fails,
-diagnose the returned error before deciding what owner action is necessary; do not
-disable verification. Existing users/passwords must not be reset as a test.
-
-Application fixes, production smoke, session revocation, exact tagged QA cleanup,
-row/object preservation and final advisors have passed. All six temporary identities
-and the synthetic journey are removed. After correcting Auth, repeat only the approved
-isolated email test and its cleanup; do not recreate the completed workflow fixtures.
-Documentation-only Git/READY checkpoint verification follows this report's commit.
+None remains in the implemented Phase 1-7 scope. The mandatory email verification
+gate is passed, both real-email test identities and sessions are removed, and production
+data/password preservation is verified. No further Supabase/Vercel environment or email
+configuration is required for this release. Preserve the verified Auth/SMTP settings.
+The final documentation-only Git/READY check follows this report's commit; its exact
+result is supplied in the delivery message. Do not recreate completed workflow fixtures.
 
 ### Required only after TCC approves the project
 
 Owner approval of the business/legal information above, production domain/email brand
 configuration if desired, approved imagery and staff onboarding by the CEO. None is
 permission to alter legitimate financial records. Enable leaked-password protection
-if supported by the plan; this is separate from the mandatory email-confirmation gate.
+if supported by the plan; this accepted security-maintenance item is separate from the
+now-passed mandatory email-confirmation gate. Previously autoconfirmed accounts still
+require independent identity verification before CEO staff onboarding.
 
 ## 17. Future Enhancements
 
