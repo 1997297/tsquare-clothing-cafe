@@ -21,8 +21,15 @@ test('sign-out and chunk cleanup remain real deletions, not empty session cookie
 });
 test('cookie migration only touches this project including PKCE and chunked tokens', () => {
   const url = 'https://project-ref.supabase.co';
-  for (const suffix of ['', '.0', '.12', '-code-verifier', '-code-verifier.0', '-user']) assert.ok(isProjectAuthCookie(`sb-project-ref-auth-token${suffix}`, url));
-  for (const name of ['theme', 'sb-other-auth-token', 'sb-project-ref-auth-token-other', 'sb-project-ref-auth-token.invalid']) assert.equal(isProjectAuthCookie(name, url), false);
+  for (const suffix of ['', '.0', '.12', '-code-verifier', '-code-verifier.0', '-user', '-flows-code-verifier', '-flows-code-verifier.0', '-flow-Abc_1234-code-verifier', '-flow-Abc_1234-code-verifier.1']) assert.ok(isProjectAuthCookie(`sb-project-ref-auth-token${suffix}`, url));
+  for (const name of ['theme', 'sb-other-auth-token', 'sb-project-ref-auth-token-other', 'sb-project-ref-auth-token.invalid', 'sb-project-ref-auth-token.01', 'sb-project-ref-auth-token-flow-short-code-verifier', 'sb-other-auth-token-flow-Abc_1234-code-verifier', `sb-project-ref-auth-token-flow-${'x'.repeat(65)}-code-verifier`]) assert.equal(isProjectAuthCookie(name, url), false);
+});
+test('callback selects the supplied PKCE flow without exposing callback secrets in diagnostics', () => {
+  const source = readFileSync(new URL('../src/app/auth/callback/route.ts', import.meta.url), 'utf8');
+  assert.match(source, /searchParams\.get\("sb_flow_id"\)/);
+  assert.match(source, /exchangeCodeForSession\(code, flowId !== null \? \{ flowId \} : undefined\)/);
+  assert.match(source, /reason: "exchange_failed"/);
+  assert.doesNotMatch(source, /console\.(warn|error)\([^;]*(requestUrl|request\.url|error\.message|error\.stack)/s);
 });
 
 const request = { id: 'request-deposit', order_id: 'order-1', requested_amount_minor: 26000000, status: 'active' } as PaymentRequest;

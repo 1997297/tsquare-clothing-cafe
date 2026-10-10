@@ -16,6 +16,7 @@ export function sessionCookieOptions(options: CookieOptions, secure: boolean, va
 
 export function isProjectAuthCookie(name: string, projectUrl: string) {
   const key = `sb-${new URL(projectUrl).hostname.split('.')[0]}-auth-token`;
-  return [key, `${key}-code-verifier`, `${key}-user`].some(base =>
-    name === base || (name.startsWith(`${base}.`) && /^\d+$/.test(name.slice(base.length + 1))));
+  const base = name.replace(/\.(0|[1-9]\d*)$/, "");
+  return [key, `${key}-code-verifier`, `${key}-flows-code-verifier`, `${key}-user`].includes(base) ||
+    (base.startsWith(`${key}-flow-`) && /^[A-Za-z0-9_-]{8,64}-code-verifier$/.test(base.slice(key.length + 6)));
 }

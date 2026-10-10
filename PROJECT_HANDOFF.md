@@ -18,8 +18,10 @@ now authorized the separate post-Phase-7 Stage 1 corrections described below.
   locally: Fit lifecycle/photos, payment-card balances/action, staff/client
   navigation and session-cookie persistence. No Stage 2/3 or redesign.
 - Entry SHA is `4b77b5e6d40a2d0b19fb4ee0c273d4467841a0ce`, main equals GitHub.
-  Vercel API verifies production READY on `dpl_abXzVJLmrvHxXcP9SATvMUK3cUVk`,
-  branch main at that exact SHA. No Stage 1 commit/push has occurred yet.
+  Stage 1 implementation is pushed as `be14098c07833024decd452459dfc53f4e6038a7`.
+  Vercel production is READY on `dpl_6zhCD6KtBNoZYU4FwiteB3dyGE2L`, branch main,
+  exact implementation SHA. Git push did not queue a deployment, so the authorized
+  rollout used the Vercel Git-source API with that exact SHA; settings were preserved.
 - Latest local optimized build (68 pages), typecheck, lint and all 62 tests pass.
   Offline native PG replay passed all suites, including 79 payment assertions,
   56 people assertions and 38 workflow/concurrency checks. Disposable PG data removed.
@@ -36,9 +38,24 @@ now authorized the separate post-Phase-7 Stage 1 corrections described below.
   in ignored temp storage. The final 39-check responsive/auth matrix passed with
   settled-page screenshots, plus six real token-refresh/browser-restart checks and
   seven Fit upload/retry/publication/archive checks. Live role/financial/media
-  isolation probes passed. Production smoke and actual-email tests remain pending.
+  isolation probes passed. The production 39-check matrix, seven Fit checks and six
+  refresh/restart checks also passed. Forced-expiry harness injection must navigate
+  away from the active page first, avoiding a race with browser auto-refresh.
 - User approved reuse of anselmkarsten179@gmail.com for one real-mailbox test,
-  with the user supplying actual email links. No Stage 1 email has been sent yet.
+  with the user supplying actual email links. The first signup passed pre-confirmation
+  denial, but its delivered link confirmed the account without completing the app
+  session. That callback failure is unresolved, not a passed release gate. Its browser
+  verifier matched the stored challenge; the old callback swallowed the error code.
+  That exact temporary email user/sessions were revoked/deleted, SQL zero confirmed.
+  A narrow follow-up adds secret-safe callback reasons, optional SDK PKCE flow-ID
+  selection and migration of the SDK's per-flow verifier cookies; 63 tests pass.
+  Follow-up typecheck, lint, 63 tests and clean optimized build (68 pages) passed.
+  An overlapping TCC dev server was stopped before the clean rebuild; the initial
+  shared-cache build failed at /icon.svg. Clean build used the existing catalogue
+  fallback when live fetches failed, so this alone is not a live-catalogue check.
+  Follow-up deployment and a fresh actual-email regression remain pending. Resume
+  ignored stage1-email-state.json/command.json only after checking the live phase;
+  stage1-email.mjs watches newly saved links and retains its own browser for PKCE.
   Confirm email is live ON; Site URL and callback allowlist use production only.
   Do not change existing passwords or add localhost URLs to production settings.
 - Remaining: finish browser/auth/upload regressions, real email confirmation and

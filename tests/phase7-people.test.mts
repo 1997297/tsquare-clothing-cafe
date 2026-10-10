@@ -15,7 +15,7 @@ test('signup confirmation explicitly returns to the existing same-origin PKCE ca
   const source = readFileSync(new URL('../src/lib/auth-context.tsx', import.meta.url), 'utf8');
   assert.ok(source.includes('emailRedirectTo: `${window.location.origin}/auth/callback?next=/account`'));
   const callback = readFileSync(new URL('../src/app/auth/callback/route.ts', import.meta.url), 'utf8');
-  assert.match(callback, /exchangeCodeForSession\(code\)/);
+  assert.match(callback, /exchangeCodeForSession\(code(?:,|\))/);
   assert.match(callback, /getSafeAuthRedirect\(requestUrl.searchParams.get\("next"\)\)/);
 });
 test('catalogue dialogs trap keyboard focus, restore the trigger and guard busy dismissal', () => {

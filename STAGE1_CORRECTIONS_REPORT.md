@@ -124,19 +124,41 @@ users/password hashes, including the configured bank row and all original media.
 
 ## Release status and remaining gates
 
-Implementation is locally verified, not yet declared fully released. Production
-currently remains the Phase 7 entry deployment at SHA
-`4b77b5e6d40a2d0b19fb4ee0c273d4467841a0ce`.
+Implementation is deployed, not yet declared fully released. Stage 1 SHA
+`be14098c07833024decd452459dfc53f4e6038a7` is on GitHub main and production READY
+deployment `dpl_6zhCD6KtBNoZYU4FwiteB3dyGE2L`. The 39-check production role/navigation/
+payment matrix, seven production Fit tests and six role refresh/restart checks pass.
+The forced-expiry harness initially raced the active browser's auto-refresh; injection
+in a blank page isolated the server-refresh test and all six production checks passed.
+Production QA Fits and their exact copied media have been removed after archive checks.
 
 The owner approved the same real mailbox for a temporary confirmation/recovery test.
 Live Confirm email is ON. Site URL is `https://tsquare-clothing-cafe.vercel.app` and
 the allowlist contains `https://tsquare-clothing-cafe.vercel.app/auth/callback`.
 These settings are preserved; the new email regression runs on production, not an
-unallowlisted localhost callback. No email has been sent in this stage yet.
+unallowlisted localhost callback. The first actual signup email passed pre-confirmation
+denial. Its delivered link confirmed the temporary account but the application callback
+did not establish a session. This remains an unresolved release gate: the previous
+callback suppressed the underlying error, so no specific root cause is claimed.
+The retained verifier matched that flow's challenge. The exact failed temporary user
+and its sessions were revoked/deleted, with zero SQL remnants. No existing user changed.
 
-Remaining release gates: commit/push and exact READY SHA, targeted production smoke,
+A narrow follow-up adds safe callback reason/error-code diagnostics (no URLs, codes,
+tokens or user details), passes an optional SDK PKCE flow identifier and recognizes
+per-flow verifier/index cookies when migrating older persistent cookies. All 63 tests
+pass, along with typecheck and lint. The clean optimized build generated 68 pages.
+An overlapping TCC development server was stopped after a shared-cache /icon.svg
+manifest failure; the clean rebuild passed. Live catalogue fetches failed during
+that local build and its existing bundled fallback was used, so live production
+catalogue verification remains distinct from the successful compilation.
+Follow-up deployment and a fresh real-email test remain pending. The latest scan
+covered 442 source/browser assets with zero known secret matches. At 14:49:59 UTC,
+all 327 original rows, five passwords and original RLS/triggers were unchanged.
+
+Remaining release gates: follow-up commit/push and exact READY SHA, targeted production smoke,
 actual delivered confirmation/recovery callbacks, all QA identities/session cleanup,
-final preservation comparison and clean synchronized Git checkpoint. No architectural
-blocker, new environment variable or migration is required. Optional leaked-password
+final preservation comparison and clean synchronized Git checkpoint. The unresolved
+email callback is a release blocker until a fresh actual-email test passes. No new
+environment variable or migration is required. Optional leaked-password
 protection remains an existing owner/plan-dependent hardening item, not a new Stage 1
 regression. No Stage 2/3, SMTP replacement or forced browser-close detection is included.
