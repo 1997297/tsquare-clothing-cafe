@@ -151,12 +151,24 @@ An overlapping TCC development server was stopped after a shared-cache /icon.svg
 manifest failure; the clean rebuild passed. Live catalogue fetches failed during
 that local build and its existing bundled fallback was used, so live production
 catalogue verification remains distinct from the successful compilation.
-Follow-up deployment and a fresh real-email test remain pending. The latest scan
+Follow-up `fe504fcf7be0cb6e0dbe653d3622d1ef9603b619` is pushed to main and READY on
+`dpl_8vSHPRAHKhnJK5wQSnQ8VnES4G7u`, with the public production alias assigned.
+GitHub triggered this deployment automatically. Its 138 build events include
+successful compilation and 68-page generation with zero catalogue-fallback warnings.
+All 39 production role/navigation/payment checks passed again, with no browser
+exceptions. Public collection/detail/sign-in pages return 200; anonymous /account
+returns the expected 307. The fresh signup email was sent around 16:12 WAT October 10;
+pre-confirmation denial passes and the actual delivered link is awaited. No recovery
+email has been requested on this fresh attempt yet. The latest scan
 covered 442 source/browser assets with zero known secret matches. At 14:49:59 UTC,
 all 327 original rows, five passwords and original RLS/triggers were unchanged.
 
-Remaining release gates: follow-up commit/push and exact READY SHA, targeted production smoke,
-actual delivered confirmation/recovery callbacks, all QA identities/session cleanup,
+The three completed role fixtures, rotated QA CEO and first failed email attempt
+are now revoked/deleted. SQL confirms zero users/profiles/staff/sessions/refresh
+tokens for those five IDs. Only the fresh approved-mailbox test remains.
+
+Remaining release gates: actual delivered confirmation/recovery callbacks,
+remaining email-test identity/session cleanup,
 final preservation comparison and clean synchronized Git checkpoint. The unresolved
 email callback is a release blocker until a fresh actual-email test passes. No new
 environment variable or migration is required. Optional leaked-password

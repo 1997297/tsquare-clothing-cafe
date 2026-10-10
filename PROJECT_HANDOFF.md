@@ -15,14 +15,14 @@ now authorized the separate post-Phase-7 Stage 1 corrections described below.
 ### Post-Phase-7 Stage 1 corrections — verification in progress
 
 - Read `STAGE1_CORRECTIONS_REPORT.md`. Seven scoped corrections are implemented
-  locally: Fit lifecycle/photos, payment-card balances/action, staff/client
+  and deployed: Fit lifecycle/photos, payment-card balances/action, staff/client
   navigation and session-cookie persistence. No Stage 2/3 or redesign.
 - Entry SHA is `4b77b5e6d40a2d0b19fb4ee0c273d4467841a0ce`, main equals GitHub.
   Stage 1 implementation is pushed as `be14098c07833024decd452459dfc53f4e6038a7`.
   Vercel production is READY on `dpl_6zhCD6KtBNoZYU4FwiteB3dyGE2L`, branch main,
   exact implementation SHA. Git push did not queue a deployment, so the authorized
   rollout used the Vercel Git-source API with that exact SHA; settings were preserved.
-- Latest local optimized build (68 pages), typecheck, lint and all 62 tests pass.
+- Latest local optimized build (68 pages), typecheck, lint and all 63 tests pass.
   Offline native PG replay passed all suites, including 79 payment assertions,
   56 people assertions and 38 workflow/concurrency checks. Disposable PG data removed.
 - Read-only production ledger confirms the reported 360000/260000/100000 example.
@@ -30,10 +30,11 @@ now authorized the separate post-Phase-7 Stage 1 corrections described below.
 - Baseline: 38 tables/327 legitimate rows, five existing Auth users/password hashes,
   all RLS enabled and no disabled application triggers. Stored only in ignored
   `supabase/.temp/stage1-state.json`; never commit this file or print credentials.
-- Three Stage 1 QA identities and two QA staff memberships now exist. They are
-  recorded by exact ID and metadata tag in that manifest. Do not confuse them with
-  the already-deleted Phase 7 email fixtures. A QA CEO was rotated after a harness
-  cookie-parser error; old user/sessions/refresh tokens were verified absent.
+- The completed Stage 1 role fixtures have been revoked/deleted. SQL verifies zero
+  users/profiles/staff/sessions/refresh tokens for all five retired Stage 1 identities
+  (the three role tests, rotated QA CEO and first failed email attempt). Only the
+  fresh approved-mailbox test remains, recorded by exact ID in the ignored manifest.
+  Do not confuse it with already-deleted Phase 7 email fixtures or recreate old tests.
 - Local browser checks use port 3001 and `stage1-browser.mjs` / `stage1-session.mjs`
   in ignored temp storage. The final 39-check responsive/auth matrix passed with
   settled-page screenshots, plus six real token-refresh/browser-restart checks and
@@ -53,14 +54,23 @@ now authorized the separate post-Phase-7 Stage 1 corrections described below.
   An overlapping TCC dev server was stopped before the clean rebuild; the initial
   shared-cache build failed at /icon.svg. Clean build used the existing catalogue
   fallback when live fetches failed, so this alone is not a live-catalogue check.
-  Follow-up deployment and a fresh actual-email regression remain pending. Resume
-  ignored stage1-email-state.json/command.json only after checking the live phase;
-  stage1-email.mjs watches newly saved links and retains its own browser for PKCE.
+  Follow-up `fe504fcf7be0cb6e0dbe653d3622d1ef9603b619` is pushed and production READY
+  on `dpl_8vSHPRAHKhnJK5wQSnQ8VnES4G7u`, main/public alias verified. GitHub triggered
+  this build automatically. Its 138 build events include successful compilation/
+  68-page generation and zero catalogue-fallback warnings. All 39 production role/
+  navigation/payment checks passed again; public catalogue/detail return 200.
+  A fresh signup email was sent around 16:12 WAT October 10; pre-confirmation login,
+  protected access and session-absence checks pass. Await the NEW actual link in
+  supabase/.temp/stage1-email-link.txt, not the morning's consumed link. The isolated
+  helper is running (exec session 24752); it automatically consumes a newly saved
+  link, then requests recovery and waits for that new link. No password is changed.
+  Resume ignored stage1-email-state.json/command.json only after checking the phase.
+  Do not restart signup or recreate accounts blindly; stage1-state.json owns exact IDs.
   Confirm email is live ON; Site URL and callback allowlist use production only.
   Do not change existing passwords or add localhost URLs to production settings.
-- Remaining: finish browser/auth/upload regressions, real email confirmation and
-  recovery on the corrected deployment, exact QA cleanup/baseline comparison,
-  secret review, reports, main push and exact READY/SHA/clean-worktree checkpoint.
+- Remaining: real email confirmation and recovery on the corrected deployment,
+  exact remaining email-test cleanup/baseline comparison, final reports and the
+  final documentation main/READY/SHA/clean-worktree checkpoint after these gates.
   Production bank settings, payments, legitimate users and original assets must remain.
 
 ### Phase 7 release checkpoint — authentication gate passed
