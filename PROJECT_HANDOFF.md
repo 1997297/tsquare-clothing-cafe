@@ -1,6 +1,6 @@
 # TSquare Clothing Cafe — Project Handoff
 
-Last updated: 2026-10-10 (Africa/Lagos)
+Last updated: 2026-10-11 (Africa/Lagos)
 
 ## Current status
 
@@ -12,71 +12,61 @@ Phase 7 implementation and its final authentication release gate have passed.
 This remains the final development phase; no Phase 8 is authorized. The user has
 now authorized the separate post-Phase-7 Stage 1 corrections described below.
 
-### Post-Phase-7 Stage 1 corrections — verification in progress
+### Post-Phase-7 Stage 1 corrections — verified and closed
 
-- Read `STAGE1_CORRECTIONS_REPORT.md`. Seven scoped corrections are implemented
-  and deployed: Fit lifecycle/photos, payment-card balances/action, staff/client
-  navigation and session-cookie persistence. No Stage 2/3 or redesign.
-- Entry SHA is `4b77b5e6d40a2d0b19fb4ee0c273d4467841a0ce`, main equals GitHub.
-  Stage 1 implementation is pushed as `be14098c07833024decd452459dfc53f4e6038a7`.
-  Vercel production is READY on `dpl_6zhCD6KtBNoZYU4FwiteB3dyGE2L`, branch main,
-  exact implementation SHA. Git push did not queue a deployment, so the authorized
-  rollout used the Vercel Git-source API with that exact SHA; settings were preserved.
-- Latest local optimized build (68 pages), typecheck, lint and all 63 tests pass.
-  Offline native PG replay passed all suites, including 79 payment assertions,
-  56 people assertions and 38 workflow/concurrency checks. Disposable PG data removed.
-- Read-only production ledger confirms the reported 360000/260000/100000 example.
-  Request remainder was mislabeled as order remainder; no financial row was changed.
-- Baseline: 38 tables/327 legitimate rows, five existing Auth users/password hashes,
-  all RLS enabled and no disabled application triggers. Stored only in ignored
-  `supabase/.temp/stage1-state.json`; never commit this file or print credentials.
-- The completed Stage 1 role fixtures have been revoked/deleted. SQL verifies zero
-  users/profiles/staff/sessions/refresh tokens for all five retired Stage 1 identities
-  (the three role tests, rotated QA CEO and first failed email attempt). Only the
-  fresh approved-mailbox test remains, recorded by exact ID in the ignored manifest.
-  Do not confuse it with already-deleted Phase 7 email fixtures or recreate old tests.
-- Local browser checks use port 3001 and `stage1-browser.mjs` / `stage1-session.mjs`
-  in ignored temp storage. The final 39-check responsive/auth matrix passed with
-  settled-page screenshots, plus six real token-refresh/browser-restart checks and
-  seven Fit upload/retry/publication/archive checks. Live role/financial/media
-  isolation probes passed. The production 39-check matrix, seven Fit checks and six
-  refresh/restart checks also passed. Forced-expiry harness injection must navigate
-  away from the active page first, avoiding a race with browser auto-refresh.
-- User approved reuse of anselmkarsten179@gmail.com for one real-mailbox test,
-  with the user supplying actual email links. The first signup passed pre-confirmation
-  denial, but its delivered link confirmed the account without completing the app
-  session. That callback failure is unresolved, not a passed release gate. Its browser
-  verifier matched the stored challenge; the old callback swallowed the error code.
-  That exact temporary email user/sessions were revoked/deleted, SQL zero confirmed.
-  A narrow follow-up adds secret-safe callback reasons, optional SDK PKCE flow-ID
-  selection and migration of the SDK's per-flow verifier cookies; 63 tests pass.
-  Follow-up typecheck, lint, 63 tests and clean optimized build (68 pages) passed.
-  An overlapping TCC dev server was stopped before the clean rebuild; the initial
-  shared-cache build failed at /icon.svg. Clean build used the existing catalogue
-  fallback when live fetches failed, so this alone is not a live-catalogue check.
-  Follow-up `fe504fcf7be0cb6e0dbe653d3622d1ef9603b619` is pushed and production READY
-  on `dpl_8vSHPRAHKhnJK5wQSnQ8VnES4G7u`, main/public alias verified. GitHub triggered
-  this build automatically. Its 138 build events include successful compilation/
-  68-page generation and zero catalogue-fallback warnings. All 39 production role/
-  navigation/payment checks passed again; public catalogue/detail return 200.
-  The 16:12 WAT signup email passed pre-confirmation denial, but its link was saved
-  at 17:15 WAT and Supabase rejected it with otp_expired (303, no callback code).
-  This latest failure is upstream email-token expiry, not an application exchange
-  failure. A normal public Auth resend at 17:19 WAT October 10 retained the exact
-  same unconfirmed temporary user, refreshed its PKCE cookies in the original
-  browser and verified zero sessions/refresh tokens; no password changed.
-  Await the NEW 17:19 WAT actual link in supabase/.temp/stage1-email-link.txt.
-  Do not reuse the expired earlier links. The isolated
-  helper is running (exec session 24752); it automatically consumes a newly saved
-  link, then requests recovery and waits for that new link. No password is changed.
-  Resume ignored stage1-email-state.json/command.json only after checking the phase.
-  Do not restart signup or recreate accounts blindly; stage1-state.json owns exact IDs.
-  Confirm email is live ON; Site URL and callback allowlist use production only.
-  Do not change existing passwords or add localhost URLs to production settings.
-- Remaining: real email confirmation and recovery on the corrected deployment,
-  exact remaining email-test cleanup/baseline comparison, final reports and the
-  final documentation main/READY/SHA/clean-worktree checkpoint after these gates.
-  Production bank settings, payments, legitimate users and original assets must remain.
+- All seven scoped corrections are implemented and production-verified. Read
+  STAGE1_CORRECTIONS_REPORT.md for each result, root cause, checks and limitations.
+  Stop here: no Stage 2/3, new phase, theme redesign or major feature is authorized.
+- Application commits: be14098c07833024decd452459dfc53f4e6038a7 and authentication
+  follow-up fe504fcf7be0cb6e0dbe653d3622d1ef9603b619. The latter is verified READY
+  on dpl_8vSHPRAHKhnJK5wQSnQ8VnES4G7u with the public production alias.
+  Documentation checkpoint 7699443919489f4b83d3afadb08b4bc5be77d56a is READY on
+  dpl_3kGZDtEscwPTkPcJGxp2Zdq8ZBHr. Final closure documentation is pushed afterward;
+  its exact SHA/READY/alias and clean local/remote equality are checked after push
+  and recorded in the final delivery message, not fabricated inside its own commit.
+- Typecheck, lint, 63 application tests and optimized 68-page build passed.
+  Native PostgreSQL replay passed 377 SQL assertions and 38 concurrency/replay checks.
+  Local/production 39-check all-role navigation/payment/auth matrices, six token-
+  refresh/browser-restart checks and seven Fit upload/retry/publication/archive
+  checks passed. The 39-check production matrix also passed on the auth follow-up.
+- Payment issue: individual-request remainder was shown as though it were the
+  whole-order balance. Existing authorized get_order_financials now provides the
+  distinct order figures. The live NGN 360,000/260,000/100,000 example passed
+  read-only verification and Admin/CEO UI checks. No financial record was changed.
+- Session-only cookies preserve refresh/new-tab/SSR access, secure HTTPS and PKCE.
+  The SDK's flow-specific verifier cookies are covered. Browser session restore
+  can retain session cookies; no claim of guaranteed browser-close detection.
+- REAL EMAIL GATE PASSED October 10: pre-confirmation password/protected access
+  denied and zero sessions verified. Actual inbox confirmation completed the
+  production callback to /account at about 17:21 WAT; reload and fresh password
+  login passed. Actual recovery email completed /auth/reset-password at 17:25 WAT.
+  No password was submitted or changed, including the temporary QA password.
+  The later retry failure was observed as Supabase otp_expired before any callback
+  code; a normal resend with fresh PKCE passed. The earliest swallowed callback
+  error cannot be retrospectively proven; do not invent its cause.
+- CLEANUP COMPLETE October 11: all six stage-owned Auth identities and associated
+  profiles/staff/sessions/refresh tokens removed; two stale QA-only Auth flow records
+  removed after verifying the users were absent. Three synthetic Fits and copied
+  media are removed. Before final email-account deletion, all 87 application UUID
+  references and owned Storage objects were checked for unexpected activity.
+- Final comparison at 00:33 WAT October 11: all 38 tables/327 legitimate rows and
+  five original password hashes unchanged. Five legitimate Auth users, four buckets
+  and seven original Storage objects remain. No missing RLS or disabled app triggers;
+  policy fingerprints match. Bank settings, payments and all legitimate data preserved.
+- The isolated email browser closed. Stage-owned temporary credentials, consumed
+  links, screenshots and helpers are removed during final closure. Do not recreate
+  fixtures or attempt to resume deleted Stage 1 test sessions/manifests.
+- Final known-secret scan: 428 source/browser assets, zero matches; private env/temp
+  files untracked. Advisors unchanged: seven intentional deny-all INFO, 31 guarded
+  definer WARN, 14 unused-index INFO and the existing leaked-password-protection WARN.
+- Local shared-cache /icon.svg build failure was resolved by stopping the competing
+  TCC dev server and rebuilding cleanly. That local build used the existing catalogue
+  fallback when fetches failed; the Vercel build had zero catalogue-fallback warnings,
+  and live public catalogue/detail requests returned 200. Generated cache backup removed.
+- No required manual action, environment change, migration, RLS or SMTP change.
+  Confirm email remains ON with production Site URL and /auth/callback allowlist.
+  Optional existing hardening: leaked-password protection if the plan supports it.
+  Any stricter server-side session-expiry policy is future work requiring approval.
 
 ### Phase 7 release checkpoint — authentication gate passed
 

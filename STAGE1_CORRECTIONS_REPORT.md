@@ -1,181 +1,193 @@
-# Post-Phase-7 corrections — Stage 1
+# TCC — Post-Phase-7 corrections: Stage 1 final report
 
-Started 2026-10-10 (Africa/Lagos). In progress; not release certification.
-No Stage 2, Stage 3, new development phase or redesign is authorized.
+Verified 11 October 2026 (Africa/Lagos). All seven corrections and their functional,
+security, production and actual-email gates passed. No architecture blocker remains.
+No Stage 2, Stage 3, new development phase or redesign was started.
 
-## Preflight
+Phase 7's original email tests, cleanup and release checkpoint were already complete
+at entry. The Stage 1 email tests are the separately authorized regression after the
+cookie changes, not an unacknowledged unfinished Phase 7 gate.
 
-- Clean main at `4b77b5e6d40a2d0b19fb4ee0c273d4467841a0ce`; GitHub main matches.
-- Production alias is READY on `dpl_abXzVJLmrvHxXcP9SATvMUK3cUVk`, the Phase 7
-  closure deployment. Phase 7 real-email confirmation, recovery callback and cleanup
-  are recorded in PHASE7_ROLLOUT_REPORT.md. No email test is silently repeated or reset.
-- Catalogue uses session-authorized mutations and private catalogue-media storage.
-  Upload policy requires an existing Fit; publication requires its gallery/options.
-- Payment card remainder is request-specific; order financials use the verified ledger
-  via get_order_financials and stable version-fenced reads. No ledger correction needed.
-- Admin navigation has no vertical scrolling region; Client has horizontal tabs.
-- Supabase SSR writes persistent cookies. Browser/session cookies must be normalized
-  consistently in browser, server and middleware without changing PKCE or refresh tokens.
+The final documentation push is followed by a fresh clean-Git/exact-READY/production
+alias check. Its exact commit and deployment are recorded in the final delivery message.
 
-## Implementation and release checklist
+## 1. Corrections and results
 
-- [x] Draft/Published creation choice, existing Archived editing preserved.
-- [x] Local photo previews/order/cover/removal, Fit-scoped uploads and safe retry handling.
-- [x] Order total/verified paid/outstanding clearly distinct from request outstanding.
-- [x] Prominent Request Payment action using the existing workflow.
-- [x] Staff navigation scrolls within viewport; accessible mobile drawer.
-- [x] Client desktop sidebar and accessible mobile drawer, all existing routes retained.
-- [x] Session-cookie persistence strategy plus restart/session-restore limitations.
-- [x] Typecheck, lint, unit tests, optimized build, SQL/authorization regression.
-- [x] Isolated authenticated local browser and upload tests; 390/768/1440, both themes.
-- [ ] Actual delivered confirmation/recovery emails through corrected production callback.
-- [ ] Production row/storage preservation; exact stage-owned test fixture cleanup.
-- [ ] Secret/diff review; main commit/push; Git equality/clean; exact READY and live smoke.
+1. **New Fit lifecycle — passed.** The creation dropdown was deliberately disabled
+   with a hidden Draft value. Draft and Published are now selectable. Creation stages
+   an idempotent draft, options and photos before the existing publication guards run.
+   Incomplete drafts stay private and recoverable. Archived remains available in editing.
+2. **New Fit photographs — passed.** Added multiple-file selection, local previews,
+   ordering, first-image cover and removal before saving. Existing private
+   catalogue-media Storage and staff-session authorization are retained. JPEG/PNG/WebP,
+   8 MB and actual header/MIME validation apply. Existing photographs are preserved.
+3. **CEO/Admin payment balance — passed.** The old card showed the individual payment
+   request's remainder, which could correctly be zero while the order still had a
+   balance. The card now separately labels Order total, Verified paid on order,
+   Order outstanding balance and Request outstanding amount. Existing authorized
+   get_order_financials supplies order figures inside the version-fenced read.
+   The reported NGN 360,000 total / 260,000 verified / 100,000 balance passed live
+   read-only ledger checks and both staff UIs. No financial row, bank setting or
+   payment evidence was changed. Partial/full/multiple-request and pending/rejected
+   evidence cases are regression-tested; unverified funds do not reduce the balance.
+4. **Request Payment visibility — passed.** A prominent button has hover, focus,
+   pending text/spinner and disabled-during-navigation states. It opens the existing
+   Orders workflow, preserving authorization and validation; no alternative payment flow.
+5. **Staff sidebar overflow — passed.** Viewport-bounded desktop navigation scrolls
+   vertically. The last item is reachable/clickable at laptop height. The native modal
+   mobile/tablet drawer has keyboard focus containment/restoration, Escape/backdrop/
+   navigation dismissal and safe-area padding. No extra page-level horizontal overflow.
+6. **Client sidebar — passed.** All twelve existing sections/routes remain. A desktop
+   sidebar and accessible mobile/tablet drawer replace the horizontal tab strip.
+   Active section, internal scrolling and closing after navigation are verified.
+7. **Session persistence — passed.** Browser, server and middleware normalize actual
+   Supabase writes to session-only cookies, including chunked tokens and per-flow PKCE
+   verifiers. HTTPS Secure, SameSite=Lax, path scope and explicit deletions are preserved.
+   Refresh, new tabs, SSR and token rotation remain functional. No auth localStorage,
+   unload logout or disabled Supabase session persistence was introduced.
 
-## Authentication decision
+## 2. Photograph and Storage verification
 
-Use browser-session cookies, not unload handlers, per-tab sessionStorage or disabled
-Supabase persistSession. Refresh/new tabs must continue working. Keep SameSite=Lax
-for email/OAuth callbacks and Secure on HTTPS. Preserve explicit cookie deletion.
-Existing persistent cookie chunks should be rewritten as session cookies without
-revoking legitimate sessions or changing passwords.
+Creation uses stable Fit/upload UUIDs. A retry reuses its draft and object paths,
+recovers already-linked uploads and removes only definitely unregistered failures;
+ambiguous network results remain recoverable. Publication is always the last guarded step.
 
-Browser restore may retain session cookies, so browser closure is not a guaranteed
-security event. A stricter future policy would use server-enforced inactivity/session
-limits or explicit reauthentication, not unreliable browser-close detection. No such
-new policy is silently introduced in Stage 1.
+Seven local checks and the same seven production checks passed: missing-photo
+publication rejection; previews/order/removal; intentionally interrupted second upload;
+private retained draft/first image; retry resulting in one published Fit with two
+images and one cover; correct public detail photograph; archive restoring public 404.
+Only copies of existing photographs of the same Fit were used. No generated/external
+placeholder imagery or new Storage bucket was introduced. Original stable Fit IDs,
+Saved Looks and all seven original Storage objects remain unchanged.
 
-The SDK's persistent-cookie default is stripped at its actual cookie write boundary
-in browser, server and middleware. Session cookies retain path `/`, SameSite=Lax,
-HTTPS Secure, chunking and explicit deletion semantics. No localStorage auth or
-per-tab/unload logout is introduced. Middleware redirects carry refreshed cookies
-and private/no-store. Existing sessions are migrated without revocation.
+## 3. Authentication verification and limits
 
-References: https://supabase.com/docs/guides/auth/server-side/advanced-guide and
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie.
+All roles passed reload/new-tab access, migration of older persistent cookies,
+expired-session refresh through redirects and clean close/reopen of the same browser
+profile requiring sign-in. Six refresh/restart checks passed locally and in production.
+The forced-expiry harness initially raced an active page's own refresh; injecting in
+a blank page isolated the test and all six checks passed. This was a harness issue.
 
-## Preservation boundaries
+Browser session restore can retain session cookies. Browser closure is not a reliable
+server-side security event, so guaranteed sign-in after every possible restart is not
+promised. A stricter future policy would require explicitly approved server-enforced
+session/inactivity limits or reauthentication.
 
-Never reset bank settings, verify real evidence, change existing passwords, delete
-legitimate users/records or weaken RLS. Only exact stage-tagged synthetic records
-may be cleaned up. The original snapshot covers 38 tables/327 rows and five Auth
-users/password hashes, including the configured bank row and all original media.
+Actual delivered-email tests used only the owner-approved temporary mailbox:
 
-## Results by correction
+- Signup created no session. Password login returned email_not_confirmed, /account
+  redirected to sign-in, and SQL showed zero sessions/refresh tokens before confirmation.
+- The actual confirmation link completed the production PKCE callback to /account at
+  about 17:21 WAT on October 10. Auth confirmation, reload and fresh password login passed.
+- The actual recovery email was requested at about 17:21 WAT. Its delivered link
+  completed the production callback to /auth/reset-password at 17:25 WAT. The authenticated
+  reset form rendered. No password was submitted or changed, including the QA password.
+- No admin-generated verification link was substituted for email delivery.
+- One earlier link was rejected by Supabase as otp_expired before any callback code.
+  A normal resend with fresh PKCE in the same test browser passed. The earliest swallowed
+  callback failure cannot be retrospectively diagnosed; no invented root cause is claimed.
+  Safe reason/error-code diagnostics now exclude URLs, tokens, verifier values and user data.
+- The callback supports the SDK's optional flow identifier. This preserves compatibility;
+  it is not asserted to be the proven cause of the earlier test failure.
 
-1. **Lifecycle:** the new-Fit control was deliberately disabled with a hidden Draft
-   value. It now offers Draft/Published; Archived remains available when editing.
-   Creation first persists an idempotent draft, then options/photos, then runs the
-   existing publication guards. Incomplete saves remain hidden and recoverable.
-2. **Photographs:** new creation picker supports multiple previews, moving images,
-   first-image cover selection and removal before saving. JPEG/PNG/WebP, 8 MB,
-   MIME/header checks and the existing session-authorized private bucket apply.
-   UUID paths belong to the saved Fit. Retry preserves IDs/paths, recovers linked
-   uploads and only removes definitely unregistered failures. Ambiguous network
-   outcomes are preserved for retry, not deleted blindly. No new imagery was sourced.
-3. **Payment balance:** the old card used `requestPosition().remaining`, which is
-   correct for an individual paid-off request but was ambiguous as an order balance.
-   Cards now separately show Order total, Verified paid on order, Order outstanding
-   balance and Request outstanding amount. `get_order_financials` supplies the order
-   totals within the existing order-version read fence. Live read-only verification
-   and Admin/CEO UI both confirmed NGN 360,000 / 260,000 / 100,000. No ledger edits.
-4. **Request Payment:** prominent button with hover, keyboard focus, pending text,
-   spinner and disabled-during-navigation behavior. It opens the existing Orders
-   workflow; no alternate issuance path or authorization change.
-5. **Staff sidebar:** desktop navigation has a viewport-bounded scroll area; the
-   mobile/tablet drawer uses a native modal dialog, focus containment/restoration,
-   Escape/backdrop/navigation dismissal, safe-area padding and internal scrolling.
-6. **Client sidebar:** all twelve original sections retained. Desktop sidebar and
-   mobile/tablet drawer replace horizontal tabs, with active-section indication.
-7. **Authentication:** all three roles passed reload/new-tab access, migration from
-   persistent cookies, real refresh-token rotation through redirect, and a clean
-   close/reopen of the same browser profile requiring sign-in. Session restore is
-   explicitly outside that last guarantee. Real-email production regression pending.
+Live settings reverified during closure, without changes:
 
-## Verification evidence
+- Confirm email: enabled.
+- Site URL: https://tsquare-clothing-cafe.vercel.app
+- Callback allowlist: https://tsquare-clothing-cafe.vercel.app/auth/callback
 
-- Latest source: typecheck, lint, all 62 application tests and optimized Next 15.5.27
-  build with 68 generated pages passed. Initial sandbox spawn EPERM was an execution
-  restriction; the approved build completed successfully.
-- Native PostgreSQL 17.6 migration replay passed all seven existing suites (377 unique
-  SQL assertions including expansion), 7 Phase 7, 8 Phase 4 and 23 Phase 6 race/replay
-  checks. This was an isolated cluster, not a reset of production; its data was removed.
-- Local all-role matrix: 39 checks passed, 390/768/1440 at 650px height, both themes,
-  all menu items, last-item reachability, focus, drawer dismissal and no horizontal
-  overflow. Settled-page screenshots visually reviewed. No uncaught browser exceptions.
-- Six separate all-role checks passed expired-session refresh on redirect and actual
-  clean browser restart. Disposable browser profile was closed and removed.
-- Seven Fit checks passed: missing-photo publication rejected; local previews/order/
-  removal; second upload interrupted; first image/draft remain private; retry creates
-  exactly one published Fit/two images/one cover; public detail photograph loads;
-  archive hides the Fit again. Copies of existing same-Fit local assets were used.
-- Live authorization probes passed anonymous/Client staff-RPC denial, Admin versus CEO
+Existing legitimate passwords were never used or changed for these tests. Automated
+Client/Admin/CEO access tests used isolated, correctly provisioned QA identities.
+
+References: [Supabase SSR guidance](https://supabase.com/docs/guides/auth/server-side/advanced-guide),
+[session-cookie behavior](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie).
+
+## 4. Tests and production evidence
+
+- TypeScript, ESLint, all 63 application tests and optimized Next.js 15.5.27 build:
+  passed, 68 pages generated.
+- Native PostgreSQL 17.6 replay: seven existing SQL suites, 377 unique assertions,
+  including 79 payment and 56 people assertions, plus 38 concurrency/replay checks.
+  This was a disposable cluster, not a production reset; its data directory was removed.
+- Local and production role/navigation/payment/auth matrices: 39 checks each, including
+  390/768/1440 widths, 650px height, both themes, every menu item, keyboard focus, drawer
+  dismissal, last-item access and no horizontal overflow. Screenshots visually reviewed.
+  All 39 production checks were repeated successfully on the authentication follow-up.
+- Authorization checks passed anonymous/Client staff-RPC denial, Admin-versus-CEO
   separation, unrelated-client financial isolation and Client catalogue/media denial.
-- Read-only advisors: 7 intentional private-table deny-all INFO, 31 guarded definer
-  WARN, 14 unused-index INFO and the existing leaked-password-protection warning.
-  No RLS, schema, migration, Storage policy, bank or Auth configuration changed.
-- 428 source/browser assets scanned: zero known server-secret or QA-password matches.
-  `.env.local` and all temporary fixture/credential files remain ignored/untracked.
-- Harness corrections: scoped form selectors to avoid SEO metadata; used normalized
-  uppercase Fit codes; waited for route loading before screenshots. A harness parser
-  error exposed a disposable QA session in diagnostics; that exact QA CEO was revoked,
-  deleted and replaced. SQL confirmed zero old user/session/refresh-token remnants.
-  Parser errors now suppress payloads. No legitimate credential was involved.
+- No uncaught browser exceptions in the final matrix. Live collection/detail/sign-in
+  requests returned 200; logged-out /account returned the expected 307.
+- A concurrent local development server caused an initial /icon.svg build-manifest
+  failure. It was stopped and the clean rebuild passed; the generated backup was removed.
+  Local build-time live catalogue fetches failed and used the existing bundled fallback.
+  Production verification was separate: the Vercel build had successful compilation,
+  68-page generation and zero catalogue-fallback warnings across 138 build events.
+- Latest known-secret scan: 428 source/browser assets, zero known server-secret or QA-
+  password matches. Earlier scans also passed. .env.local and temporary files were
+  ignored/untracked; no secret was committed.
+- One earlier harness parser error exposed a disposable QA session in diagnostics.
+  That exact QA CEO was globally revoked, deleted and replaced; zero remnants verified.
+  Parser errors suppress payloads. No legitimate credential was involved.
 
-## Release status and remaining gates
+## 5. Synthetic cleanup and production preservation
 
-Implementation is deployed, not yet declared fully released. Stage 1 SHA
-`be14098c07833024decd452459dfc53f4e6038a7` is on GitHub main and production READY
-deployment `dpl_6zhCD6KtBNoZYU4FwiteB3dyGE2L`. The 39-check production role/navigation/
-payment matrix, seven production Fit tests and six role refresh/restart checks pass.
-The forced-expiry harness initially raced the active browser's auto-refresh; injection
-in a blank page isolated the server-refresh test and all six production checks passed.
-Production QA Fits and their exact copied media have been removed after archive checks.
+All six Stage 1 Auth identities, their profiles/staff memberships/sessions/refresh
+tokens and two stale verification-flow records are removed. Three synthetic Fits and
+their copied media were removed only after archive/public-404 verification. No real
+payment, receipt, bank transfer, order or customer request was created for this stage.
 
-The owner approved the same real mailbox for a temporary confirmation/recovery test.
-Live Confirm email is ON. Site URL is `https://tsquare-clothing-cafe.vercel.app` and
-the allowlist contains `https://tsquare-clothing-cafe.vercel.app/auth/callback`.
-These settings are preserved; the new email regression runs on production, not an
-unallowlisted localhost callback. The first actual signup email passed pre-confirmation
-denial. Its delivered link confirmed the temporary account but the application callback
-did not establish a session. This remains an unresolved release gate: the previous
-callback suppressed the underlying error, so no specific root cause is claimed.
-The retained verifier matched that flow's challenge. The exact failed temporary user
-and its sessions were revoked/deleted, with zero SQL remnants. No existing user changed.
+Before final email-user deletion, 87 application UUID references and owned Storage
+objects were checked: only its expected profile existed. Cleanup used exact stage-owned
+identities; no broad email/domain-based deletion or RLS/trigger disabling occurred.
 
-A narrow follow-up adds safe callback reason/error-code diagnostics (no URLs, codes,
-tokens or user details), passes an optional SDK PKCE flow identifier and recognizes
-per-flow verifier/index cookies when migrating older persistent cookies. All 63 tests
-pass, along with typecheck and lint. The clean optimized build generated 68 pages.
-An overlapping TCC development server was stopped after a shared-cache /icon.svg
-manifest failure; the clean rebuild passed. Live catalogue fetches failed during
-that local build and its existing bundled fallback was used, so live production
-catalogue verification remains distinct from the successful compilation.
-Follow-up `fe504fcf7be0cb6e0dbe653d3622d1ef9603b619` is pushed to main and READY on
-`dpl_8vSHPRAHKhnJK5wQSnQ8VnES4G7u`, with the public production alias assigned.
-GitHub triggered this deployment automatically. Its 138 build events include
-successful compilation and 68-page generation with zero catalogue-fallback warnings.
-All 39 production role/navigation/payment checks passed again, with no browser
-exceptions. Public collection/detail/sign-in pages return 200; anonymous /account
-returns the expected 307. The fresh signup email was sent around 16:12 WAT October 10;
-pre-confirmation denial passes. That link was saved at 17:15 WAT and Supabase
-rejected it as otp_expired before issuing any callback code (303 redirect). This
-observed failure is email-token expiry upstream of the application callback.
-A normal public Auth resend at 17:19 WAT retained the same unconfirmed temporary
-account and refreshed its session-only PKCE cookies in the original browser.
-Zero sessions/refresh tokens and no password change were verified. The new actual
-link is awaited. No recovery email has been requested on this attempt yet. The latest scan
-covered 442 source/browser assets with zero known secret matches. At 14:49:59 UTC,
-all 327 original rows, five passwords and original RLS/triggers were unchanged.
+Final comparison at 00:33 WAT on October 11 confirms:
 
-The three completed role fixtures, rotated QA CEO and first failed email attempt
-are now revoked/deleted. SQL confirms zero users/profiles/staff/sessions/refresh
-tokens for those five IDs. Only the fresh approved-mailbox test remains.
+- All 38 tables and 327 original production rows unchanged.
+- All five existing Auth users/password hashes preserved.
+- All four Storage buckets and seven original objects preserved.
+- Original RLS/policy fingerprints unchanged; zero unprotected application tables and
+  zero disabled application triggers.
+- Zero Stage 1 users, staff memberships, profiles, sessions, refresh tokens, flow states
+  or catalogue Fits remain.
+- Bank configuration, financial activity, appointments, messages and legitimate catalogue
+  records remain intact.
 
-Remaining release gates: actual delivered confirmation/recovery callbacks,
-remaining email-test identity/session cleanup,
-final preservation comparison and clean synchronized Git checkpoint. The unresolved
-email callback is a release blocker until a fresh actual-email test passes. No new
-environment variable or migration is required. Optional leaked-password
-protection remains an existing owner/plan-dependent hardening item, not a new Stage 1
-regression. No Stage 2/3, SMTP replacement or forced browser-close detection is included.
+The isolated QA browsers closed. Final local cleanup removed only the 34 stage-owned
+temporary helpers, screenshots, proofs, credential manifests and consumed email links.
+Unrelated project files, environment configuration, prior worktrees and runtimes are kept.
+
+## 6. Git and deployment
+
+Entry checkpoint: 4b77b5e6d40a2d0b19fb4ee0c273d4467841a0ce.
+Main implementation: be14098c07833024decd452459dfc53f4e6038a7.
+Authentication follow-up: fe504fcf7be0cb6e0dbe653d3622d1ef9603b619.
+
+The follow-up is verified READY on dpl_8vSHPRAHKhnJK5wQSnQ8VnES4G7u. Documentation
+checkpoint 7699443919489f4b83d3afadb08b4bc5be77d56a is READY on
+dpl_3kGZDtEscwPTkPcJGxp2Zdq8ZBHr, with the production alias assigned. Later changes
+are documentation only. GitHub automatic deployment worked for the follow-up and
+documentation checkpoints; an explicit exact-Git-source deployment was used earlier
+when no queued build was visible. No deployment/environment setting was changed.
+
+Final closure documentation is committed/pushed after this report is written, then
+HEAD/origin/GitHub equality, clean worktree and its exact READY/public-alias assignment
+are checked. The final delivery message supplies that resulting SHA and deployment ID.
+
+Main changes cover catalogue creation/gallery/upload validation; shared navigation
+drawer and account/admin layouts; payment summary loading/labels/action; browser/server/
+middleware cookie handling and auth callback; regression tests and handoff documentation.
+No schema migration or dependency upgrade was required.
+
+## 7. Blockers, manual actions and optional future work
+
+**Actual production blockers: none after the successful email regression and cleanup.**
+No required Supabase, Vercel, bank, SMTP or environment-variable action remains.
+
+Unchanged advisor findings: seven intentional private-table deny-all INFO, 31 guarded
+authenticated-definer WARN, 14 unused-index INFO and one existing leaked-password-
+protection WARN. No new Stage 1 finding or RLS weakening was introduced.
+
+Optional existing hardening: enable leaked-password protection if supported by the
+project plan. This is not a Stage 1 functionality blocker. A stricter session-expiry
+policy needs separate approval. Browser session-restore limits remain as documented.
+No Stage 2/3 theme work, new major feature or Phase 8 is authorized. Stop after Stage 1.
