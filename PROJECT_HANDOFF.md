@@ -59,9 +59,14 @@ now authorized the separate post-Phase-7 Stage 1 corrections described below.
   this build automatically. Its 138 build events include successful compilation/
   68-page generation and zero catalogue-fallback warnings. All 39 production role/
   navigation/payment checks passed again; public catalogue/detail return 200.
-  A fresh signup email was sent around 16:12 WAT October 10; pre-confirmation login,
-  protected access and session-absence checks pass. Await the NEW actual link in
-  supabase/.temp/stage1-email-link.txt, not the morning's consumed link. The isolated
+  The 16:12 WAT signup email passed pre-confirmation denial, but its link was saved
+  at 17:15 WAT and Supabase rejected it with otp_expired (303, no callback code).
+  This latest failure is upstream email-token expiry, not an application exchange
+  failure. A normal public Auth resend at 17:19 WAT October 10 retained the exact
+  same unconfirmed temporary user, refreshed its PKCE cookies in the original
+  browser and verified zero sessions/refresh tokens; no password changed.
+  Await the NEW 17:19 WAT actual link in supabase/.temp/stage1-email-link.txt.
+  Do not reuse the expired earlier links. The isolated
   helper is running (exec session 24752); it automatically consumes a newly saved
   link, then requests recovery and waits for that new link. No password is changed.
   Resume ignored stage1-email-state.json/command.json only after checking the phase.

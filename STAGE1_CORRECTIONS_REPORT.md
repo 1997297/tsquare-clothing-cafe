@@ -158,8 +158,13 @@ successful compilation and 68-page generation with zero catalogue-fallback warni
 All 39 production role/navigation/payment checks passed again, with no browser
 exceptions. Public collection/detail/sign-in pages return 200; anonymous /account
 returns the expected 307. The fresh signup email was sent around 16:12 WAT October 10;
-pre-confirmation denial passes and the actual delivered link is awaited. No recovery
-email has been requested on this fresh attempt yet. The latest scan
+pre-confirmation denial passes. That link was saved at 17:15 WAT and Supabase
+rejected it as otp_expired before issuing any callback code (303 redirect). This
+observed failure is email-token expiry upstream of the application callback.
+A normal public Auth resend at 17:19 WAT retained the same unconfirmed temporary
+account and refreshed its session-only PKCE cookies in the original browser.
+Zero sessions/refresh tokens and no password change were verified. The new actual
+link is awaited. No recovery email has been requested on this attempt yet. The latest scan
 covered 442 source/browser assets with zero known secret matches. At 14:49:59 UTC,
 all 327 original rows, five passwords and original RLS/triggers were unchanged.
 
