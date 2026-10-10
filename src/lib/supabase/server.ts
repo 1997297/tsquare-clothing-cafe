@@ -1,8 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { sessionCookieOptions } from "@/lib/auth/session-cookies";
 
 export async function createServerSupabaseClient() {
   const cookieStore = await cookies();
+  const secure = (await headers()).get("x-forwarded-proto") === "https";
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabasePublishableKey =
@@ -20,7 +22,7 @@ export async function createServerSupabaseClient() {
       setAll(cookiesToSet) {
         try {
           cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
+            cookieStore.set(name, value, sessionCookieOptions(options, secure, value))
           );
         } catch {
           // The `setAll` method was called from a Server Component.

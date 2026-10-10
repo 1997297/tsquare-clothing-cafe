@@ -23,6 +23,7 @@ import {
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { ProfileAvatar } from "@/components/common/ProfileAvatar";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { NavigationDrawer } from "@/components/common/NavigationDrawer";
 import { useAuth } from "@/lib/auth-context";
 import { getRoleLabel, type StaffRole } from "@/lib/auth/roles";
 import { cn } from "@/lib/utils";
@@ -69,7 +70,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
   useEffect(() => setMobileOpen(false), [pathname]);
 
   const nav = (
-    <nav aria-label="Atelier operations" className="space-y-1.5">
+    <nav aria-label="Atelier operations" className="shrink-0 space-y-1.5">
       {navigation.map((item) => {
         const Icon = item.icon;
         const active = item.href === "/admin"
@@ -82,7 +83,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
             href={item.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs uppercase tracking-[0.16em] transition-colors",
+              "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs uppercase tracking-[0.16em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-champagne",
               active
                 ? "border border-champagne/30 bg-champagne/10 text-champagne"
                 : "border border-transparent text-stone-400 hover:border-stone-800 hover:bg-stone-900/70 hover:text-warm-ivory"
@@ -108,6 +109,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
             className="rounded-xl border border-stone-800 p-2.5 text-stone-300 lg:hidden"
             aria-label={mobileOpen ? "Close operations navigation" : "Open operations navigation"}
             aria-expanded={mobileOpen}
+            aria-controls="staff-navigation"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -162,8 +164,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
         </div>
       </header>
 
-      {mobileOpen && (
-        <div className="fixed inset-0 top-16 z-30 bg-near-black/95 px-4 py-6 backdrop-blur-2xl sm:top-20 lg:hidden">
+      <NavigationDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} id="staff-navigation" title="Atelier navigation">
           <Link
             href="/admin/profile"
             aria-current={profileActive ? "page" : undefined}
@@ -183,12 +184,11 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
             <span className="text-[9px] font-mono uppercase tracking-widest text-champagne">Profile</span>
           </Link>
           {nav}
-        </div>
-      )}
+      </NavigationDrawer>
 
       <div className="mx-auto flex w-full max-w-[1600px]">
-        <aside className="sticky top-20 hidden h-[calc(100vh-5rem)] w-72 shrink-0 border-r border-stone-800/70 px-5 py-8 lg:flex lg:flex-col">
-          <div className="mb-7 px-3">
+        <aside className="sticky top-20 hidden h-[calc(100dvh-5rem)] w-72 shrink-0 overflow-y-auto overscroll-contain border-r border-stone-800/70 px-5 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:flex lg:flex-col">
+          <div className="mb-7 shrink-0 px-3">
             <div className="flex items-center gap-2 text-champagne">
               {identity.role === "ceo" ? <Crown className="h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />}
               <span className="text-[10px] font-mono uppercase tracking-[0.24em] text-champagne-dark">Authorized Staff</span>
@@ -198,7 +198,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
             </p>
           </div>
           {nav}
-          <div className="mt-auto space-y-2">
+          <div className="mt-auto shrink-0 space-y-2 pt-6">
             <Link
               href="/admin/profile"
               aria-current={profileActive ? "page" : undefined}

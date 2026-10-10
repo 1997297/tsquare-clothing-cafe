@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { FinancialSummary, PaymentRequest, PaymentWorkspace } from "@/lib/payments/manual";
-import { paymentPercent, PAYMENT_PURPOSES, requestPosition } from "@/lib/payments/manual";
+import { paymentPercent, PAYMENT_PURPOSES, requestPosition, requestOrderSummary } from "@/lib/payments/manual";
 import { formatMinor } from "@/lib/payments/money";
 
 export const panelClass = "payment-panel rounded-3xl border border-stone-800 bg-stone-950/60 p-5 sm:p-7 min-w-0";
@@ -16,7 +16,7 @@ export function FinancialCards({ summary }: { summary: FinancialSummary }) {
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-xl">Financial position</h2><span className="rounded-full border border-champagne/30 px-3 py-1 text-xs text-champagne">{summary.fully_paid ? "Fully paid" : summary.total_minor === null ? "Price not agreed" : `${percent}% verified paid`}</span></div>
     <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">{([
       ["Order total", summary.total_minor], ["Verified paid", summary.verified_minor],
-      ["Awaiting verification", summary.pending_minor], ["Remaining balance", summary.balance_minor],
+      ["Awaiting verification", summary.pending_minor], ["Order outstanding balance", summary.balance_minor],
     ] as const).map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-xs text-stone-400">{label}</dt><dd className="mt-2 break-words font-display text-xl text-warm-ivory tabular-nums">{formatMinor(value)}</dd></div>)}</dl>
     {summary.total_minor !== null && <><div className="mt-5 h-1.5 overflow-hidden rounded-full bg-stone-800" role="progressbar" aria-label="Verified payment progress" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}><div className="h-full bg-champagne" style={{ width: `${percent}%` }} /></div><p className="mt-2 text-xs text-stone-400">{percent}% paid · {balancePercent}% balance</p></>}
     <p className="mt-4 text-xs leading-5 text-stone-400">Receipts awaiting verification do not reduce your balance. Only funds confirmed by TCC count as paid.</p>
@@ -24,12 +24,19 @@ export function FinancialCards({ summary }: { summary: FinancialSummary }) {
 }
 export function RequestCard({ request, workspace, staff }: { request: PaymentRequest; workspace: PaymentWorkspace; staff: boolean }) {
   const position = requestPosition(request, workspace.payments, workspace.submissions);
+  const financial = requestOrderSummary(request, workspace.financials);
   const order = workspace.orders.find(o => o.id === request.order_id);
   const customer = workspace.customers.find(c => c.id === request.customer_id);
   return <Link href={`/${staff ? "admin" : "account"}/payments/${request.id}`} className="block min-w-0 rounded-2xl border border-stone-800 p-5 transition-colors hover:border-champagne/50 focus-visible:outline-champagne">
     <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="break-all font-mono text-xs text-champagne">{request.request_reference}</p><p className="mt-2 text-sm">{order?.order_reference} · {PAYMENT_PURPOSES[request.purpose]}</p>{staff && customer && <p className="mt-1 break-words text-xs text-stone-400">{customer.first_name} {customer.last_name} · {customer.email}</p>}</div><span className="text-xs text-stone-400">{position.status}</span></div>
-    <p className="mt-4 break-words font-display text-2xl tabular-nums">{formatMinor(request.requested_amount_minor)}</p>
-    <p className="mt-2 text-xs leading-6 text-stone-400">Verified: {formatMinor(position.verified)} · Remaining: {formatMinor(position.remaining)}</p>
+    {financial ? <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+      {([['Order total', financial.total_minor], ['Verified paid on order', financial.verified_minor], ['Order outstanding balance', financial.balance_minor]] as const).map(([label, amount]) => <div key={label}><dt className="text-xs text-stone-400">{label}</dt><dd className="mt-1 break-words font-display text-xl tabular-nums">{formatMinor(amount)}</dd></div>)}
+    </dl> : <p className="mt-4 text-sm text-amber-400">Order balance unavailable. Refresh before requesting payment.</p>}
+    <div className="mt-4 border-t border-stone-800 pt-3 text-xs leading-6 text-stone-400">
+      <p>Requested amount: {formatMinor(request.requested_amount_minor)}</p>
+      <p>Verified on this request: {formatMinor(position.verified)}</p>
+      <p>Request outstanding amount: {formatMinor(position.remaining)}</p>
+    </div>
     <p className="mt-2 text-xs text-stone-500">Issued {paymentDate(request.created_at)}{request.due_date ? ` · Due ${paymentDate(request.due_date)}` : ""}</p>
   </Link>;
 }

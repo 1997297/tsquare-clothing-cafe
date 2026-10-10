@@ -6,11 +6,10 @@ import { ChangeEvent, useEffect, useRef, useState, useTransition } from "react";
 import { ArrowLeft, ArrowRight, ImagePlus, Loader2, Save, Star, Trash2 } from "lucide-react";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import type { CatalogueImageAdmin } from "@/lib/catalogue-admin";
-import { supabase } from "@/lib/supabase/client";
-import { addFitImageAction, removeFitImageAction, reorderFitImagesAction, updateFitImageAction } from "./actions";
+import { uploadCatalogueImage } from "./upload-image";
+import { CATALOGUE_IMAGE_EXTENSIONS as IMAGE_EXTENSIONS, CATALOGUE_IMAGE_MAX_BYTES as MAX_IMAGE_BYTES } from "@/lib/catalogue-images";
+import { removeFitImageAction, reorderFitImagesAction, updateFitImageAction } from "./actions";
 
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
-const IMAGE_EXTENSIONS: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
 
 export function GalleryManager({ fitId, fitName, initialImages }: { fitId: string; fitName: string; initialImages: CatalogueImageAdmin[] }) {
   const router = useRouter();
@@ -55,25 +54,16 @@ export function GalleryManager({ fitId, fitName, initialImages }: { fitId: strin
     setUploading(true);
     setMessage("");
     let completed = 0;
-    for (const file of files) {
-      const path = `${fitId}/${crypto.randomUUID()}.${IMAGE_EXTENSIONS[file.type]}`;
-      const { error: uploadError } = await supabase.storage.from("catalogue-media").upload(path, file, { cacheControl: "3600", contentType: file.type, upsert: false });
-      if (uploadError) {
-        console.error("Catalogue image upload failed", uploadError);
-        setMessage(`Upload stopped after ${completed} image${completed === 1 ? "" : "s"}.`);
-        break;
+    try {
+      for (const file of files) {
+        const path = `${fitId}/${crypto.randomUUID()}.${IMAGE_EXTENSIONS[file.type]}`;
+        await uploadCatalogueImage(fitId, fitName, file, path);
+        completed += 1;
       }
-      const result = await addFitImageAction({ fitId, storageObjectPath: path, altText: `${fitName} garment view` });
-      if (!result.success) {
-        await supabase.storage.from("catalogue-media").remove([path]);
-        setMessage(result.error);
-        break;
-      }
-      completed += 1;
-    }
-    setUploading(false);
-    if (completed === files.length) setMessage(`${completed} image${completed === 1 ? "" : "s"} added.`);
-    router.refresh();
+      setMessage(`${completed} photograph${completed === 1 ? "" : "s"} added.`);
+    } catch (error) {
+      setMessage(`${completed} added. ${error instanceof Error ? error.message : "Upload could not be confirmed. Refresh the gallery before retrying."}`);
+    } finally { setUploading(false); router.refresh(); }
   };
 
   const remove = () => {

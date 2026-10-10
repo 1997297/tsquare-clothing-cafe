@@ -1,6 +1,6 @@
 # TSquare Clothing Cafe — Project Handoff
 
-Last updated: 2026-10-09 (Africa/Lagos)
+Last updated: 2026-10-10 (Africa/Lagos)
 
 ## Current status
 
@@ -9,7 +9,42 @@ HEAD/origin/main/remote equality at `76bbb53318cff0ac541dc5354e42fa4bfdcc7712`,
 and production alias https://tsquare-clothing-cafe.vercel.app assigned to READY
 deployment `dpl_FK3c3Fc7dtRtecTF5rt1CpbZDKsQ` at that exact SHA.
 Phase 7 implementation and its final authentication release gate have passed.
-This is the final phase; no Phase 8 or post-Phase-7 corrections were begun.
+This remains the final development phase; no Phase 8 is authorized. The user has
+now authorized the separate post-Phase-7 Stage 1 corrections described below.
+
+### Post-Phase-7 Stage 1 corrections — verification in progress
+
+- Read `STAGE1_CORRECTIONS_REPORT.md`. Seven scoped corrections are implemented
+  locally: Fit lifecycle/photos, payment-card balances/action, staff/client
+  navigation and session-cookie persistence. No Stage 2/3 or redesign.
+- Entry SHA is `4b77b5e6d40a2d0b19fb4ee0c273d4467841a0ce`, main equals GitHub.
+  Vercel API verifies production READY on `dpl_abXzVJLmrvHxXcP9SATvMUK3cUVk`,
+  branch main at that exact SHA. No Stage 1 commit/push has occurred yet.
+- Latest local optimized build (68 pages), typecheck, lint and all 62 tests pass.
+  Offline native PG replay passed all suites, including 79 payment assertions,
+  56 people assertions and 38 workflow/concurrency checks. Disposable PG data removed.
+- Read-only production ledger confirms the reported 360000/260000/100000 example.
+  Request remainder was mislabeled as order remainder; no financial row was changed.
+- Baseline: 38 tables/327 legitimate rows, five existing Auth users/password hashes,
+  all RLS enabled and no disabled application triggers. Stored only in ignored
+  `supabase/.temp/stage1-state.json`; never commit this file or print credentials.
+- Three Stage 1 QA identities and two QA staff memberships now exist. They are
+  recorded by exact ID and metadata tag in that manifest. Do not confuse them with
+  the already-deleted Phase 7 email fixtures. A QA CEO was rotated after a harness
+  cookie-parser error; old user/sessions/refresh tokens were verified absent.
+- Local browser checks use port 3001 and `stage1-browser.mjs` / `stage1-session.mjs`
+  in ignored temp storage. The final 39-check responsive/auth matrix passed with
+  settled-page screenshots, plus six real token-refresh/browser-restart checks and
+  seven Fit upload/retry/publication/archive checks. Live role/financial/media
+  isolation probes passed. Production smoke and actual-email tests remain pending.
+- User approved reuse of anselmkarsten179@gmail.com for one real-mailbox test,
+  with the user supplying actual email links. No Stage 1 email has been sent yet.
+  Confirm email is live ON; Site URL and callback allowlist use production only.
+  Do not change existing passwords or add localhost URLs to production settings.
+- Remaining: finish browser/auth/upload regressions, real email confirmation and
+  recovery on the corrected deployment, exact QA cleanup/baseline comparison,
+  secret review, reports, main push and exact READY/SHA/clean-worktree checkpoint.
+  Production bank settings, payments, legitimate users and original assets must remain.
 
 ### Phase 7 release checkpoint — authentication gate passed
 

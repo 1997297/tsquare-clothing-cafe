@@ -1,11 +1,21 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSafeAuthRedirect } from "@/lib/auth/redirect";
+import { isProjectAuthCookie, sessionCookieOptions } from "@/lib/auth/session-cookies";
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
+  const secure = request.nextUrl.protocol === "https:";
+  const finish = (response: NextResponse) => {
+    // Redirects must carry refreshed/deleted cookies as well as normal responses.
+    if (response !== supabaseResponse) {
+      for (const cookie of supabaseResponse.cookies.getAll()) response.cookies.set(cookie);
+    }
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
+  };
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabasePublishableKey =
@@ -28,9 +38,13 @@ export async function middleware(request: NextRequest) {
       url.search = "";
       url.searchParams.set("next", request.nextUrl.pathname);
       url.searchParams.set("error", "service_unavailable");
-      return NextResponse.redirect(url);
+      return finish(NextResponse.redirect(url));
     }
-    return supabaseResponse;
+    return finish(supabaseResponse);
+  }
+
+  for (const { name, value } of request.cookies.getAll()) {
+    if (isProjectAuthCookie(name, supabaseUrl)) supabaseResponse.cookies.set(name, value, sessionCookieOptions({}, secure, value));
   }
 
   const supabase = createServerClient(supabaseUrl, supabasePublishableKey, {
@@ -38,13 +52,16 @@ export async function middleware(request: NextRequest) {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet, responseHeaders) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        const previousCookies = supabaseResponse.cookies.getAll();
         supabaseResponse = NextResponse.next({
           request,
         });
+        previousCookies.forEach(cookie => supabaseResponse.cookies.set(cookie));
+        Object.entries(responseHeaders ?? {}).forEach(([name, value]) => supabaseResponse.headers.set(name, value));
         cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, options)
+          supabaseResponse.cookies.set(name, value, sessionCookieOptions(options, secure, value))
         );
       },
     },
@@ -63,7 +80,7 @@ export async function middleware(request: NextRequest) {
       url.pathname = "/auth/sign-in";
       url.search = "";
       url.searchParams.set("next", request.nextUrl.pathname);
-      return NextResponse.redirect(url);
+      return finish(NextResponse.redirect(url));
     }
 
     const { data: staff, error: staffError } = await supabase
@@ -81,7 +98,7 @@ export async function middleware(request: NextRequest) {
       url.pathname = "/auth/access-denied";
       url.search = "";
       url.searchParams.set("reason", "service");
-      return NextResponse.redirect(url);
+      return finish(NextResponse.redirect(url));
     }
 
     if (isAdminRoute && (!staff || staff.status !== "active")) {
@@ -89,7 +106,7 @@ export async function middleware(request: NextRequest) {
       url.pathname = "/auth/access-denied";
       url.search = "";
       if (staff?.status === "inactive") url.searchParams.set("reason", "inactive");
-      return NextResponse.redirect(url);
+      return finish(NextResponse.redirect(url));
     }
 
     if (isAccountRoute && staff) {
@@ -97,7 +114,7 @@ export async function middleware(request: NextRequest) {
       url.pathname = staff.status === "active" ? "/admin" : "/auth/access-denied";
       url.search = "";
       if (staff.status === "inactive") url.searchParams.set("reason", "inactive");
-      return NextResponse.redirect(url);
+      return finish(NextResponse.redirect(url));
     }
   }
 
@@ -108,10 +125,10 @@ export async function middleware(request: NextRequest) {
     url.pathname = "/auth/continue";
     url.search = "";
     url.searchParams.set("next", next);
-    return NextResponse.redirect(url);
+    return finish(NextResponse.redirect(url));
   }
 
-  return supabaseResponse;
+  return finish(supabaseResponse);
 }
 
 export const config = {

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "node --test --test-isolation=none --experimental-strip-types tests/remediation.test.mts tests/phase5-transfer-date.test.mjs tests/phase6-atelier-time.test.mts tests/phase6-validation.test.mts tests/phase6-priority.test.mts tests/phase7-people.test.mts",
+    "test": "node --test --test-isolation=none --experimental-strip-types tests/remediation.test.mts tests/phase5-transfer-date.test.mjs tests/phase6-atelier-time.test.mts tests/phase6-validation.test.mts tests/phase6-priority.test.mts tests/phase7-people.test.mts tests/stage1-corrections.test.mts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

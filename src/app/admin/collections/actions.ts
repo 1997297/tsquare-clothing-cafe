@@ -15,6 +15,8 @@ import {
 } from "@/lib/catalogue-admin";
 import { requireStaff } from "@/lib/server/auth";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isUuid } from "@/lib/validation";
+import { validateCatalogueImageBytes } from "@/lib/catalogue-images";
 
 const IDENTIFIER_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const IMAGE_POSITIONS = new Set(["center", "top", "bottom", "left", "right"]);
@@ -93,15 +95,24 @@ async function ensurePublishable(
   return { success: true, data: undefined };
 }
 
-export async function createFitAction(input: unknown): Promise<CatalogueActionResult<{ id: string }>> {
+export async function createFitAction(input: unknown, creationKey: string): Promise<CatalogueActionResult<{ id: string }>> {
   await requireStaff();
+  if (!isUuid(creationKey)) return { success: false, error: "Invalid Fit creation key." };
   const parsed = validateFitMutation(input);
   if (!parsed.success) return parsed;
+  if (parsed.data.status !== "draft") return { success: false, error: "Prepare the draft gallery before publishing." };
   const references = await validateReferences(parsed.data.categorySlug, parsed.data.fabricIds, parsed.data.colourIds);
   if (!references.success) return references;
 
   const supabase = await createServerSupabaseClient();
-  const id = `fit-${randomUUID()}`;
+  // Stable per-form identity recovers an interrupted insert without duplicate Fits.
+  const id = `fit-${creationKey}`;
+  const previous = await supabase.from("catalogue_fits").select("id,status").eq("id", id).maybeSingle();
+  if (previous.error) return { success: false, error: "Draft status could not be checked. Please retry." };
+  if (previous.data) {
+    if (previous.data.status !== "draft") return { success: false, error: "This Fit is already saved. Open it from Collections." };
+    return { success: true, data: { id } };
+  }
   let slug: string;
   try {
     slug = await uniqueSlug(parsed.data.name, "catalogue_fits");
@@ -131,16 +142,8 @@ export async function createFitAction(input: unknown): Promise<CatalogueActionRe
   });
   if (error) return { success: false, error: safeError(error, "The Fit could not be created.") };
 
-  const { error: optionError } = await supabase.rpc("replace_catalogue_fit_options", {
-    p_fit_id: id,
-    p_fabric_ids: parsed.data.fabricIds,
-    p_colour_ids: parsed.data.colourIds,
-  });
-  if (optionError) {
-    console.error("New Fit option assignment failed", { code: optionError.code, message: optionError.message });
-    return { success: false, error: "The draft was created, but its options could not be assigned. Open it and save again." };
-  }
-
+  // The creation form saves options, photographs and the requested lifecycle next.
+  // Always return the durable draft ID so failures can be resumed in its editor.
   refreshCatalogue(slug);
   return { success: true, data: { id } };
 }
@@ -321,12 +324,19 @@ export async function addFitImageAction(input: unknown): Promise<CatalogueAction
   }
   const supabase = await createServerSupabaseClient();
   const filename = storageObjectPath.slice(storageObjectPath.lastIndexOf("/") + 1);
+  const registered = await supabase.from("catalogue_fit_images").select("id").eq("fit_id", fitId).eq("storage_object_path", storageObjectPath).maybeSingle();
+  if (registered.error) return { success: false, error: "Image registration status could not be checked." };
+  if (registered.data) return { success: true, data: { id: registered.data.id } };
   const { data: storedObjects, error: storedObjectError } = await supabase.storage
     .from("catalogue-media")
     .list(fitId, { limit: 2, search: filename });
   if (storedObjectError || !storedObjects?.some((object) => object.name === filename)) {
     return { success: false, error: "The uploaded catalogue image could not be verified." };
   }
+  const storedImage = await supabase.storage.from("catalogue-media").download(storageObjectPath);
+  if (storedImage.error || !storedImage.data) return { success: false, error: "The uploaded photograph could not be read." };
+  try { validateCatalogueImageBytes(storedImage.data.type, new Uint8Array(await storedImage.data.arrayBuffer())); }
+  catch { return { success: false, error: "The uploaded photograph is not a supported image of 8 MB or less." }; }
   const { data: existing, error: existingError } = await supabase
     .from("catalogue_fit_images")
     .select("sort_order,is_primary")

@@ -41,17 +41,26 @@ export async function getPaymentWorkspace(staff: boolean, orderId?: string): Pro
   const { orders, data } = await readStablePaymentSnapshot(
     () => readAll<PaymentWorkspace["orders"][number]>((a, b) => orderQuery().range(a, b)),
     async (before) => {
-      const [requests, submissions, payments, bankResult, customers, events, summary] = await Promise.all([
+      const [requests, submissions, payments, bankResult, customers, events] = await Promise.all([
         readAll<PaymentWorkspace["requests"][number]>((a, b) => requestQuery().range(a, b)),
         readAll<PaymentWorkspace["submissions"][number]>((a, b) => submissionQuery().range(a, b)),
         readAll<PaymentWorkspace["payments"][number]>((a, b) => paymentQuery().range(a, b)),
         staff ? client.from("payment_bank_settings").select("id,bank_name,account_name,account_number,instructions,is_configured,lock_version,updated_at").eq("id", true).maybeSingle<BankSettings>() : Promise.resolve({ data: null, error: null }),
         staff ? readAll<PaymentWorkspace["customers"][number]>((a, b) => client.from("profiles").select("id,first_name,last_name,email").order("id").range(a, b)) : Promise.resolve([]),
         orderId ? readAll<PaymentWorkspace["events"][number]>((a, b) => client.from("lifecycle_events").select("id,entity_id,event_type,actor_type,metadata,created_at").eq("entity_type", "order").eq("entity_id", orderId).in("event_type", ["order_price_set", "payment_request_issued", "payment_request_cancelled", "payment_evidence_submitted", "payment_evidence_rejected", "payment_verified"]).order("id").range(a, b)) : Promise.resolve([]),
-        orderId && before.length ? getOrderFinancials(orderId) : Promise.resolve(null),
       ]);
       if (bankResult.error) throw bankResult.error;
-      return { requests, submissions, payments, customers, bank: bankResult.data, events, summary };
+      // Use the same authorized ledger RPC as order/detail/client views. These reads
+      // remain inside the order-version fence, including multi-request order cards.
+      const ids = before.filter(order => order.id === orderId || requests.some(request => request.order_id === order.id)).map(order => order.id);
+      const financials: Record<string, FinancialSummary> = {};
+      for (let offset = 0; offset < ids.length; offset += 4) {
+        const batch = await Promise.all(ids.slice(offset, offset + 4).map(getOrderFinancials));
+        for (const financial of batch) financials[financial.order_id] = financial;
+      }
+      if (requests.some(request => !financials[request.order_id])) throw new Error("FINANCIAL_SUMMARY_UNAVAILABLE");
+      const summary = orderId ? financials[orderId] ?? null : null;
+      return { requests, submissions, payments, customers, bank: bankResult.data, events, summary, financials };
     },
   );
   for (const submission of data.submissions) {

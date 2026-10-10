@@ -47,6 +47,11 @@ export interface PaymentWorkspace {
   payments: VerifiedPayment[]; customers: { id: string; first_name: string; last_name: string; email: string }[];
   bank: BankSettings | null; events: PaymentEvent[];
   summary: FinancialSummary | null;
+  financials: Record<string, FinancialSummary>;
+}
+export function requestOrderSummary(request: PaymentRequest, financials: Record<string, FinancialSummary>) {
+  const summary = financials[request.order_id];
+  return summary?.order_id === request.order_id ? summary : null;
 }
 export function requestPosition(request: PaymentRequest, payments: VerifiedPayment[], submissions: PaymentSubmission[]) {
   const verified = payments.filter(p => p.payment_request_id === request.id && p.status === "successful")

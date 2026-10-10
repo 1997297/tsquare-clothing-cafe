@@ -8,6 +8,7 @@ import { useAccountData } from "@/lib/account-store";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { ProfileAvatar } from "@/components/common/ProfileAvatar";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { NavigationDrawer } from "@/components/common/NavigationDrawer";
 import {
   Compass,
   FileText,
@@ -25,6 +26,7 @@ import {
   CreditCard,
   Sparkles,
   MessageSquare,
+  Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -54,6 +56,8 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     reloadData,
   } = useAccountData();
   const [mounted, setMounted] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => setMobileOpen(false), [pathname]);
 
   useEffect(() => {
     setMounted(true);
@@ -83,6 +87,18 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
   const clientFullName = `${profile?.firstName || "Private"} ${profile?.lastName || "Client"}`;
 
+  const navigation = <nav aria-label="Private Client Navigation" className="space-y-1.5">
+    {NAV_ITEMS.map(item => {
+      const Icon = item.icon;
+      const active = item.href === "/account" ? pathname === "/account" : pathname.startsWith(item.href);
+      return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
+        className={cn("flex items-center gap-3 rounded-xl border px-3 py-3 text-xs uppercase tracking-wider transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-champagne", active ? "border-champagne/30 bg-champagne/10 text-champagne" : "border-transparent text-stone-400 hover:border-stone-800 hover:bg-stone-900/70 hover:text-warm-ivory")}>
+        <Icon className="h-4 w-4 shrink-0" /><span>{item.label}</span>
+        {item.href === "/account/notifications" && unreadNotificationsCount > 0 && <span className="ml-auto rounded-full bg-champagne px-2 py-0.5 text-[10px] text-near-black">{unreadNotificationsCount}</span>}
+      </Link>;
+    })}
+  </nav>;
+
   return (
     <div className="min-h-screen bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black flex flex-col">
       <meta name="robots" content="noindex, nofollow, noarchive" />
@@ -92,6 +108,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
           {/* Brand Anchor & Boutique Navigation */}
           <div className="flex min-w-0 items-center gap-3 sm:gap-6">
+            <button type="button" onClick={() => setMobileOpen(true)} aria-label="Open client navigation" aria-expanded={mobileOpen} aria-controls="client-navigation" className="shrink-0 rounded-xl border border-stone-800 p-2 text-stone-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-champagne lg:hidden"><Menu className="h-5 w-5" /></button>
             <Link
               href="/"
               className="flex items-center transition-opacity hover:opacity-85 focus:outline-none"
@@ -179,49 +196,12 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           </div>
         </div>
 
-        {/* ── Sub Navigation Tabs ── */}
-        <div className="border-t border-stone-800/60 bg-near-black/60 backdrop-blur-md">
-          <nav
-            aria-label="Private Client Navigation"
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2"
-          >
-            {NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                item.href === "/account"
-                  ? pathname === "/account"
-                  : pathname.startsWith(item.href);
-
-              const isNotification = item.href === "/account/notifications";
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={cn(
-                    "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs uppercase tracking-widest font-medium transition-all whitespace-nowrap relative shrink-0",
-                    isActive
-                      ? "bg-stone-900/90 text-champagne border border-stone-700/70 shadow-sm"
-                      : "text-stone-400 hover:text-warm-ivory hover:bg-stone-800/40"
-                  )}
-                >
-                  <Icon className={cn("w-3.5 h-3.5", isActive ? "text-champagne" : "text-stone-500")} />
-                  <span>{item.label}</span>
-                  {isNotification && unreadNotificationsCount > 0 && (
-                    <span className="ml-1 px-1.5 py-0.2 rounded-full bg-champagne text-near-black text-[9px] font-bold">
-                      {unreadNotificationsCount}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
       </header>
-
+      <NavigationDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} id="client-navigation" title="Client navigation">{navigation}</NavigationDrawer>
+      <div className="mx-auto flex w-full max-w-[1600px] flex-1">
+        <aside className="sticky top-20 hidden h-[calc(100dvh-5rem)] w-64 shrink-0 overflow-y-auto overscroll-contain border-r border-stone-800/70 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:block">{navigation}</aside>
       {/* ── Main Content Area ── */}
-      <main id="account-content" className="flex-1 min-w-0 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <main id="account-content" className="min-w-0 flex-1 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         {accountError ? (
           <div className="max-w-xl mx-auto py-20 text-center space-y-4" role="alert">
             <ShieldCheck className="w-9 h-9 text-amber-400 mx-auto" />
@@ -231,6 +211,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           </div>
         ) : children}
       </main>
+      </div>
     </div>
   );
 }
