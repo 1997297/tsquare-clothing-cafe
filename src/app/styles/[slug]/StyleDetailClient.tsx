@@ -328,9 +328,6 @@ export default function StyleDetailClient({
           <div className="mt-28 pt-16 border-t border-stone-900">
             <div className="flex items-center justify-between mb-10">
               <div>
-                <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold">
-                  Complementary Looks
-                </span>
                 <h2 className="font-display text-2xl sm:text-3xl text-warm-ivory mt-1">
                   You May Also Admire
                 </h2>

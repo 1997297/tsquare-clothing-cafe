@@ -15,6 +15,7 @@ import { WorkflowTimeline } from "@/components/atelier/WorkflowUI";
 import { ClientOrderFinance } from "@/components/payments/ClientOrderFinance";
 import { formatAtelierInstant } from "@/lib/atelier-time";
 import { APPOINTMENT_STATUS_LABELS } from "@/lib/atelier-service";
+import { appointmentScheduleLabel, formatAppointmentPreference } from "@/lib/atelier-presentation";
 
 const STAGES = [
   ["order_confirmed", "Order Confirmed"],
@@ -77,7 +78,6 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
       <section className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
         <div>
-          <p className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne">Atelier Milestones</p>
           <h2 className="font-display text-xl text-warm-ivory">Craftsmanship Progression</h2>
         </div>
         <ol className="grid grid-cols-1 sm:grid-cols-6 gap-4" aria-label="Order progress">
@@ -126,7 +126,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             {relatedAppointments.map((appointment) => (
               <div key={appointment.id} className="p-3 rounded-xl bg-stone-900/50 border border-stone-800">
                 <p className="text-warm-ivory capitalize">{appointment.type.replace(/-/g, " ")}</p>
-                <p className="text-stone-400">{appointment.scheduledStartAt ? formatAtelierInstant(appointment.scheduledStartAt) : `Preferred: ${appointment.preferredDate} · ${appointment.preferredTime}`}</p>
+                <p className="mt-2 text-stone-400">{appointmentScheduleLabel(appointment.status, Boolean(appointment.scheduledStartAt))}</p>
+                <p className="mt-1 text-stone-300">{appointment.scheduledStartAt ? formatAtelierInstant(appointment.scheduledStartAt) : formatAppointmentPreference(appointment.preferredDate, appointment.preferredTime)}</p>
                 <p className="mt-2 text-xs text-champagne">{APPOINTMENT_STATUS_LABELS[appointment.status] ?? appointment.status}</p>
                 <p className="text-stone-500">{formatOfficeLocation(appointment.location)}</p>
                 <Link href={`/account/appointments/${appointment.id}`} className="mt-2 inline-block text-xs text-champagne">Appointment details →</Link>

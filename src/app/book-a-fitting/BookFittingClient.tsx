@@ -130,9 +130,6 @@ export default function BookFittingClient() {
         </div>
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            TCC Office Reservation
-          </span>
           <h1 className="font-display text-4xl sm:text-6xl font-normal tracking-tight text-warm-ivory">
             Book A Fitting Session
           </h1>

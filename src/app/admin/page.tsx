@@ -16,8 +16,7 @@ export default async function AdminOverviewPage() {
     <div className="space-y-10">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-champagne-dark">Atelier Overview</p>
-          <h1 className="mt-3 font-display text-3xl sm:text-4xl">Operational Pulse</h1>
+          <h1 className="font-display text-3xl sm:text-4xl">Operational Pulse</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-400">
             Review current atelier work and open the next operation that needs your attention.
           </p>
@@ -56,8 +55,7 @@ export default async function AdminOverviewPage() {
         <div className="rounded-3xl border border-stone-800 bg-stone-950/60 p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-[9px] font-mono uppercase tracking-[0.22em] text-champagne-dark">Atelier Journal</p>
-              <h2 className="mt-2 font-display text-2xl">Recent Activity</h2>
+              <h2 className="font-display text-2xl">Recent Activity</h2>
             </div>
             <Clock3 className="h-5 w-5 text-stone-600" />
           </div>
@@ -84,8 +82,7 @@ export default async function AdminOverviewPage() {
         </div>
 
         <div className="rounded-3xl border border-stone-800 bg-stone-950/60 p-6 sm:p-8">
-          <p className="text-[9px] font-mono uppercase tracking-[0.22em] text-champagne-dark">Catalogue Operations</p>
-          <h2 className="mt-2 font-display text-2xl">Shape the Collection</h2>
+          <h2 className="font-display text-2xl">Shape the Collection</h2>
           <p className="mt-4 text-sm leading-7 text-stone-400">
             Review Fit details, galleries and available fabrics before publishing. Archive a Fit to remove it from the public Collection while retaining its history.
           </p>

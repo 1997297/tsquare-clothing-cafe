@@ -49,8 +49,7 @@ export function WorkflowTimeline({ events, emptyLabel = "No workflow activity ha
     <section className="rounded-3xl border border-stone-800 bg-white/80 p-6 dark:bg-stone-950/60 sm:p-8">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-[9px] font-mono uppercase tracking-[0.24em] text-champagne-dark">Workflow history</p>
-          <h2 className="mt-2 font-display text-xl text-stone-950 dark:text-warm-ivory">Commission timeline</h2>
+          <h2 className="font-display text-xl text-stone-950 dark:text-warm-ivory">Commission timeline</h2>
         </div>
         <Clock3 className="h-5 w-5 text-stone-500" />
       </div>

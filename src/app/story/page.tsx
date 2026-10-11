@@ -14,9 +14,6 @@ export default function StoryPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Editorial Brand Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-24">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            The TSquare House Narrative
-          </span>
           <h1 className="font-display text-4xl sm:text-6xl font-normal tracking-tight text-warm-ivory leading-tight">
             Rooted in Abeokuta. Crafted for Presence.
           </h1>
@@ -42,11 +39,6 @@ export default function StoryPage() {
 
         {/* Story Section 1: The Brand Philosophy */}
         <section className="mb-20 space-y-6">
-          <div className="border-b border-stone-800 pb-3">
-            <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold">
-              01 • Sartorial Philosophy
-            </span>
-          </div>
           <h2 className="font-display text-3xl sm:text-4xl text-warm-ivory font-normal">
             Presence is Not Demanded; It Is Felt.
           </h2>
@@ -63,11 +55,6 @@ export default function StoryPage() {
         {/* Story Section 2: The Abeokuta Foundation */}
         <section className="mb-20 grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
           <div className="md:col-span-6 space-y-6">
-            <div className="border-b border-stone-800 pb-3">
-              <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold">
-                02 • Geographic Roots
-              </span>
-            </div>
             <h2 className="font-display text-3xl sm:text-4xl text-warm-ivory font-normal">
               The Abeokuta Heritage
             </h2>
@@ -98,11 +85,6 @@ export default function StoryPage() {
 
         {/* Story Section 3: The TSquare Man */}
         <section className="mb-20 p-8 sm:p-12 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl">
-          <div className="border-b border-stone-800 pb-3 mb-6">
-            <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold">
-              03 • The Archetype
-            </span>
-          </div>
           <h2 className="font-display text-3xl sm:text-4xl text-warm-ivory font-normal mb-4">
             Who is The TSquare Man?
           </h2>

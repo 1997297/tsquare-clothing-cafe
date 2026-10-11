@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { APPOINTMENT_STATUS_LABELS, appointmentPurposeLabel } from "@/lib/atelier-service";
 import { formatAtelierInstant } from "@/lib/atelier-time";
+import { appointmentChangeLabel, appointmentChangeStatus, formatAppointmentPreference } from "@/lib/atelier-presentation";
 import { getAtelierAppointment, getAtelierContact, listAtelierAppointments } from "@/lib/server/atelier-service";
 import { AppointmentCard, AppointmentStatus, AtelierTimeline, ContextLinks, ServiceEmpty, ServiceHeader } from "./ServiceUI";
 import { ClientAppointmentControls, StaffAppointmentControls } from "./AppointmentForms";
@@ -17,7 +18,7 @@ export async function AppointmentListPage({ staff, searchParams }: { staff: bool
   const query = (params.q ?? "").trim().toLowerCase().slice(0, 100);
   const filtered = rows.filter(row => !query || `${appointmentPurposeLabel(row.type)} ${customers.get(row.customer_id)?.name ?? ""} ${row.preferred_date} ${row.id}`.toLowerCase().includes(query));
   const pageHref = (next: number) => `${base}?${new URLSearchParams({ status, page: String(next), q: query })}`;
-  return <div className="space-y-7"><ServiceHeader eyebrow="Salon diary" title={staff ? "Appointments" : "Private atelier appointments"} description="Requested visits and TCC-confirmed schedules are kept distinct. All appointment times are shown in Nigeria time (WAT).">
+  return <div className="space-y-7"><ServiceHeader title={staff ? "Appointments" : "Private atelier appointments"} description="Requested visits and TCC-confirmed schedules are kept distinct. All appointment times are shown in Nigeria time (WAT).">
     {!staff && <Link href={`${base}/new`} className={atelierButton}>Request a visit</Link>}
   </ServiceHeader>
     <form className="flex flex-wrap items-end gap-3" method="get"><label className="min-w-0 text-xs text-stone-400">Status<select className={atelierInput} name="status" defaultValue={status}><option value="all">All appointments</option>{Object.entries(filters).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
@@ -33,15 +34,15 @@ export async function AppointmentDetailPage({ id, staff }: { id: string; staff: 
   const contact = staff ? await getAtelierContact(appointment.customer_id) : null;
   const base = staff ? "/admin" : "/account";
   return <div className="space-y-7"><Link href={`${base}/appointments`} className="text-xs text-champagne">← Appointments</Link>
-    <ServiceHeader eyebrow="Private atelier visit" title={appointmentPurposeLabel(appointment.type)} description="The confirmed schedule is authoritative. Client preferences and change requests do not reserve a new slot."><AppointmentStatus status={appointment.status} /></ServiceHeader>
+    <ServiceHeader title={appointmentPurposeLabel(appointment.type)} description="TCC confirms your date and time here. Preferred times and reschedule requests are not confirmed bookings."><AppointmentStatus status={appointment.status} /></ServiceHeader>
     <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(300px,0.8fr)]"><div className="min-w-0 space-y-6">
       <section className={`${atelierPanel} space-y-5`}>
         {contact && <div><h2 className="font-display text-xl">{contact.first_name} {contact.last_name}</h2><p className="mt-2 break-words text-sm text-stone-400">{contact.email} · {contact.phone || "Phone not recorded"}</p></div>}
-        <div><h2 className="text-xs uppercase tracking-wider text-champagne">{["completed", "cancelled"].includes(appointment.status) ? "Recorded schedule" : "Confirmed schedule"}</h2><p className="mt-2 text-lg">{formatAtelierInstant(appointment.scheduled_start_at)}</p>
+        <div><h2 className="text-sm text-stone-400">{["completed", "cancelled"].includes(appointment.status) ? "Recorded Date & Time" : "Confirmed Date & Time"}</h2><p className="mt-2 text-lg">{formatAtelierInstant(appointment.scheduled_start_at)}</p>
           {appointment.scheduled_end_at && <p className="mt-1 text-xs text-stone-500">Until {formatAtelierInstant(appointment.scheduled_end_at)}</p>}
           {!appointment.scheduled_start_at && appointment.confirmed_date && <p className="mt-2 text-sm text-amber-400">Earlier schedule: {appointment.confirmed_date} {appointment.confirmed_time}. TCC must review this legacy schedule.</p>}
         </div>
-        <div><p className="text-xs uppercase text-stone-500">Original preference</p><p className="mt-2 text-sm text-stone-300">{appointment.preferred_date} · {appointment.preferred_time}</p></div>
+        <div><p className="text-sm text-stone-400">Preferred Date &amp; Time</p><p className="mt-2 text-sm text-stone-300">{formatAppointmentPreference(appointment.preferred_date, appointment.preferred_time)}</p></div>
         <p className="text-sm text-stone-400">{appointment.location}</p>
         {appointment.notes && <div><p className="text-xs uppercase text-stone-500">Client note</p><p className="mt-2 whitespace-pre-wrap break-words text-sm text-stone-300">{appointment.notes}</p></div>}
         {appointment.cancelled_at && <p className="whitespace-pre-wrap break-words text-sm text-stone-400">Cancelled by {appointment.cancelled_actor_type === "staff" ? "TCC" : appointment.cancelled_actor_type} · {formatAtelierInstant(appointment.cancelled_at)}{appointment.cancellation_reason ? ` · ${appointment.cancellation_reason}` : ""}</p>}
@@ -49,8 +50,8 @@ export async function AppointmentDetailPage({ id, staff }: { id: string; staff: 
         <ContextLinks staff={staff} order={appointment.order_id} request={appointment.bespoke_request_id} />
       </section>
       {detail.changes.length > 0 && <section className={atelierPanel}><h2 className="font-display text-xl">Change requests</h2><ol className="mt-5 space-y-5">{detail.changes.map(change => <li key={change.id} className="border-l border-stone-700 pl-4">
-        <p className="text-sm capitalize">{change.change_type} · {change.status.replace(/_/g, " ")}</p><p className="mt-2 text-xs text-stone-500">{formatAtelierInstant(change.created_at)}</p>
-        {change.proposed_date && <p className="mt-2 text-sm text-stone-300">Preferred: {change.proposed_date} · {change.proposed_time}</p>}
+        <p className="text-sm">{appointmentChangeLabel(change.change_type)} · {appointmentChangeStatus(change.status)}</p><p className="mt-2 text-xs text-stone-400">{formatAtelierInstant(change.created_at)}</p>
+        {change.proposed_date && <p className="mt-2 text-sm text-stone-300">Preferred Date &amp; Time: {formatAppointmentPreference(change.proposed_date, change.proposed_time)}</p>}
         {change.reason && <p className="mt-2 whitespace-pre-wrap break-words text-sm text-stone-400">{change.reason}</p>}
         {change.review_reason && <p className="mt-2 whitespace-pre-wrap break-words text-sm text-stone-300">TCC: {change.review_reason}</p>}
         {change.reviewed_at && <p className="mt-2 text-xs text-stone-500">Reviewed {formatAtelierInstant(change.reviewed_at)}</p>}

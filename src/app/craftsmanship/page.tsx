@@ -101,9 +101,6 @@ export default function CraftsmanshipPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Editorial Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            Atelier Standards & Discipline
-          </span>
           <h1 className="font-display text-4xl sm:text-6xl font-normal tracking-tight text-warm-ivory leading-tight">
             Every detail has a reason.
           </h1>
@@ -145,9 +142,6 @@ export default function CraftsmanshipPage() {
                     !isEven ? "lg:order-1" : ""
                   }`}
                 >
-                  <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold block">
-                    {craft.tagline}
-                  </span>
 
                   <h2 className="font-display text-2xl sm:text-4xl text-warm-ivory font-normal">
                     {craft.title}
@@ -175,9 +169,6 @@ export default function CraftsmanshipPage() {
 
         {/* Closing Invitation */}
         <div className="mt-32 p-8 sm:p-14 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl text-center max-w-4xl mx-auto">
-          <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block mb-2">
-            Witness It In Person
-          </span>
           <h2 className="font-display text-3xl sm:text-4xl text-warm-ivory">
             Visit the TCC Office
           </h2>

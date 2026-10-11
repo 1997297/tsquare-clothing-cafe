@@ -30,10 +30,7 @@ export default async function AccessDeniedPage({
         <div className="mx-auto mt-10 flex h-14 w-14 items-center justify-center rounded-full border border-champagne/30 bg-champagne/10">
           <LockKeyhole className="h-6 w-6 text-champagne" />
         </div>
-        <p className="mt-7 text-[10px] font-mono uppercase tracking-[0.3em] text-champagne-dark">
-          Private Atelier Security
-        </p>
-        <h1 className="mt-3 font-display text-3xl">Access Restricted</h1>
+        <h1 className="mt-6 font-display text-3xl">Access Restricted</h1>
         <p className="mx-auto mt-4 max-w-sm text-sm leading-7 text-stone-400">
           {message}
         </p>

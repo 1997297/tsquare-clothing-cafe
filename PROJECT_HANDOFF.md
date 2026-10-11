@@ -10,13 +10,47 @@ and production alias https://tsquare-clothing-cafe.vercel.app assigned to READY
 deployment `dpl_FK3c3Fc7dtRtecTF5rt1CpbZDKsQ` at that exact SHA.
 Phase 7 implementation and its final authentication release gate have passed.
 This remains the final development phase; no Phase 8 is authorized. The user has
-now authorized the separate post-Phase-7 Stage 1 corrections described below.
+now authorized the separate post-Phase-7 Stage 1 and Stage 2 corrections below.
+
+### Post-Phase-7 Stage 2 — implementation and verification in progress
+
+- Scope: CEO bank display/edit card, historical request Transfer To/copy card,
+  shared Concierge bubbles/composer/refresh layout, human appointment wording,
+  and selective decorative heading-label removal. No Stage 3 or new major feature.
+- Entry gate verified clean main/local/origin/GitHub equality at
+  3bb9505f1f1eeab215ad705ed73fadde307b8121 and exact READY production
+  dpl_FVdvxgQ7zyEGf8A3jjjiSEhhteuN, with the public production alias.
+- UI implementation is local and uncommitted. Existing payment actions, ledger,
+  RLS, server authentication, callbacks and migrations are unchanged. A small
+  ClientForm opt-in focuses the bank editor only after its inert hydration gate.
+- Final typecheck, lint, 70 tests and optimized 68-page build passed. All 48 isolated
+  real-component browser checks passed at 390/768/1440 in both themes, including
+  focus, failures/retry, exact copy, sender colours and chat pagination/scrolling.
+  Browser fixture suite uses real components with explicitly mocked
+  actions: NEVER use it as evidence of actual production bank persistence.
+  scripts/verify-stage2-ui.mjs runs on port 3001 after a build with that port free.
+- Stage 2 QA manifest/helpers/proofs are ignored under supabase/.temp/stage2-*.
+  Four tagged temporary Auth identities (Client, unrelated Client, Admin, CEO)
+  exist for safe authenticated READ checks. No QA business records were created.
+  Production bank saving must not be exercised, even with identical details.
+  Existing conversations must not be marked read just to test their presentation.
+- Live role/RLS checks passed, including rejected Client/Admin bank operations and
+  unrelated-client financial/appointment/conversation isolation. All original
+  38-table/327-row fingerprints and RLS/trigger settings still match the baseline.
+- Actual local production build passed the 36-check all-role responsive/theme smoke,
+  real password login/guards, CEO Edit/Cancel, read-only real record displays and copy.
+  All business POSTs were blocked, including automatic conversation mark-read.
+  Final known-secret scan: 439 source/browser files, zero matches/private files tracked.
+- Outstanding: commit/push, exact READY rollout and production smoke, exact QA cleanup and
+  preservation comparison, then final report/clean-Git checkpoint. Do not declare
+  Stage 2 complete until those gates pass. Do not resume removed Stage 1 fixtures.
 
 ### Post-Phase-7 Stage 1 corrections — verified and closed
 
 - All seven scoped corrections are implemented and production-verified. Read
   STAGE1_CORRECTIONS_REPORT.md for each result, root cause, checks and limitations.
-  Stop here: no Stage 2/3, new phase, theme redesign or major feature is authorized.
+  This is historical Stage 1 closure. Stage 2 is separately authorized above;
+  Stage 3, a new phase, theme redesign and major features remain out of scope.
 - Application commits: be14098c07833024decd452459dfc53f4e6038a7 and authentication
   follow-up fe504fcf7be0cb6e0dbe653d3622d1ef9603b619. The latter is verified READY
   on dpl_8vSHPRAHKhnJK5wQSnQ8VnES4G7u with the public production alias.

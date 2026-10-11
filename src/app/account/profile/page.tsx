@@ -132,9 +132,6 @@ export default function AccountProfilePage() {
       <ReturnLink href="/account" label="Return to Dashboard" />
       {/* Header */}
       <div className="border-b border-stone-800/60 pb-6">
-        <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-1">
-          Client Credentials
-        </span>
         <h1 className="font-display text-2xl sm:text-3xl text-warm-ivory">
           Personal Profile
         </h1>

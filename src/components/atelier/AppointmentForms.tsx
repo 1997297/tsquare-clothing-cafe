@@ -1,5 +1,6 @@
 import { APPOINTMENT_PURPOSES, type AtelierAppointment, type AtelierChange, type AtelierContextOptions } from "@/lib/atelier-service";
 import { atelierCalendar, isAtelierTime } from "@/lib/atelier-time";
+import { appointmentChangeLabel, formatAppointmentPreference } from "@/lib/atelier-presentation";
 import { createAtelierAppointmentAction, requestAtelierChangeAction, manageAtelierAppointmentAction, reviewAtelierChangeAction, addAtelierNoteAction } from "@/app/atelier-actions";
 import { AtelierField, AtelierForm } from "./AtelierForm";
 import { ContextFields } from "./ServiceUI";
@@ -55,8 +56,10 @@ export function StaffAppointmentControls({ appointment, changes }: { appointment
   const values = { appointmentId: appointment.id, expectedVersion: appointment.lock_version };
   const action = appointment.status === "requested" ? "confirm" : "reschedule";
   return <div className="space-y-6">
-    {pending.map(change => <section className={atelierPanel} key={change.id}><h2 className="font-display text-xl">Review client {change.change_type}</h2>
-      <p className="mt-3 whitespace-pre-wrap break-words text-sm text-stone-400">{change.proposed_date} {change.proposed_time}{change.reason ? ` · ${change.reason}` : ""}</p>
+    {pending.map(change => <section className={atelierPanel} key={change.id}><h2 className="font-display text-xl">{appointmentChangeLabel(change.change_type)}</h2>
+      <p className="mt-3 text-sm text-stone-400">Awaiting TCC review</p>
+      {change.proposed_date && <p className="mt-3 text-sm text-stone-300">Preferred Date &amp; Time: {formatAppointmentPreference(change.proposed_date, change.proposed_time)}</p>}
+      {change.reason && <p className="mt-3 whitespace-pre-wrap break-words text-sm text-stone-400">{change.reason}</p>}
       <details className="mt-5"><summary className="cursor-pointer text-sm text-champagne">Approve change</summary><div className="mt-4">
         <AtelierForm action={reviewAtelierChangeAction} label="Approve change" values={{ changeId: change.id, decision: "approve", expectedVersion: appointment.lock_version, expectedChangeVersion: change.lock_version }} confirmText="Approve this client change and notify them? Any selected time becomes the authoritative TCC schedule.">
           {change.change_type === "reschedule" && <ScheduleFields appointment={appointment} change={change} />}

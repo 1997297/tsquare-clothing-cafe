@@ -79,10 +79,7 @@ function CreateAccountForm() {
         {/* Brand Header */}
         <div className="text-center flex flex-col items-center">
           <BrandLogo variant="light" size="lg" />
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold mt-4 block">
-            Private Client Membership
-          </span>
-          <h1 className="font-display text-2xl sm:text-3xl text-warm-ivory mt-2 font-normal">
+          <h1 className="mt-6 font-display text-2xl sm:text-3xl text-warm-ivory font-normal">
             Create Your Client Account
           </h1>
           <p className="mt-2 text-xs text-stone-400 font-light">

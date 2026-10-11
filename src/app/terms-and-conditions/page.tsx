@@ -19,9 +19,6 @@ export default function TermsPage() {
           Back to Home
         </Link>
 
-        <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-2">
-          Atelier Terms of Engagement
-        </span>
         <h1 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory mb-8">
           Terms & Conditions
         </h1>

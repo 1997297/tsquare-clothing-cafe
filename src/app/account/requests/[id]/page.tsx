@@ -12,6 +12,7 @@ import { ReturnLink } from "@/components/common/ReturnLink";
 import { RequestStatusBadge, WorkflowTimeline } from "@/components/atelier/WorkflowUI";
 import { findOwnedRequest } from "@/lib/atelier-workflow";
 import { RequestResubmissionForm } from "./RequestResubmissionForm";
+import { formatAppointmentPreference } from "@/lib/atelier-presentation";
 
 export default function RequestDetailPage({
   params,
@@ -270,10 +271,10 @@ export default function RequestDetailPage({
                 {request.appointmentRequest.type.replace(/-/g, " ")}
               </p>
               <p className="text-stone-400 font-mono">
-                {request.appointmentRequest.preferredDate} ({request.appointmentRequest.preferredTime})
+                Preferred Date &amp; Time: {formatAppointmentPreference(request.appointmentRequest.preferredDate, request.appointmentRequest.preferredTime)}
               </p>
               <p className="text-[11px] text-stone-500">
-                TCC office
+                TCC office · Awaiting confirmation, not a confirmed booking.
               </p>
             </div>
           )}

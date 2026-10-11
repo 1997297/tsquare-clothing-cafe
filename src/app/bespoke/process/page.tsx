@@ -89,9 +89,6 @@ export default function BespokeProcessPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-24">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            Atelier Methodology
-          </span>
           <h1 className="font-display text-4xl sm:text-6xl font-normal tracking-tight text-warm-ivory">
             The Bespoke Journey: How It Works
           </h1>
@@ -144,9 +141,6 @@ export default function BespokeProcessPage() {
 
         {/* Ready to begin callout */}
         <div className="mt-24 p-8 sm:p-12 bg-stone-950 fine-border text-center">
-          <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold block mb-3">
-            Your Commission Awaits
-          </span>
           <h2 className="font-display text-3xl text-warm-ivory">
             Ready to initiate your bespoke journey?
           </h2>

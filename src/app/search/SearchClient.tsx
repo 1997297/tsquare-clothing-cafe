@@ -35,9 +35,6 @@ export default function SearchClient() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Search Header */}
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            Atelier Archive Discovery
-          </span>
           <h1 className="font-display text-4xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
             Search The Collection
           </h1>

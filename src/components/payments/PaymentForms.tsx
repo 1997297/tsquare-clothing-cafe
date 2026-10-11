@@ -9,6 +9,7 @@ import { type BankSettings, type FinancialSummary, type PaymentOrder, type Payme
 import { formatMinor } from "@/lib/payments/money";
 import { workflowOperation, type WorkflowOperation } from "@/lib/workflow-operation";
 import { buttonClass, inputClass, panelClass } from "./PaymentUI";
+import { BankAccountCard } from "./BankAccountCard";
 
 type Values = Record<string, unknown>;
 function Confirm({ description, busy, close, confirm }: { description: string; busy: boolean; close: () => void; confirm: () => void }) {
@@ -16,7 +17,7 @@ function Confirm({ description, busy, close, confirm }: { description: string; b
   useEffect(() => { const node = dialog.current; node?.showModal(); return () => node?.close(); }, []);
   return <dialog ref={dialog} onCancel={e => { e.preventDefault(); if (!busy) close(); }} aria-labelledby="payment-confirm-title" className="m-auto w-[calc(100%-2rem)] max-w-md rounded-3xl border border-stone-700 bg-stone-950 p-6 text-warm-ivory shadow-2xl backdrop:bg-black/75"><h2 id="payment-confirm-title" className="font-display text-2xl">Confirm financial action</h2><p className="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-stone-300">{description}</p><div className="mt-6 flex flex-wrap justify-end gap-3"><button type="button" autoFocus disabled={busy} onClick={close} className="rounded-xl border border-stone-700 px-4 py-3 text-sm">Go back</button><button type="button" disabled={busy} onClick={confirm} className={buttonClass}>{busy ? "Saving…" : "Confirm"}</button></div></dialog>;
 }
-function FinancialForm({ children, values, action, label, describe, disabled = false }: { children: ReactNode; values: Values; action: (input: unknown) => Promise<PaymentActionResult>; label: string; describe: (input: Values) => string; disabled?: boolean }) {
+function FinancialForm({ children, values, action, label, describe, disabled = false, onSuccess, onCancel }: { children: ReactNode; values: Values; action: (input: unknown) => Promise<PaymentActionResult>; label: string; describe: (input: Values) => string; disabled?: boolean; onSuccess?: () => void; onCancel?: () => void }) {
   const router = useRouter();
   const operation = useRef<WorkflowOperation | null>(null);
   const [pending, startTransition] = useTransition();
@@ -33,20 +34,35 @@ function FinancialForm({ children, values, action, label, describe, disabled = f
         const result = await action({ ...input, operationKey });
         setFailed(!result.success);
         setMessage(result.success ? "Saved. Financial records refreshed." : result.error);
-        if (result.success) { router.refresh(); window.dispatchEvent(new Event("tcc-payments-updated")); }
+        if (result.success) { router.refresh(); window.dispatchEvent(new Event("tcc-payments-updated")); onSuccess?.(); }
       } catch { setFailed(true); setMessage("We could not confirm the result. Refresh to check the history, or retry the same action."); }
       setConfirmation(null);
     });
   };
-  return <><ClientForm onSubmit={e => { e.preventDefault(); if (pending || disabled) return; setMessage(""); setConfirmation({ ...Object.fromEntries(new FormData(e.currentTarget)), ...values }); }} className="space-y-4"><fieldset disabled={pending || disabled} className="min-w-0 space-y-4">{children}<button type="submit" className={buttonClass}>{label}</button></fieldset>{message && <p role={failed ? "alert" : "status"} className={`text-sm leading-6 ${failed ? "text-rose-400" : "text-champagne"}`}>{message}</p>}</ClientForm>{confirmation && <Confirm description={describe(confirmation)} busy={pending} close={() => { if (!pending) setConfirmation(null); }} confirm={run} />}</>;
+  return <><ClientForm onSubmit={e => { e.preventDefault(); if (pending || disabled) return; setMessage(""); setConfirmation({ ...Object.fromEntries(new FormData(e.currentTarget)), ...values }); }} focusFirstField={Boolean(onCancel)} className="space-y-4"><fieldset disabled={pending || disabled} className="min-w-0 space-y-4">{children}<div className="flex flex-wrap items-center gap-3"><button type="submit" className={buttonClass}>{pending ? "Saving…" : label}</button>{onCancel && <button type="button" onClick={onCancel} className="rounded-xl border border-stone-700 px-4 py-3 text-xs text-stone-300 focus-visible:outline-champagne">Cancel</button>}</div></fieldset>{message && <p role={failed ? "alert" : "status"} className={`text-sm leading-6 ${failed ? "text-rose-400" : "text-champagne"}`}>{message}</p>}</ClientForm>{confirmation && <Confirm description={describe(confirmation)} busy={pending} close={() => { if (!pending) setConfirmation(null); }} confirm={run} />}</>;
 }
 function Field({ label, children }: { label: string; children: ReactNode }) { return <label className="block min-w-0 text-xs text-stone-400">{label}{children}</label>; }
 function MoneyInput({ value }: { value?: number | null }) { return <input name="amount" inputMode="decimal" required maxLength={20} placeholder="0.00" defaultValue={value == null ? "" : `${Math.floor(value / 100)}.${String(value % 100).padStart(2, "0")}`} className={inputClass} />; }
 
 export function BankSettingsForm({ bank, ceo }: { bank: BankSettings | null; ceo: boolean }) {
+  const [editing, setEditing] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const editButton = useRef<HTMLButtonElement>(null);
+  const closeEditor = () => {
+    setEditing(false);
+    requestAnimationFrame(() => editButton.current?.focus());
+  };
   if (!bank) return <section className={panelClass}><h2 className="font-display text-xl">Official bank details</h2><p className="mt-3 text-sm text-stone-400">Bank configuration is unavailable. Payment requests cannot be issued.</p></section>;
-  return <section className={panelClass}><h2 className="font-display text-xl">Official bank details</h2><p className="my-4 text-sm leading-6 text-stone-400">{bank.is_configured ? "New payment requests use these details. Existing requests retain their original bank instructions." : "Setup incomplete. Fields below contain placeholder hints only. The CEO must enter the official details after project approval; no transfers should be made yet."}</p>
-    {ceo ? <FinancialForm key={bank.lock_version} values={{ expectedVersion: bank.lock_version }} action={setBankAction} label="Save official bank details" describe={v => `Change the destination for NEW payment requests to ${v.bankName}, ${v.accountName}, account ${v.accountNumber}? Confirm these are TCC's official details. Historical requests will not change.`}><div className="grid gap-4 sm:grid-cols-2"><Field label="Bank name"><input name="bankName" required minLength={2} maxLength={120} defaultValue={bank.bank_name} placeholder="Enter official bank name" className={inputClass} /></Field><Field label="Account name"><input name="accountName" required minLength={2} maxLength={160} defaultValue={bank.account_name} placeholder="Enter TCC account name" className={inputClass} /></Field><Field label="Account number"><input name="accountNumber" required inputMode="numeric" pattern="[0-9]{10}" maxLength={10} defaultValue={bank.account_number} placeholder="Official 10-digit number" className={inputClass} /></Field><Field label="Transfer instructions (optional)"><textarea name="instructions" maxLength={2000} defaultValue={bank.instructions} placeholder="Instructions for the client" className={inputClass} /></Field></div></FinancialForm> : <><dl className="space-y-2 break-words text-sm"><div><dt className="text-stone-500">Bank</dt><dd>{bank.bank_name || "Not configured"}</dd></div><div><dt className="text-stone-500">Account</dt><dd>{bank.account_name || "Not configured"} {bank.account_number}</dd></div></dl><p className="mt-4 text-xs text-stone-400">Only the CEO can change the destination account.</p></>}
+  return <section className={panelClass} aria-label="Bank Account Settings">
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-xl">Bank Account Settings</h2>
+      {ceo && !editing && <button ref={editButton} type="button" className={buttonClass} onClick={() => { setSaved(false); setEditing(true); }}>{bank.is_configured ? "Edit" : "Set up bank account"}</button>}
+    </div>
+    <p className="my-4 text-sm leading-6 text-stone-400">{bank.is_configured ? "Current official transfer details for new payment requests. Existing requests keep their original bank instructions." : "Setup incomplete. The CEO must enter TCC’s official bank details before payment requests can be issued. Do not transfer funds yet."}</p>
+    {ceo && editing ? <FinancialForm key={bank.lock_version} values={{ expectedVersion: bank.lock_version }} action={setBankAction} label="Save Changes" onCancel={closeEditor} onSuccess={() => { setSaved(true); closeEditor(); }} describe={v => `Change the destination for NEW payment requests to ${v.bankName}, ${v.accountName}, account ${v.accountNumber}? Confirm these are TCC's official details. Historical requests will not change.`}>
+      <div className="grid gap-4 sm:grid-cols-2"><Field label="Bank name"><input autoFocus name="bankName" required minLength={2} maxLength={120} defaultValue={bank.bank_name} placeholder="Enter official bank name" className={inputClass} /></Field><Field label="Account name"><input name="accountName" required minLength={2} maxLength={160} defaultValue={bank.account_name} placeholder="Enter TCC account name" className={inputClass} /></Field><Field label="Account number"><input name="accountNumber" required inputMode="numeric" pattern="[0-9]{10}" maxLength={10} defaultValue={bank.account_number} placeholder="Official 10-digit number" className={inputClass} /></Field><Field label="Transfer instructions (optional)"><textarea name="instructions" maxLength={2000} defaultValue={bank.instructions} placeholder="Instructions for the client" className={inputClass} /></Field></div>
+    </FinancialForm> : bank.is_configured && <><BankAccountCard bank={bank} />{bank.instructions && <p className="mt-4 whitespace-pre-wrap break-words text-sm text-stone-300">{bank.instructions}</p>}</>}
+    {!ceo && <p className="mt-4 text-xs text-stone-400">Only the CEO can change the destination account.</p>}
+    {saved && <p role="status" className="mt-4 text-sm text-stone-300">Official bank details saved.</p>}
   </section>;
 }
 

@@ -65,9 +65,6 @@ export default function BespokePage() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold mb-4">
-            TSquare Clothing Cafe Atelier
-          </span>
 
           <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-normal tracking-tight text-warm-ivory leading-tight max-w-4xl">
             A garment made from you. Not simply for you.
@@ -93,9 +90,6 @@ export default function BespokePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
-              <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block">
-                The House Philosophy
-              </span>
               <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory leading-tight">
                 Craftsmanship is a discipline of patient millimeters.
               </h2>
@@ -135,9 +129,6 @@ export default function BespokePage() {
       <section className="py-24 sm:py-32 bg-near-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-            <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block mb-3">
-              The Sartorial Pillars
-            </span>
             <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
               The Architecture of Bespoke
             </h2>
@@ -178,9 +169,6 @@ export default function BespokePage() {
       <section className="py-20 sm:py-28 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-espresso/10 to-transparent" />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            Your Vision, Our Craft
-          </span>
           <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
             Start From An Idea
           </h2>
@@ -199,9 +187,6 @@ export default function BespokePage() {
       {/* ── Final CTA ── */}
       <section className="py-20 sm:py-28 text-center border-t border-stone-800/40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            TCC Office
-          </span>
           <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
             Begin Your Bespoke Journey
           </h2>

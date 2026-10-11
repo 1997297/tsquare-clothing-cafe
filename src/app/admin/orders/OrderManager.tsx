@@ -25,8 +25,7 @@ export function OrderManager({ orders }: { orders: AdminOrderRecord[] }) {
     <div className="space-y-8">
       <header className="flex flex-col gap-5 border-b border-stone-800/70 pb-7 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-champagne-dark">Atelier production</p>
-          <h1 className="mt-3 font-display text-3xl sm:text-4xl">Production Orders</h1>
+          <h1 className="font-display text-3xl sm:text-4xl">Production Orders</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-400">Orders are created only from approved request snapshots. Production stages here are visible to the owning client.</p>
         </div>
         <p className="text-xs text-stone-500">{visible.length} of {orders.length} orders</p>

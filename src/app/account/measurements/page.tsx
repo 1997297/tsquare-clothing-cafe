@@ -121,9 +121,6 @@ export default function AccountMeasurementsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800/60 pb-6">
         <div>
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-1">
-            Anatomical Vault
-          </span>
           <h1 className="font-display text-2xl sm:text-3xl text-warm-ivory">
             Physiological Measurements
           </h1>

@@ -11,7 +11,7 @@ import { manageAdminStaffAction } from './actions';
 export default async function AdminStaffPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const page = peoplePage((await searchParams).page);
   const result = await getStaffDirectory(page);
-  return <div className="space-y-8"><ServiceHeader eyebrow="CEO authority" title="Staff" description="Manage Admin access while retaining staff attribution and business history. CEO authority is protected and cannot be changed here." />
+  return <div className="space-y-8"><ServiceHeader title="Staff" description="Manage Admin access while retaining staff attribution and business history. CEO authority is protected and cannot be changed here." />
     <PeopleSection id="onboarding" title="Add an Admin"><StaffOnboarding /></PeopleSection>
     {result.staff.length === 0 ? <ServiceEmpty>No staff records on this page.</ServiceEmpty> : <div className="grid items-start gap-5 xl:grid-cols-2">{result.staff.map(row => <article key={row.user_id} className={atelierPanel}>
       <h2 className="break-words font-display text-xl">{peopleName(row.first_name, row.last_name)}</h2><p className="mt-2 break-all text-sm text-stone-400">{row.email}</p>

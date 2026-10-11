@@ -42,12 +42,6 @@ export default function WardrobePage() {
       <div className="border-b border-stone-800/60 pb-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-4 h-4 text-champagne" />
-              <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block">
-                Digital Atelier Archive
-              </span>
-            </div>
             <h1 className="font-display text-3xl sm:text-4xl text-warm-ivory font-normal">
               Your TSquare Wardrobe
             </h1>

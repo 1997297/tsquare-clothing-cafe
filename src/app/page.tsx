@@ -80,9 +80,6 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left Narrative */}
             <div className="lg:col-span-6 space-y-6">
-              <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block">
-                TSQUARE CLOTHING CAFE
-              </span>
 
               <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory leading-tight">
                 The TSquare Man.
@@ -151,9 +148,6 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div>
-              <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-stone-400 font-semibold block mb-2">
-                House Silhouettes
-              </span>
               <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
                 Signature Collections
               </h2>
@@ -176,9 +170,6 @@ export default async function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity" />
               <div className="absolute bottom-6 sm:bottom-10 left-6 sm:left-10 right-6 z-10">
-                <span className="text-[10px] uppercase tracking-[0.25em] text-champagne font-mono font-semibold">
-                  Volumetric Grandeur
-                </span>
                 <h3 className="font-display text-2xl sm:text-4xl text-[#FAF8F5] mt-1">
                   {COLLECTIONS[0].name}
                 </h3>
@@ -205,9 +196,6 @@ export default async function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity" />
               <div className="absolute bottom-6 sm:bottom-10 left-6 sm:left-8 right-6 z-10">
-                <span className="text-[10px] uppercase tracking-[0.25em] text-champagne font-mono font-semibold">
-                  Executive Authority
-                </span>
                 <h3 className="font-display text-2xl sm:text-3xl text-[#FAF8F5] mt-1">
                   {COLLECTIONS[1].name}
                 </h3>
@@ -234,9 +222,6 @@ export default async function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90" />
               <div className="absolute bottom-6 left-6 right-6 z-10">
-                <span className="text-[9px] uppercase tracking-widest text-champagne font-mono">
-                  Tactile Luxury
-                </span>
                 <h3 className="font-display text-xl sm:text-2xl text-[#FAF8F5] mt-0.5">
                   {COLLECTIONS[2].name}
                 </h3>
@@ -260,9 +245,6 @@ export default async function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90" />
               <div className="absolute bottom-6 left-6 right-6 z-10">
-                <span className="text-[9px] uppercase tracking-widest text-champagne font-mono">
-                  Ancestral Weaving
-                </span>
                 <h3 className="font-display text-xl sm:text-2xl text-[#FAF8F5] mt-0.5">
                   {COLLECTIONS[3].name}
                 </h3>
@@ -288,9 +270,6 @@ export default async function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-95" />
                 <div className="relative z-10">
-                  <span className="text-[9px] uppercase tracking-widest text-champagne font-mono">
-                    Full Floating Canvas
-                  </span>
                   <h3 className="font-display text-xl text-[#FAF8F5] mt-0.5">
                     {COLLECTIONS[4].name}
                   </h3>
@@ -314,9 +293,6 @@ export default async function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-95" />
                 <div className="relative z-10">
-                  <span className="text-[9px] uppercase tracking-widest text-champagne font-mono">
-                    Black Tie & Galas
-                  </span>
                   <h3 className="font-display text-xl text-[#FAF8F5] mt-0.5">
                     {COLLECTIONS[5].name}
                   </h3>
@@ -340,9 +316,6 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div>
-              <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block mb-2">
-                Curated Editorial
-              </span>
               <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
                 Selected Looks
               </h2>
@@ -370,9 +343,6 @@ export default async function HomePage() {
       <section className="py-24 sm:py-32 bg-stone-950 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-            <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block mb-3">
-              The Sartorial Process
-            </span>
             <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
               Made for you. Down to the detail.
             </h2>
@@ -450,9 +420,6 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-6">
-              <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block">
-                Atelier Discipline
-              </span>
               <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory leading-tight">
                 Every detail has a reason.
               </h2>
@@ -535,9 +502,6 @@ export default async function HomePage() {
       <section className="py-24 sm:py-32 bg-near-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block mb-2">
-              Curated Dress Codes
-            </span>
             <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
               Dress for the moment.
             </h2>
@@ -562,9 +526,6 @@ export default async function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
                 <div className="relative z-10">
-                  <span className="text-[9px] uppercase font-mono tracking-widest text-champagne block mb-1">
-                    Occasion
-                  </span>
                   <h3 className="font-display text-base sm:text-xl text-[#FAF8F5] group-hover:text-champagne transition-colors">
                     {occ.name}
                   </h3>
@@ -583,9 +544,6 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------- */}
       <section className="py-24 sm:py-32 bg-near-black border-y border-stone-800">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-4">
-            PRIVATE CLIENT EXPERIENCE
-          </span>
 
           <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory leading-tight max-w-3xl mx-auto">
             Your relationship with TSquare, remembered.
@@ -637,9 +595,6 @@ export default async function HomePage() {
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            In-Person Atelier Consultation
-          </span>
 
           <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
             Some things should be made in person.
@@ -663,9 +618,6 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------- */}
       <section className="py-24 sm:py-32 bg-near-black text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-stone-500 font-semibold block mb-3">
-            TSQUARE CLOTHING CAFE
-          </span>
 
           <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
             Your next statement begins here.

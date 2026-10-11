@@ -61,12 +61,8 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
           <X className="h-5 w-5" />
         </button>
 
-        {/* Brand Eyebrow */}
+        {/* Keep the functional Fit reference. */}
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold">
-            Bespoke Commission
-          </span>
-          <span className="text-stone-600">•</span>
           <span className="text-[10px] uppercase font-mono tracking-widest text-stone-400">
             {style.code}
           </span>

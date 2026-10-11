@@ -71,9 +71,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             Back To All Collections
           </Link>
 
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-2">
-            House Collection
-          </span>
 
           <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-normal tracking-tight text-[#FAF8F5] leading-tight drop-shadow-sm">
             {collection.name}
@@ -118,9 +115,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <section className="py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-12 pb-4 border-b border-stone-800/80">
           <div>
-            <span className="text-[10px] uppercase font-mono tracking-widest text-champagne font-semibold">
-              Archive Catalog
-            </span>
             <h2 className="font-display text-2xl text-warm-ivory mt-0.5">
               Curated {collection.name} Pieces
             </h2>
@@ -144,9 +138,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
         {/* Bottom Consultation Link with Rounded-3xl */}
         <div className="mt-20 p-8 sm:p-12 bg-stone-950 fine-border rounded-3xl text-center max-w-3xl mx-auto shadow-md">
-          <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold block mb-2">
-            Personal Customization
-          </span>
           <h3 className="font-display text-2xl text-warm-ivory">
             Require a custom variant of {collection.name}?
           </h3>

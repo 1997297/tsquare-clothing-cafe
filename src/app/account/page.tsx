@@ -22,6 +22,8 @@ import { ClientOrderFinance } from "@/components/payments/ClientOrderFinance";
 import { ClientAtelierSummary } from "@/components/atelier/ClientAtelierSummary";
 import { nextAtelierAppointment } from "@/lib/atelier-priority";
 import { formatAtelierInstant } from "@/lib/atelier-time";
+import { appointmentScheduleLabel, formatAppointmentPreference } from "@/lib/atelier-presentation";
+import { APPOINTMENT_STATUS_LABELS } from "@/lib/atelier-service";
 
 const CRAFTSMANSHIP_STAGES = [
   { id: "order_confirmed", label: "Confirmed" },
@@ -78,9 +80,6 @@ export default function AccountOverviewPage() {
       <div className="border-b border-stone-800/60 pb-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-2">
-              Private Client Salon
-            </span>
             <h1 className="font-display text-3xl sm:text-4xl text-warm-ivory font-normal">
               {greeting}, {clientFirstName}.
             </h1>
@@ -349,15 +348,16 @@ export default function AccountOverviewPage() {
                   {(upcomingAppointment.type || "Appointment").replace(/[-_]/g, " ")}
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-champagne/15 text-champagne border border-champagne/30 text-[10px] font-mono capitalize">
-                  {upcomingAppointment.status}
+                  {APPOINTMENT_STATUS_LABELS[upcomingAppointment.status] ?? upcomingAppointment.status}
                 </span>
               </div>
 
               <div className="p-4 rounded-2xl bg-stone-900/50 border border-stone-800/60 space-y-2">
+                <p className="text-xs text-stone-400">{appointmentScheduleLabel(upcomingAppointment.status, Boolean(upcomingAppointment.scheduledStartAt))}</p>
                 <div className="flex items-center gap-2 text-xs text-warm-ivory">
                   <Clock className="w-3.5 h-3.5 text-champagne shrink-0" />
                   <span className="font-mono">
-                    {upcomingAppointment.scheduledStartAt ? formatAtelierInstant(upcomingAppointment.scheduledStartAt) : `Preferred: ${upcomingAppointment.preferredDate} · ${upcomingAppointment.preferredTime} (awaiting TCC)`}
+                    {upcomingAppointment.scheduledStartAt ? formatAtelierInstant(upcomingAppointment.scheduledStartAt) : formatAppointmentPreference(upcomingAppointment.preferredDate, upcomingAppointment.preferredTime)}
                   </span>
                 </div>
                 <p className="text-[11px] text-stone-400 pl-5.5">

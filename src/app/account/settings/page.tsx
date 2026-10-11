@@ -59,9 +59,6 @@ export default function AccountSettingsPage() {
     <div className="space-y-8 animate-in fade-in duration-300 max-w-3xl">
       {/* Header */}
       <div className="border-b border-stone-800/60 pb-6">
-        <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-1">
-          Security & Privacy
-        </span>
         <h1 className="font-display text-2xl sm:text-3xl text-warm-ivory">
           Account Settings
         </h1>

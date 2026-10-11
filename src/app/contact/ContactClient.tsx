@@ -45,9 +45,6 @@ export default function ContactClient() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-3">
-            Atelier Liaison & Concierge
-          </span>
           <h1 className="font-display text-4xl sm:text-6xl font-normal tracking-tight text-warm-ivory">
             Connect With TSquare
           </h1>
@@ -159,9 +156,6 @@ export default function ContactClient() {
           <div className="lg:col-span-7">
             <div className="p-8 sm:p-10 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl">
               <div className="mb-6">
-                <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold block mb-1">
-                  Atelier Dispatch
-                </span>
                 <h3 className="font-display text-2xl text-warm-ivory">
                   Send A Message To Our Stylists
                 </h3>

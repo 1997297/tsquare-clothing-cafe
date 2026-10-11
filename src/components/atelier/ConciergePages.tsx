@@ -32,7 +32,7 @@ export async function ConciergeListPage({ staff, searchParams }: { staff: boolea
   const base = staff ? "/admin/concierge" : "/account/concierge";
   const last = result.conversations.at(-1);
   const next = new URLSearchParams(staff ? { status: status ?? "", unread: params.unread ?? "", before: last?.last_message_at ?? last?.created_at ?? "", beforeId: last?.id ?? "" } : { page: String(page + 1) });
-  return <div className="space-y-7"><ServiceHeader eyebrow="TCC Concierge" title={staff ? "Client conversations" : "Your private Concierge"} description={staff ? "Client messages, shared TCC read state and private atelier replies. Formal request changes stay in the Requests workflow." : "Direct communication with the atelier. Your conversations and replies are private to your account and authorized TCC staff."}>
+  return <div className="space-y-7"><ServiceHeader title={staff ? "Client conversations" : "Your private Concierge"} description={staff ? "Client messages, shared TCC read state and private atelier replies. Formal request changes stay in the Requests workflow." : "Direct communication with the atelier. Your conversations and replies are private to your account and authorized TCC staff."}>
     {!staff && <Link className={atelierButton} href={`${base}/new`}>Start a conversation</Link>}
   </ServiceHeader>
     {staff && <form method="get" className="flex flex-wrap items-end gap-4"><label className="text-xs text-stone-400">Status<select name="status" defaultValue={status ?? ""} className={atelierInput}><option value="">All conversations</option>{Object.entries(CONCIERGE_STATUS_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
@@ -57,17 +57,18 @@ export async function ConciergeDetailPage({ id, staff }: { id: string; staff: bo
   const base = staff ? "/admin" : "/account";
   const open = ["open", "in_review", "awaiting_customer"].includes(conversation.status);
   return <div className="mx-auto max-w-4xl space-y-7"><Link href={`${base}/concierge`} className="text-xs text-champagne">← Concierge</Link>
-    <ServiceHeader eyebrow={conversation.reference_code} title={conversation.subject} description={`${CONCIERGE_STATUS_LABELS[conversation.status] ?? conversation.status} · Private communication with TCC`} />
+    <ServiceHeader reference={conversation.reference_code} title={conversation.subject} description={`${CONCIERGE_STATUS_LABELS[conversation.status] ?? conversation.status} · Private communication with TCC`} />
     <section className={`${atelierPanel} space-y-5`}>
       {contact && <div><p className="font-display text-xl">{contact.first_name} {contact.last_name}</p><p className="mt-2 break-words text-sm text-stone-400">{contact.email} · {contact.phone || "Phone not recorded"}</p></div>}
       <ContextLinks staff={staff} order={conversation.context_order_id ?? conversation.related_order_id} request={conversation.context_request_id ?? conversation.related_request_id} appointment={conversation.context_appointment_id ?? conversation.related_appointment_id} />
-      <ConciergeMessages key={id} requestId={id} initialMessages={thread.messages} initialHasMore={thread.has_more} initialReadSeq={staff ? conversation.staff_read_seq : conversation.client_read_seq} staff={staff} />
-    </section>
-    <section className={atelierPanel}><h2 className="mb-5 font-display text-xl">{staff ? "Reply as TCC Concierge" : "Your reply"}</h2>
+      <ConciergeMessages key={id} requestId={id} initialMessages={thread.messages} initialHasMore={thread.has_more} initialReadSeq={staff ? conversation.staff_read_seq : conversation.client_read_seq} staff={staff}>
+      <section className="border-t border-stone-800 pt-6"><h2 className="mb-5 font-display text-xl">{staff ? "Reply as TCC Concierge" : "Your reply"}</h2>
       {open ? <AtelierForm action={sendAtelierMessageAction} values={{ requestId: id }} label={staff ? "Send TCC reply" : "Send reply"} resetOnSuccess>
         <AtelierField label="Message"><textarea name="message" rows={5} maxLength={4000} required className={atelierInput} /></AtelierField>
         <p className="text-xs leading-5 text-stone-500">Sent messages cannot be edited or deleted. Do not share passwords or payment credentials.</p>
       </AtelierForm> : <p className="text-sm text-stone-400">This conversation is {conversation.status}. {staff ? "Reopen it below to reply." : "TCC can reopen it, or you can start a new conversation."}</p>}
+      </section>
+      </ConciergeMessages>
     </section>
     {staff && <section className={atelierPanel}><h2 className="mb-5 font-display text-xl">Conversation status</h2><AtelierForm action={setAtelierConversationStatusAction} values={{ requestId: id, expectedVersion: conversation.lock_version }} label="Update conversation" confirmText="Change this conversation's status? Closing or resolving prevents further messages until TCC explicitly reopens it. History is retained.">
       <AtelierField label="Status"><select name="status" defaultValue={conversation.status} className={atelierInput}>{Object.entries(CONCIERGE_STATUS_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></AtelierField>

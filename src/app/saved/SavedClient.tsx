@@ -25,9 +25,6 @@ export default function SavedClient() {
         {/* Page Header */}
         <div className="border-b border-stone-800/80 pb-8 mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-champagne font-semibold block mb-2">
-              Private Client Consultation Curation
-            </span>
             <h1 className="font-display text-4xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
               Saved Looks
             </h1>

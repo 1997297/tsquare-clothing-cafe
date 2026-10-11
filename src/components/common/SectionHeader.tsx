@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 
 interface SectionHeaderProps {
-  eyebrow?: string;
   title: string;
   description?: string;
   alignment?: "left" | "center" | "right";
@@ -10,7 +9,6 @@ interface SectionHeaderProps {
 }
 
 export function SectionHeader({
-  eyebrow,
   title,
   description,
   alignment = "center",
@@ -24,7 +22,6 @@ export function SectionHeader({
   };
 
   const titleColor = theme === "dark" ? "text-warm-ivory" : "text-near-black";
-  const eyebrowColor = theme === "dark" ? "text-stone-400" : "text-stone-500";
   const descColor = theme === "dark" ? "text-stone-300" : "text-stone-600";
 
   return (
@@ -35,16 +32,6 @@ export function SectionHeader({
         className
       )}
     >
-      {eyebrow && (
-        <span
-          className={cn(
-            "text-[10px] sm:text-xs uppercase tracking-[0.28em] font-semibold mb-3 select-none",
-            eyebrowColor
-          )}
-        >
-          {eyebrow}
-        </span>
-      )}
       <h2
         className={cn(
           "font-display text-2xl sm:text-4xl lg:text-5xl font-normal tracking-tight leading-tight sm:leading-tight",

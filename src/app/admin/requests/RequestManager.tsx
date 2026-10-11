@@ -37,8 +37,7 @@ export function RequestManager({ requests }: { requests: AdminRequestRecord[] })
     <div className="space-y-8">
       <header className="flex flex-col gap-5 border-b border-stone-800/70 pb-7 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-champagne-dark">Commission intake</p>
-          <h1 className="mt-3 font-display text-3xl sm:text-4xl">Client Requests</h1>
+          <h1 className="font-display text-3xl sm:text-4xl">Client Requests</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-400">Review real Make This Mine submissions, request precise changes, record decisions, and create orders only after approval.</p>
         </div>
         <p className="text-xs text-stone-500">{visible.length} of {requests.length} requests</p>

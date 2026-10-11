@@ -82,7 +82,7 @@ export function GalleryManager({ fitId, fitName, initialImages }: { fitId: strin
   return (
     <section className="rounded-3xl border border-stone-800 bg-stone-950/50 p-5 sm:p-7">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div><p className="text-[10px] uppercase tracking-[0.2em] text-champagne">Fit Gallery</p><h2 className="mt-2 font-display text-2xl">Exact outfit views</h2><p className="mt-2 max-w-2xl text-xs leading-6 text-stone-500">Every image must show this same Fit. Order is customer-facing; the cover appears on catalogue cards.</p></div>
+        <div><h2 className="font-display text-2xl">Exact outfit views</h2><p className="mt-2 max-w-2xl text-xs leading-6 text-stone-500">Every image must show this same Fit. Order is customer-facing; the cover appears on catalogue cards.</p></div>
         <input ref={inputRef} type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={upload} className="sr-only" />
         <button type="button" disabled={uploading} onClick={() => inputRef.current?.click()} className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-champagne/40 px-4 py-2.5 text-xs uppercase tracking-wider text-champagne disabled:opacity-50">{uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}{uploading ? "Uploading…" : "Add images"}</button>
       </div>

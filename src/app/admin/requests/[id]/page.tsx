@@ -6,6 +6,7 @@ import { RequestStatusBadge, WorkflowTimeline } from "@/components/atelier/Workf
 import { getAdminRequest } from "@/lib/server/atelier-workflow";
 import { isUuid } from "@/lib/validation";
 import { RequestReviewPanel } from "./RequestReviewPanel";
+import { RequestAppointmentSummary } from "@/components/atelier/RequestAppointmentSummary";
 
 function valueLabel(value: unknown) {
   if (value === null || value === undefined || value === "") return "Not provided";
@@ -83,7 +84,8 @@ export default async function AdminRequestDetailPage({ params }: { params: Promi
             verificationStatus: request.measurementsSnapshot.verificationStatus,
           }} />
           <DetailGrid title="Customization choices" values={{ ...request.preferences, specialInstructions: request.specialInstructions }} />
-          <DetailGrid title="Occasion and schedule" values={{ occasion: request.occasion, eventName: request.eventName, eventDate: request.eventDate, requiredDate: request.requiredDate, appointment: request.appointmentRequest }} />
+          <DetailGrid title="Occasion and dates" values={{ occasion: request.occasion, eventName: request.eventName, eventDate: request.eventDate, requiredDate: request.requiredDate }} />
+          <RequestAppointmentSummary appointment={request.appointmentRequest} />
 
           <section className="rounded-3xl border border-stone-800 bg-stone-950/60 p-6 sm:p-8">
             <h2 className="text-xs font-mono uppercase tracking-[0.24em] text-champagne">Client references</h2>

@@ -13,7 +13,7 @@ export default async function AdminClientsPage({ searchParams }: { searchParams:
   const page = peoplePage(params.page);
   const result = await getClientDirectory(search, activity, page);
   const href = (next: number) => `/admin/clients?${new URLSearchParams({ q: search, activity, page: String(next) })}`;
-  return <div className="space-y-8"><ServiceHeader eyebrow="Client relationships" title="Clients" description="Find a registered client and open their profile, current measurements and linked atelier history." />
+  return <div className="space-y-8"><ServiceHeader title="Clients" description="Find a registered client and open their profile, current measurements and linked atelier history." />
     <form className={`${atelierPanel} grid items-end gap-4 sm:grid-cols-[1fr_1fr_auto]`} method="get">
       <label className="text-xs text-stone-400">Name, email or phone<input className={atelierInput} name="q" type="search" maxLength={120} defaultValue={search} /></label>
       <label className="text-xs text-stone-400">Activity<select name="activity" className={atelierInput} defaultValue={activity}><option value="all">All clients</option><option value="active_orders">With active orders</option><option value="pending_requests">With requests awaiting review</option></select></label>

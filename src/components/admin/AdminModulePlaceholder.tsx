@@ -2,22 +2,19 @@ import Link from "next/link";
 import { ArrowLeft, LockKeyhole } from "lucide-react";
 
 interface AdminModulePlaceholderProps {
-  eyebrow: string;
   title: string;
   description: string;
   nextPhase: string;
 }
 
 export function AdminModulePlaceholder({
-  eyebrow,
   title,
   description,
   nextPhase,
 }: AdminModulePlaceholderProps) {
   return (
     <div className="mx-auto max-w-4xl">
-      <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-champagne-dark">{eyebrow}</p>
-      <h1 className="mt-3 font-display text-3xl sm:text-4xl">{title}</h1>
+      <h1 className="font-display text-3xl sm:text-4xl">{title}</h1>
       <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-400">{description}</p>
 
       <section className="mt-10 rounded-3xl border border-stone-800 bg-stone-950/60 p-7 sm:p-10">

@@ -6,13 +6,11 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
-  BadgeCheck,
   Camera,
   CheckCircle2,
   Loader2,
   LockKeyhole,
   Save,
-  ShieldCheck,
 } from "lucide-react";
 import { ProfileAvatar } from "@/components/common/ProfileAvatar";
 import { getRoleLabel, type StaffRole } from "@/lib/auth/roles";
@@ -170,8 +168,7 @@ export function StaffProfileForm({ profile }: StaffProfileFormProps) {
   return (
     <div className="space-y-8">
       <div className="border-b border-stone-800/70 pb-6">
-        <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-champagne-dark">Staff Identity</p>
-        <h1 className="mt-3 font-display text-3xl text-warm-ivory sm:text-4xl">Personal Profile</h1>
+        <h1 className="font-display text-3xl text-warm-ivory sm:text-4xl">Personal Profile</h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-400">
           Maintain your personal contact details and profile picture. Staff authority is displayed here but managed separately.
         </p>
@@ -230,11 +227,7 @@ export function StaffProfileForm({ profile }: StaffProfileFormProps) {
         <div className="grid gap-8 p-5 sm:p-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)]">
           <section aria-labelledby="staff-personal-details" className="min-w-0 space-y-5">
             <div>
-              <p className="flex items-center gap-2 text-[9px] font-mono uppercase tracking-[0.22em] text-champagne-dark">
-                <BadgeCheck className="h-4 w-4" />
-                Editable Details
-              </p>
-              <h2 id="staff-personal-details" className="mt-2 font-display text-2xl text-warm-ivory">
+              <h2 id="staff-personal-details" className="font-display text-2xl text-warm-ivory">
                 Personal information
               </h2>
             </div>
@@ -310,11 +303,7 @@ export function StaffProfileForm({ profile }: StaffProfileFormProps) {
 
           <aside aria-labelledby="staff-authority" className="min-w-0 space-y-4 rounded-2xl border border-stone-800 bg-stone-950/40 p-4 sm:p-5">
             <div>
-              <p className="flex items-center gap-2 text-[9px] font-mono uppercase tracking-[0.22em] text-champagne-dark">
-                <ShieldCheck className="h-4 w-4" />
-                Protected Authority
-              </p>
-              <h2 id="staff-authority" className="mt-2 font-display text-xl text-warm-ivory">Account access</h2>
+              <h2 id="staff-authority" className="font-display text-xl text-warm-ivory">Account access</h2>
               <p className="mt-2 text-xs leading-6 text-stone-500">
                 These values are read-only and cannot be changed through ordinary profile editing.
               </p>

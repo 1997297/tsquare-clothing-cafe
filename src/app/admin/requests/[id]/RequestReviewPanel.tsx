@@ -70,8 +70,7 @@ export function RequestReviewPanel({ request }: { request: AdminRequestRecord })
 
   return (
     <section className="rounded-3xl border border-stone-800 bg-stone-950/70 p-6 sm:p-8">
-      <p className="text-[9px] font-mono uppercase tracking-[0.24em] text-champagne-dark">Authorized actions</p>
-      <h2 className="mt-2 font-display text-2xl">Review decision</h2>
+      <h2 className="font-display text-2xl">Review decision</h2>
       {error && <p role="alert" className="mt-5 rounded-xl border border-red-800/50 bg-red-950/30 p-3 text-xs text-red-300">{error}</p>}
 
       {request.status === "submitted" && (

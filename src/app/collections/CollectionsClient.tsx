@@ -67,9 +67,6 @@ export default function CollectionsClient() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Editorial Page Header */}
         <div className="border-b border-stone-800 pb-12 mb-12">
-          <span className="text-[10px] uppercase font-mono tracking-[0.28em] text-champagne font-semibold block mb-3">
-            TCC Atelier Portfolio
-          </span>
           <h1 className="font-display text-4xl sm:text-6xl font-normal tracking-tight text-warm-ivory max-w-3xl">
             House Silhouettes & Collections
           </h1>

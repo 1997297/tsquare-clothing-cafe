@@ -36,8 +36,7 @@ export function OrderStageControl({ order }: { order: AdminOrderRecord }) {
 
   return (
     <section className="rounded-3xl border border-stone-800 bg-stone-950/70 p-6 sm:p-8">
-      <p className="text-[9px] font-mono uppercase tracking-[0.24em] text-champagne-dark">Production control</p>
-      <h2 className="mt-2 font-display text-2xl">Advance stage</h2>
+      <h2 className="font-display text-2xl">Advance stage</h2>
       {error && <p role="alert" className="mt-4 rounded-xl border border-red-800/50 bg-red-950/30 p-3 text-xs text-red-300">{error}</p>}
       {next ? (
         <div className="mt-6 space-y-4">
@@ -45,7 +44,7 @@ export function OrderStageControl({ order }: { order: AdminOrderRecord }) {
           <label className="block"><span className="text-[10px] uppercase tracking-wider text-stone-500">Optional client-visible update</span><textarea value={message} onChange={(event) => setMessage(event.target.value)} maxLength={2000} rows={4} className="mt-2 w-full rounded-2xl border border-stone-700 bg-near-black p-4 text-sm outline-none focus:border-champagne" /></label>
           <button type="button" onClick={() => setConfirming(true)} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-champagne px-5 py-3 text-xs font-bold uppercase tracking-wider text-near-black">Advance to {ORDER_STATUS_LABELS[next]}</button>
         </div>
-      ) : <p className="mt-6 flex items-center gap-2 rounded-2xl border border-emerald-800/40 bg-emerald-950/20 p-4 text-sm text-emerald-300"><CheckCircle2 className="h-4 w-4" /> This order has completed its production lifecycle.</p>}
+      ) : <p className="mt-6 flex items-center gap-2 rounded-2xl border border-emerald-800/40 bg-emerald-950/20 p-4 text-sm text-emerald-300"><CheckCircle2 className="h-4 w-4" /> Production is complete for this order.</p>}
       <ConfirmDialog open={confirming} title={`Move to ${next ? ORDER_STATUS_LABELS[next] : "next stage"}?`} description="This production update will be recorded in the order history and shown to the client." confirmLabel="Update stage" busy={isPending} onCancel={() => !isPending && setConfirming(false)} onConfirm={confirm} />
     </section>
   );
