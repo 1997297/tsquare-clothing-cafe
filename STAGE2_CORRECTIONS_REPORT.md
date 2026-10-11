@@ -2,8 +2,9 @@
 
 Date: 11 October 2026 (Africa/Lagos)
 
-Status: implementation and local verification complete; production rollout in progress.
-This report does not declare release closure until the deployment and cleanup gates below pass.
+Status: all Stage 2 application, production smoke and account-cleanup gates passed.
+The final documentation-only Git/READY checkpoint is verified after this report's
+commit and recorded in the delivery message; a document cannot embed its own SHA.
 
 ## 1. CEO bank account card
 
@@ -93,9 +94,27 @@ response header. Live database/RPC isolation is independently checked, not infer
 from the browser HTTP status alone.
 
 Baseline: 38 tables / 327 original rows, five original Auth identities/password hashes,
-four buckets and seven objects. Final exact QA cleanup and preservation comparison
-remain mandatory. Production bank saving is intentionally not exercised; local mocked
+four buckets and seven objects. Production bank saving is intentionally not exercised; local mocked
 save tests are not represented as live database-persistence tests.
+
+**Final preservation and cleanup, 18:34 WAT:** zero tagged QA users, profiles, staff
+memberships, sessions or refresh tokens remain. Cleanup first checked every application/
+Storage UUID reference and Storage owner_id for unexpected business ownership.
+Five legitimate Auth users remain; all five original password hashes match. Bank
+configuration, verified-payment rows, original order, four buckets/seven objects and
+RLS/policy/trigger fingerprints match. No application table lacks RLS or has disabled
+application triggers.
+
+Do not mistake concurrent legitimate use for QA activity: the original active CEO
+converted a confirmed request at 18:22 WAT, confirmed measurements, set its new order
+price and issued a payment request by 18:28 WAT. All five audit events and six added
+operation/result rows belong to an original actor, never a QA identity. There are now
+345 rows across the same 38 tables, including two orders and two payment requests.
+326 original rows are byte-for-byte fingerprint matches. For the one converted
+request, a READ-ONLY reconstruction of the prior status/version/timestamp exactly
+matches its original fingerprint, and the new order/event timestamps match the
+conversion. No rollback or restoration was performed. All 18 newly added legitimate
+rows, including notifications and financial activity, were preserved.
 
 Read-only Supabase advisors are unchanged: seven intentional deny-all INFO, 31 guarded
 SECURITY DEFINER WARN, 14 unused-index INFO and the existing leaked-password-protection
@@ -110,7 +129,11 @@ including this report and the final production bundle, checked 439 files: zero m
 - Final isolated browser suite: 48 checks passed, zero production writes.
 - Live permission/isolation/preservation checks: eight passed.
 - Actual local Next.js role smoke: 36 passed, zero browser exceptions/business POSTs.
-- Exact production Next.js role smoke and final cleanup: pending.
+- Exact READY production Next.js role smoke: 36 passed, zero browser exceptions or
+  business POSTs. Client/Admin/CEO password login, dashboards, permissions and the
+  same 390/768/1440 light/dark checks all passed.
+- Exact four-account/session cleanup and the concurrent-activity-aware preservation
+  comparison above: passed. No existing password was used or changed; no email sent.
 
 Reusable verification: `npm run typecheck`, `npm run lint`, `npm test`,
 `npm run build`, then `node scripts/verify-stage2-ui.mjs` with port 3001 free.
@@ -121,20 +144,30 @@ does not load credentials. Set CHROME_PATH if Chrome is installed elsewhere.
 
 Entry main/local/origin/GitHub were equal and clean at
 `3bb9505f1f1eeab215ad705ed73fadde307b8121`.
-Stage 2 application commit and push are pending; no closure claim yet.
+Stage 2 application commit `2a441c89c0a9e6289d81f210335a571c7ce60ee9` is pushed
+to main. Local HEAD/origin/main matched with a clean worktree after that push.
+The final closure commit changes only this report and PROJECT_HANDOFF.md. Verify its
+HEAD/origin/GitHub equality, clean worktree and exact READY alias after push; the
+delivery message records the final documentation SHA and deployment ID.
 
 ## 10. Production deployment
 
 Entry production was READY on `dpl_FVdvxgQ7zyEGf8A3jjjiSEhhteuN` at the entry SHA,
-with https://tsquare-clothing-cafe.vercel.app assigned. Stage 2 exact SHA/READY/alias,
-build logs and targeted production smoke remain to be verified after push.
+with https://tsquare-clothing-cafe.vercel.app assigned.
+
+Stage 2 deployment `dpl_6eb7CtNMj8XH92B28wgWvti3WdY9` is verified READY,
+production/main, at the exact application SHA above, with the public production
+alias assigned. Build logs confirm successful compilation and 68 generated pages,
+with zero catalogue-fallback warnings. All 36 targeted production smoke checks passed.
+The documentation-only deployment is checked separately after its push.
 
 ## 11. Remaining gates / manual actions
 
-Pending: reviewed commit/push, exact READY production,
-production role smoke, removal of all four tagged QA accounts/sessions, preservation
-comparison and deletion of Stage 2 temporary credentials/browser artifacts.
-No manual Supabase/Vercel/environment configuration is currently required.
+No Stage 2 production blocker or manual Supabase/Vercel/environment action remains.
+All 22 temporary QA credential, screenshot, browser-profile, proof, helper and bundle
+items were removed after recording their results here. Disposable browsers are closed.
+The non-secret deployment-inspection helper is removed after the final Git/READY
+checkpoint. The documentation push and exact READY check are recorded in delivery.
 The existing leaked-password setting is optional previously documented hardening,
 not a newly introduced Stage 2 blocker. Stage 3 and Phase 8 have not begun.
 

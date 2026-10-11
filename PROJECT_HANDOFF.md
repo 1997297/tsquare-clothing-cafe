@@ -12,7 +12,7 @@ Phase 7 implementation and its final authentication release gate have passed.
 This remains the final development phase; no Phase 8 is authorized. The user has
 now authorized the separate post-Phase-7 Stage 1 and Stage 2 corrections below.
 
-### Post-Phase-7 Stage 2 — implementation and verification in progress
+### Post-Phase-7 Stage 2 — production verified; final documentation checkpoint
 
 - Scope: CEO bank display/edit card, historical request Transfer To/copy card,
   shared Concierge bubbles/composer/refresh layout, human appointment wording,
@@ -20,7 +20,9 @@ now authorized the separate post-Phase-7 Stage 1 and Stage 2 corrections below.
 - Entry gate verified clean main/local/origin/GitHub equality at
   3bb9505f1f1eeab215ad705ed73fadde307b8121 and exact READY production
   dpl_FVdvxgQ7zyEGf8A3jjjiSEhhteuN, with the public production alias.
-- UI implementation is local and uncommitted. Existing payment actions, ledger,
+- Application 2a441c89c0a9e6289d81f210335a571c7ce60ee9 is pushed to main and
+  verified READY on dpl_6eb7CtNMj8XH92B28wgWvti3WdY9 with the public alias.
+  Local/origin/main matched cleanly after push. Existing payment actions, ledger,
   RLS, server authentication, callbacks and migrations are unchanged. A small
   ClientForm opt-in focuses the bank editor only after its inert hydration gate.
 - Final typecheck, lint, 70 tests and optimized 68-page build passed. All 48 isolated
@@ -29,21 +31,39 @@ now authorized the separate post-Phase-7 Stage 1 and Stage 2 corrections below.
   Browser fixture suite uses real components with explicitly mocked
   actions: NEVER use it as evidence of actual production bank persistence.
   scripts/verify-stage2-ui.mjs runs on port 3001 after a build with that port free.
-- Stage 2 QA manifest/helpers/proofs are ignored under supabase/.temp/stage2-*.
-  Four tagged temporary Auth identities (Client, unrelated Client, Admin, CEO)
-  exist for safe authenticated READ checks. No QA business records were created.
+- Four tagged temporary Auth identities (Client, unrelated Client, Admin, CEO)
+  were used for safe authenticated READ checks and are now deleted, with zero
+  profiles/staff memberships/sessions/refresh tokens remaining. No QA business
+  records were created. Do not recreate these completed fixtures or their manifest.
   Production bank saving must not be exercised, even with identical details.
   Existing conversations must not be marked read just to test their presentation.
-- Live role/RLS checks passed, including rejected Client/Admin bank operations and
-  unrelated-client financial/appointment/conversation isolation. All original
-  38-table/327-row fingerprints and RLS/trigger settings still match the baseline.
+- Eight live role/RLS checks passed, including specifically unauthorized Client/Admin
+  bank operations and unrelated-client financial/appointment/conversation isolation.
 - Actual local production build passed the 36-check all-role responsive/theme smoke,
   real password login/guards, CEO Edit/Cancel, read-only real record displays and copy.
   All business POSTs were blocked, including automatic conversation mark-read.
   Final known-secret scan: 439 source/browser files, zero matches/private files tracked.
-- Outstanding: commit/push, exact READY rollout and production smoke, exact QA cleanup and
-  preservation comparison, then final report/clean-Git checkpoint. Do not declare
-  Stage 2 complete until those gates pass. Do not resume removed Stage 1 fixtures.
+- All 36 production smoke checks also passed on the exact application deployment:
+  actual Client/Admin/CEO login and same responsive/theme/read-only checks; zero
+  browser exceptions or business writes. Build logs have zero catalogue fallbacks.
+- Final preservation check at 18:34 WAT: bank settings, verified payments, original
+  order, five original passwords, four buckets/seven objects and RLS/triggers match.
+  IMPORTANT: the original active CEO legitimately converted another request, priced
+  its new order and issued a payment request between 18:22 and 18:28 WAT. Preserve
+  that activity. Current baseline is 38 tables/345 rows, two orders/two payment
+  requests. 326 original row fingerprints match; read-only reconstruction of the
+  converted request's prior status/version/timestamp matches its original hash.
+  The 18 added rows and five audit events are attributed to original staff, not QA.
+  No rollback/restoration was performed. Never restore the earlier 327-row state.
+- STAGE2_CORRECTIONS_REPORT.md records all 11 requested areas, test limitations and
+  cleanup evidence. All 22 temporary Stage 2 credential/screenshot/browser/proof/
+  generated-helper items are removed; reusable synthetic component tests remain
+  tracked. The non-secret deployment helper is removed after final verification.
+- Final documentation checkpoint: clean main/local/origin/GitHub equality and exact
+  READY production are checked again after this docs-only commit. Its SHA/deployment
+  are recorded in delivery, not embedded circularly in its own commit. No manual
+  configuration or production blocker remains.
+  Do not start Stage 3, Phase 8 or a comprehensive theme redesign.
 
 ### Post-Phase-7 Stage 1 corrections — verified and closed
 
