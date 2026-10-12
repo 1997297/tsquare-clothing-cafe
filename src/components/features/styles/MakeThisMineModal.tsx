@@ -50,13 +50,13 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
       {/* Modal Dialog Content with Rounded-3xl */}
       <div
         ref={modalRef}
-        className="relative z-10 w-full max-w-2xl bg-stone-950 border border-stone-800 shadow-2xl p-6 sm:p-10 text-warm-ivory rounded-3xl animate-in zoom-in-95 duration-200 my-8"
+        className="relative z-10 w-full max-w-2xl bg-surface border border-stone-800 shadow-2xl p-6 sm:p-10 text-warm-ivory rounded-3xl animate-in zoom-in-95 duration-200 my-8"
       >
         {/* Close Button with Rounded-full */}
         <button
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute top-5 right-5 p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-stone-800/80 rounded-full transition-colors focus:outline-none"
+          className="absolute top-5 right-5 p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-surface-hover rounded-full transition-colors focus:outline-none"
         >
           <X className="h-5 w-5" />
         </button>
@@ -86,7 +86,7 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-start gap-3 p-4 bg-stone-900/40 border border-stone-800/60 rounded-2xl">
+            <div className="flex items-start gap-3 p-4 bg-surface-elevated border border-stone-800/60 rounded-2xl">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-champagne/10 border border-champagne/30 text-champagne text-xs font-bold font-mono rounded-lg">
                 01
               </span>
@@ -100,8 +100,8 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-stone-900/40 border border-stone-800/60 rounded-2xl">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-stone-800 border border-stone-700 text-stone-300 text-xs font-bold font-mono rounded-lg">
+            <div className="flex items-start gap-3 p-4 bg-surface-elevated border border-stone-800/60 rounded-2xl">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-surface-hover border border-stone-700 text-stone-300 text-xs font-bold font-mono rounded-lg">
                 02
               </span>
               <div>
@@ -114,8 +114,8 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-stone-900/40 border border-stone-800/60 rounded-2xl">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-stone-800 border border-stone-700 text-stone-300 text-xs font-bold font-mono rounded-lg">
+            <div className="flex items-start gap-3 p-4 bg-surface-elevated border border-stone-800/60 rounded-2xl">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-surface-hover border border-stone-700 text-stone-300 text-xs font-bold font-mono rounded-lg">
                 03
               </span>
               <div>
@@ -128,8 +128,8 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-stone-900/40 border border-stone-800/60 rounded-2xl">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-stone-800 border border-stone-700 text-stone-300 text-xs font-bold font-mono rounded-lg">
+            <div className="flex items-start gap-3 p-4 bg-surface-elevated border border-stone-800/60 rounded-2xl">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-surface-hover border border-stone-700 text-stone-300 text-xs font-bold font-mono rounded-lg">
                 04
               </span>
               <div>
@@ -163,7 +163,7 @@ export function MakeThisMineModal({ style, isOpen, onClose }: MakeThisMineModalP
             onClick={() => {
               toggle(style.id);
             }}
-            className="sm:w-auto text-warm-ivory border-stone-700 hover:bg-stone-800"
+            className="sm:w-auto text-warm-ivory border-stone-700 hover:bg-surface-hover"
           >
             {saved ? (
               <>

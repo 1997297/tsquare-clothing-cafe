@@ -86,7 +86,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
               "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs uppercase tracking-[0.16em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-champagne",
               active
                 ? "border border-champagne/30 bg-champagne/10 text-champagne"
-                : "border border-transparent text-stone-400 hover:border-stone-800 hover:bg-stone-900/70 hover:text-warm-ivory"
+                : "border border-transparent text-stone-400 hover:border-stone-800 hover:bg-surface-elevated hover:text-warm-ivory"
             )}
           >
             <Icon className="h-4 w-4 shrink-0" />
@@ -100,8 +100,8 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
   );
 
   return (
-    <div className="min-h-screen bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black">
-      <header className="sticky top-0 z-40 border-b border-stone-800/80 bg-near-black/95 backdrop-blur-2xl">
+    <div className="min-h-screen bg-near-black text-warm-ivory selection:bg-action selection:text-on-action">
+      <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur-2xl shadow-sm">
         <div className="flex h-16 items-center gap-3 px-4 sm:h-20 sm:px-6 lg:px-8">
           <button
             type="button"
@@ -117,7 +117,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
           <Link href="/admin" className="min-w-0 shrink-0">
             <BrandLogo variant="light" size="sm" align="left" asLink={false} />
           </Link>
-          <div className="hidden h-6 w-px bg-stone-800 sm:block" />
+          <div className="hidden h-6 w-px bg-surface-hover sm:block" />
           <div className="hidden min-w-0 sm:block">
             <p className="text-[9px] font-mono uppercase tracking-[0.28em] text-champagne-dark">Private Atelier</p>
             <p className="truncate text-xs text-stone-400">Operations Control Room</p>
@@ -125,7 +125,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
 
           <div className="ml-auto flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
-            <div className="hidden h-6 w-px bg-stone-800 sm:block" />
+            <div className="hidden h-6 w-px bg-surface-hover sm:block" />
             <Link
               href="/admin/profile"
               aria-label="Open staff profile"
@@ -133,7 +133,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
               title="Open staff profile"
               className={cn(
                 "group flex min-w-0 items-center gap-3 rounded-xl p-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-champagne",
-                profileActive ? "bg-champagne/10" : "hover:bg-stone-900/70"
+                profileActive ? "bg-champagne/10" : "hover:bg-surface-elevated"
               )}
             >
               <div className="hidden min-w-0 text-right md:block">
@@ -154,7 +154,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
                 await signOut();
                 router.replace("/auth/sign-in");
               }}
-              className="rounded-xl p-2.5 text-stone-400 transition-colors hover:bg-stone-900 hover:text-warm-ivory"
+              className="rounded-xl p-2.5 text-stone-400 transition-colors hover:bg-surface-elevated hover:text-warm-ivory"
               title="Sign out"
               aria-label="Sign out of TCC operations"
             >
@@ -169,7 +169,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
             href="/admin/profile"
             aria-current={profileActive ? "page" : undefined}
             className={cn(
-              "mb-6 flex items-center gap-4 rounded-2xl border bg-stone-950/60 p-4 transition-colors",
+              "mb-6 flex items-center gap-4 rounded-2xl border bg-surface p-4 transition-colors",
               profileActive ? "border-champagne/40" : "border-stone-800 hover:border-stone-700"
             )}
           >
@@ -187,7 +187,7 @@ export function AdminShell({ children, identity, conciergeUnread }: AdminShellPr
       </NavigationDrawer>
 
       <div className="mx-auto flex w-full max-w-[1600px]">
-        <aside className="sticky top-20 hidden h-[calc(100dvh-5rem)] w-72 shrink-0 overflow-y-auto overscroll-contain border-r border-stone-800/70 px-5 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:flex lg:flex-col">
+        <aside className="sticky top-20 hidden h-[calc(100dvh-5rem)] w-72 shrink-0 overflow-y-auto overscroll-contain border-r border-line bg-surface px-5 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:flex lg:flex-col">
           <div className="mb-7 shrink-0 px-3">
             <div className="flex items-center gap-2 text-champagne">
               {identity.role === "ceo" ? <Crown className="h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />}

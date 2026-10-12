@@ -91,7 +91,7 @@ export default function AccountOverviewPage() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/bespoke/create/idea"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all shadow-sm shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all shadow-sm shrink-0"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Start An Idea</span>
@@ -109,7 +109,7 @@ export default function AccountOverviewPage() {
       {activeOrder && <ClientOrderFinance orderId={activeOrder.id} compact />}
       {/* ── Section 1: Priority Active Garment Focus ── */}
       {activeOrder ? (
-        <div className="p-6 sm:p-8 bg-stone-950 fine-border rounded-3xl space-y-6">
+        <div className="p-6 sm:p-8 bg-surface fine-border rounded-3xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-stone-800/60">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
@@ -161,8 +161,8 @@ export default function AccountOverviewPage() {
                       className={cn(
                         "h-1.5 rounded-full transition-all duration-300",
                         isPassed
-                          ? "bg-champagne"
-                          : "bg-stone-800"
+                          ? "bg-action"
+                          : "bg-surface-hover"
                       )}
                     />
                     <p
@@ -172,7 +172,7 @@ export default function AccountOverviewPage() {
                           ? "text-champagne font-bold"
                           : isPassed
                           ? "text-stone-300"
-                          : "text-stone-600"
+                          : "text-ink-muted"
                       )}
                     >
                       {stage.label}
@@ -197,7 +197,7 @@ export default function AccountOverviewPage() {
           </div>
         </div>
       ) : recentRequest ? (
-        <div className="p-6 sm:p-8 bg-stone-950 fine-border rounded-3xl space-y-4">
+        <div className="p-6 sm:p-8 bg-surface fine-border rounded-3xl space-y-4">
           <div className="flex items-center justify-between">
             <span className="px-2.5 py-0.5 rounded-full bg-champagne/15 text-champagne border border-champagne/30 text-[10px] font-mono uppercase tracking-widest">
               Latest Bespoke Request
@@ -226,7 +226,7 @@ export default function AccountOverviewPage() {
           </div>
         </div>
       ) : (
-        <div className="p-8 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
+        <div className="p-8 bg-surface fine-border rounded-3xl text-center space-y-4">
           <Scissors className="w-8 h-8 text-champagne/60 mx-auto" />
           <h2 className="font-display text-2xl text-warm-ivory">
             No Active Orders Yet
@@ -237,7 +237,7 @@ export default function AccountOverviewPage() {
           <div className="pt-2">
             <Link
               href="/collections"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all"
             >
               <span>Explore The Collections</span>
               <ArrowRight className="w-4 h-4" />
@@ -249,7 +249,7 @@ export default function AccountOverviewPage() {
       {/* ── Section 2: Two-Column Priority Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Measurements Vault Snapshot */}
-        <div className="p-6 bg-stone-950 fine-border rounded-3xl space-y-5">
+        <div className="p-6 bg-surface fine-border rounded-3xl space-y-5">
           <div className="flex items-center justify-between pb-3 border-b border-stone-800/60">
             <div className="flex items-center gap-2.5">
               <Ruler className="w-4 h-4 text-champagne" />
@@ -284,19 +284,19 @@ export default function AccountOverviewPage() {
 
               {/* Sample metrics */}
               <div className="grid grid-cols-3 gap-2 pt-2">
-                <div className="p-2.5 rounded-xl bg-stone-900/60 border border-stone-800/50 text-center">
+                <div className="p-2.5 rounded-xl bg-surface-elevated border border-stone-800/50 text-center">
                   <span className="text-[9px] uppercase font-mono text-stone-500 block">Chest</span>
                   <span className="text-xs font-mono font-bold text-warm-ivory">
                     {currentMeasurement.measurements.chest || "—"} {currentMeasurement.unit}
                   </span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-stone-900/60 border border-stone-800/50 text-center">
+                <div className="p-2.5 rounded-xl bg-surface-elevated border border-stone-800/50 text-center">
                   <span className="text-[9px] uppercase font-mono text-stone-500 block">Shoulder</span>
                   <span className="text-xs font-mono font-bold text-warm-ivory">
                     {currentMeasurement.measurements.shoulder || "—"} {currentMeasurement.unit}
                   </span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-stone-900/60 border border-stone-800/50 text-center">
+                <div className="p-2.5 rounded-xl bg-surface-elevated border border-stone-800/50 text-center">
                   <span className="text-[9px] uppercase font-mono text-stone-500 block">Top Length</span>
                   <span className="text-xs font-mono font-bold text-warm-ivory">
                     {currentMeasurement.measurements.topLength || "—"} {currentMeasurement.unit}
@@ -325,7 +325,7 @@ export default function AccountOverviewPage() {
         </div>
 
         {/* Upcoming Appointment */}
-        <div className="p-6 bg-stone-950 fine-border rounded-3xl space-y-5">
+        <div className="p-6 bg-surface fine-border rounded-3xl space-y-5">
           <div className="flex items-center justify-between pb-3 border-b border-stone-800/60">
             <div className="flex items-center gap-2.5">
               <Calendar className="w-4 h-4 text-champagne" />
@@ -352,7 +352,7 @@ export default function AccountOverviewPage() {
                 </span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-stone-900/50 border border-stone-800/60 space-y-2">
+              <div className="p-4 rounded-2xl bg-surface-elevated border border-stone-800/60 space-y-2">
                 <p className="text-xs text-stone-400">{appointmentScheduleLabel(upcomingAppointment.status, Boolean(upcomingAppointment.scheduledStartAt))}</p>
                 <div className="flex items-center gap-2 text-xs text-warm-ivory">
                   <Clock className="w-3.5 h-3.5 text-champagne shrink-0" />
@@ -411,9 +411,9 @@ export default function AccountOverviewPage() {
               <Link
                 key={w.id}
                 href={`/account/wardrobe/${w.id}`}
-                className="group p-4 rounded-2xl bg-stone-950 fine-border hover:border-champagne/40 transition-colors flex items-center gap-4"
+                className="group p-4 rounded-2xl bg-surface fine-border hover:border-champagne/40 transition-colors flex items-center gap-4"
               >
-                <div className="relative w-14 h-16 rounded-xl overflow-hidden bg-stone-900 shrink-0">
+                <div className="relative w-14 h-16 rounded-xl overflow-hidden bg-surface-elevated shrink-0">
                   <Image
                     src={w.heroImage}
                     alt={w.styleName}
@@ -461,7 +461,7 @@ export default function AccountOverviewPage() {
             {savedStyles.slice(0, 4).map((style) => (
               <div
                 key={style.id}
-                className="group relative rounded-2xl overflow-hidden bg-stone-900 border border-stone-800/80 p-3 space-y-2 hover:border-champagne/40 transition-colors"
+                className="group relative rounded-2xl overflow-hidden bg-surface-elevated border border-stone-800/80 p-3 space-y-2 hover:border-champagne/40 transition-colors"
               >
                 <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-espresso">
                   <Image
@@ -482,7 +482,7 @@ export default function AccountOverviewPage() {
                 </div>
                 <Link
                   href={`/bespoke/create/${style.slug}`}
-                  className="block w-full py-1.5 text-center text-[10px] uppercase tracking-wider font-bold text-near-black bg-champagne hover:bg-champagne-light rounded-lg transition-colors"
+                  className="block w-full py-1.5 text-center text-[10px] uppercase tracking-wider font-bold text-on-action bg-action hover:bg-action-hover rounded-lg transition-colors"
                 >
                   Make This Mine
                 </Link>

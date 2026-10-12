@@ -7,6 +7,7 @@ import { readFile, readdir, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promis
 import { resolve, join, relative } from 'node:path';
 import { createRequire } from 'node:module';
 import puppeteer from 'puppeteer-core';
+import { inspectThemeContrast } from './theme-contrast.mjs';
 
 const require = createRequire(import.meta.url);
 const webpackPackage = require('next/dist/compiled/webpack/webpack');
@@ -42,7 +43,7 @@ try {
     else if (req.url === '/styles.css') { res.setHeader('content-type', 'text/css; charset=utf-8'); res.end(css); }
     else { res.setHeader('content-type', 'text/html; charset=utf-8'); res.end(`<!doctype html><html lang="en" class="${fontClasses}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/styles.css"><title>TCC isolated Stage 2 UI test</title></head><body><div id="root"></div><script src="/bundle.js"></script></body></html>`); }
   });
-  await new Promise((ok, no) => { server.once('error', no); server.listen(3001, '127.0.0.1', ok); });
+  await new Promise((ok, no) => { server.once('error', no); server.listen(3001, 'localhost', ok); });
   profile = await mkdtemp(join(temp, 'stage2-browser-'));
   browser = await puppeteer.launch({ executablePath: process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true, userDataDir: profile, args: ['--no-first-run', '--no-default-browser-check'] });
   const context = await browser.createBrowserContext();
@@ -63,8 +64,30 @@ try {
     await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
     await page.waitForFunction(() => Boolean(window.stage2) && !document.querySelector('form[inert]'));
   };
-  const fits = async () => assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && [...document.querySelectorAll('main,section,ol')].every(n => n.scrollWidth <= n.clientWidth + 1)), 'horizontal overflow');
+  const fits = async () => {
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && [...document.querySelectorAll('main,section,ol')].every(n => n.scrollWidth <= n.clientWidth + 1)), 'horizontal overflow');
+    await page.waitForFunction(() => document.getAnimations().filter(a => a.effect?.getComputedTiming().iterations !== Infinity).every(a => a.playState !== 'running'));
+    const contrast = await page.evaluate(inspectThemeContrast);
+    assert.deepEqual(contrast.failures, [], 'Rendered fixture text contrast');
+  };
   const capture = async name => { const file = join(temp, `stage2-${name}.png`); await page.screenshot({ path: file, fullPage: true }); screenshots.push(file); };
+
+  for (const theme of ['dark', 'light']) for (const width of [390, 768, 1440]) {
+    await load('theme', 'ceo', theme, width);
+    await fits();
+    for (const variant of ['primary','secondary','outline','champagne','ghost']) {
+      await page.hover(`[data-variant="${variant}"]`);
+      await fits();
+    }
+    await page.focus('input[type="date"]');
+    assert.ok(await page.$eval('input[type="date"]', n => getComputedStyle(n).outlineStyle === 'solid' && parseFloat(getComputedStyle(n).outlineWidth) >= 2));
+    assert.ok(await page.$('button:disabled'));
+    await capture(`controls-${theme}-${width}`);
+    await button('Open confirmation'); await page.waitForSelector('dialog[open]');
+    await fits(); await page.keyboard.press('Escape');
+    assert.equal(await page.$('dialog[open]'), null);
+    pass(`Theme button hover, disabled state, input focus, status badges, timeline and confirmation ${theme}/${width}`);
+  }
 
   for (const theme of (process.argv.includes('--edges-only') ? [] : ['dark', 'light'])) for (const width of [390, 768, 1440]) {
     const suffix = `${theme}/${width}`;

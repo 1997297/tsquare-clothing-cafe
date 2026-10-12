@@ -1,18 +1,53 @@
 # TSquare Clothing Cafe — Project Handoff
 
-Last updated: 2026-10-12 (Africa/Lagos)
+Last updated: 2026-10-13 (Africa/Lagos)
 
 ## Current scope
 
 Phases 1–7 and post-development corrections Stages 1, 2 and 2.1 are complete.
-Stage 3, Phase 8, major new features and a comprehensive theme redesign are not
-authorized. Follow the latest user request and actual repository state.
+Stage 3 theme refinement is now authorized by the October 12 user brief. It covers
+the existing dark/light colour system, contrast, surfaces and visual usability only.
+Do not redesign routes/layouts, change workflows or start Phase 8/new major features.
 
-The current task is repository housekeeping: remove historical reports, superseded
+The previous task was repository housekeeping: remove historical reports, superseded
 planning/progress notes, two obsolete screenshot-audit scripts and an accidental
 empty file. No application source, assets, dependency configuration, tests, database
-schema, production data or secrets are changed. This cleanup is local and has not
-been committed, pushed or deployed.
+schema, production data or secrets were changed. Cleanup is checkpointed locally as
+6cccf0dd902fb9f0668a65bd1bf3f9cc3ef7aea2; it has not yet been pushed or deployed.
+
+Stage 3 is in progress. Read the full user attachment c90a8fe6-350f-41ee-835f-f688f36edc73
+before resuming. Required: shared semantic tokens; all Public/Client/Admin/CEO surfaces;
+preserved payment attention indicators; before/after rendered QA at 390/768/1440,
+both themes; contrast/focus and theme persistence checks; typecheck/lint/tests/build;
+exact Git/READY deployment and production smoke. No business or authentication logic
+changes. Final results should be delivered to the user, not recreate removed report files.
+Ignored supabase/.temp/stage3-* helpers/state are owned by this pass. The manifest may
+contain temporary QA credentials and baseline fingerprints: never display or commit it.
+Inspect its status before retrying setup/cleanup after interruption; do not blindly
+recreate identities or discard preservation evidence. Only stage-tagged disposable
+accounts are permitted for browser reads; never edit legitimate users or financial data.
+
+Stage 3 working evidence (not a release): fresh baseline is 377 rows across 38 tables
+and five original Auth users; the extra row since the earlier release is legitimate.
+Three tagged disposable QA identities exist in the ignored manifest and must be cleaned
+up through stage3-ops.mjs only after production verification. Before screenshots passed
+54 checks. Final typecheck, lint, all 87 tests and the optimized 68-page build passed.
+Isolated browser fixtures passed 18 payment-attention scenarios and 54 bank,
+Concierge, appointment and theme-control scenarios, with no backend writes.
+The full local matrix audited 152 cases / 10,701 text samples with zero overflow,
+browser exceptions or business writes. It found only the shared active-profile avatar
+initials at 4.44:1 on Admin/CEO light desktop. ProfileAvatar now uses semantic primary
+ink, with two nested-tint regression tests; the 42-case final-build three-role browser
+rerun passed 1,954 text samples, nine interactions, zero browser errors and zero writes.
+Decorative standalone Client-header dividers are correctly
+excluded from text contrast. Production push, both-theme production verification and
+ownership-checked QA cleanup are still required.
+Source comparison verified style-only edits outside the stylesheet/theme provider;
+authentication, financial code, schema, catalogue data, photography and logo are unchanged.
+The final-build known-secret scan covered 439 tracked-source/browser files with zero matches;
+environment files and temporary QA state are untracked. Theme refinements use one
+semantic RGB token system, readable neutral/status palettes, native control schemes,
+visible keyboard focus and photo-specific copy colours. No new styling framework.
 
 Cleanup verification: 16 files removed (13 historical reports/notes, two obsolete
 audit scripts and one empty file). No non-generated empty project files or dangling

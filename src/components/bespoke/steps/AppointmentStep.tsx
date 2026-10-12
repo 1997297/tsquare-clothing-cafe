@@ -61,13 +61,13 @@ export function AppointmentStep({
               className={cn(
                 "w-full flex items-start gap-4 p-5 rounded-2xl border text-left transition-all duration-200",
                 isSelected
-                  ? "border-champagne/60 bg-stone-900/60 ring-1 ring-champagne/20"
-                  : "border-stone-800 hover:border-stone-700 hover:bg-stone-900/30"
+                  ? "border-champagne/60 bg-surface-elevated ring-1 ring-champagne/20"
+                  : "border-stone-800 hover:border-stone-700 hover:bg-surface-elevated"
               )}
             >
               <div className={cn(
                 "w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 transition-all",
-                isSelected ? "border-champagne bg-champagne" : "border-stone-600"
+                isSelected ? "border-champagne bg-action" : "border-stone-600"
               )} />
               <div>
                 <p className={cn(
@@ -87,7 +87,7 @@ export function AppointmentStep({
 
       {/* Appointment details (when a type is selected that isn't "none") */}
       {needsDetails && (
-        <div className="mb-8 p-5 bg-stone-950 border border-stone-800/50 rounded-2xl space-y-5 animate-in fade-in duration-200">
+        <div className="mb-8 p-5 bg-surface border border-stone-800/50 rounded-2xl space-y-5 animate-in fade-in duration-200">
           <p className="text-[10px] uppercase tracking-widest text-stone-500 font-mono">
             Preferred Appointment Details
           </p>
@@ -126,12 +126,12 @@ export function AppointmentStep({
                   className={cn(
                     "flex flex-col items-start px-4 py-3 rounded-xl border text-left transition-all duration-150",
                     appt.preferredTime === t.id
-                      ? "border-champagne/60 bg-stone-900/80 text-champagne"
+                      ? "border-champagne/60 bg-surface-elevated text-champagne"
                       : "border-stone-800 text-stone-400 hover:border-stone-700 hover:text-stone-300"
                   )}
                 >
                   <span className="text-xs font-semibold uppercase tracking-wide">{t.label}</span>
-                  <span className="text-[10px] mt-0.5 opacity-70">{t.sub}</span>
+                  <span className="text-[10px] mt-0.5 text-ink-secondary">{t.sub}</span>
                 </button>
               ))}
             </div>
@@ -152,11 +152,11 @@ export function AppointmentStep({
               value={appt.notes ?? ""}
               onChange={(e) => set("notes", e.target.value)}
               placeholder="Any additional context for the team, such as travelling from out of town or specific questions to prepare."
-              className="w-full bg-near-black border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none focus:border-champagne/50 resize-none leading-relaxed"
+              className="w-full bg-near-black border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-ink-muted px-4 py-3 focus:outline-none focus:border-champagne/50 resize-none leading-relaxed"
             />
           </div>
 
-          <p className="text-[10px] text-stone-600 leading-relaxed italic">
+          <p className="text-[10px] text-ink-muted leading-relaxed italic">
             This is an appointment request, not a confirmed booking. The TSquare team will contact you to finalise the date and time.
           </p>
         </div>
@@ -178,8 +178,8 @@ export function AppointmentStep({
           className={cn(
             "flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl transition-all duration-200",
             appt.type
-              ? "bg-champagne text-near-black hover:bg-champagne-light"
-              : "bg-stone-900 text-stone-600 cursor-not-allowed"
+              ? "bg-action text-on-action hover:bg-action-hover"
+              : "bg-surface-elevated text-ink-muted cursor-not-allowed"
           )}
         >
           Continue

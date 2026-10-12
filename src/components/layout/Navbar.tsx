@@ -133,7 +133,7 @@ export function Navbar() {
                   <Link
                     key={c.id}
                     href={`/collections/${c.slug}`}
-                    className="block px-4 py-2.5 text-xs text-stone-300 hover:text-champagne hover:bg-stone-900/80 transition-colors uppercase tracking-widest font-normal rounded-lg mx-2"
+                    className="block px-4 py-2.5 text-xs text-stone-300 hover:text-champagne hover:bg-surface-elevated transition-colors uppercase tracking-widest font-normal rounded-lg mx-2"
                   >
                     {c.name}
                   </Link>
@@ -185,7 +185,7 @@ export function Navbar() {
             {/* Book A Fitting CTA Button with Rounded Corners */}
             <Link
               href="/book-a-fitting"
-              className="hidden xl:inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-semibold text-near-black bg-champagne hover:bg-champagne-light px-4 py-2 rounded-xl transition-all shadow-sm"
+              className="hidden xl:inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-semibold text-on-action bg-action hover:bg-action-hover px-4 py-2 rounded-xl transition-all shadow-sm"
             >
               <Calendar className="h-3.5 w-3.5" />
               Book Fitting
@@ -197,7 +197,7 @@ export function Navbar() {
             <button
               onClick={() => setIsSearchOpen(true)}
               aria-label="Search collections"
-              className="p-2.5 text-stone-300 hover:text-warm-ivory hover:bg-stone-800/40 rounded-full transition-colors focus:outline-none"
+              className="p-2.5 text-stone-300 hover:text-warm-ivory hover:bg-surface-hover rounded-full transition-colors focus:outline-none"
             >
               <Search className="h-4 sm:h-5 w-4 sm:w-5" />
             </button>
@@ -206,11 +206,11 @@ export function Navbar() {
             <Link
               href="/saved"
               aria-label={`Saved looks (${savedCount})`}
-              className="relative p-2.5 text-stone-300 hover:text-warm-ivory hover:bg-stone-800/40 rounded-full transition-colors focus:outline-none"
+              className="relative p-2.5 text-stone-300 hover:text-warm-ivory hover:bg-surface-hover rounded-full transition-colors focus:outline-none"
             >
               <Heart className="h-4 sm:h-5 w-4 sm:w-5" />
               {savedCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-champagne text-[9px] font-bold text-near-black">
+                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-action text-[9px] font-bold text-on-action">
                   {savedCount}
                 </span>
               )}
@@ -220,11 +220,11 @@ export function Navbar() {
             <Link
               href={user || profile ? "/account" : "/auth/sign-in"}
               aria-label={user || profile ? "Private Client Portal" : "Private client sign in"}
-              className="relative p-2.5 text-stone-300 hover:text-warm-ivory hover:bg-stone-800/40 rounded-full transition-colors focus:outline-none"
+              className="relative p-2.5 text-stone-300 hover:text-warm-ivory hover:bg-surface-hover rounded-full transition-colors focus:outline-none"
             >
               <User className="h-4 sm:h-5 w-4 sm:w-5" />
               {(user || profile) && (
-                <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-champagne ring-2 ring-near-black" />
+                <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-action ring-2 ring-near-black" />
               )}
             </Link>
           </div>
@@ -293,14 +293,14 @@ export function Navbar() {
               </div>
               <Link
                 href="/book-a-fitting"
-                className="flex w-full items-center justify-center bg-champagne text-near-black py-3.5 text-xs font-bold uppercase tracking-[0.22em] rounded-xl shadow-md"
+                className="flex w-full items-center justify-center bg-action text-on-action py-3.5 text-xs font-bold uppercase tracking-[0.22em] rounded-xl shadow-md"
               >
                 Book A Fitting Consultation
               </Link>
               <Link
                 href={user || profile ? "/account" : "/auth/sign-in"}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex w-full items-center justify-center border border-stone-700 text-stone-300 py-3.5 text-xs font-semibold uppercase tracking-[0.22em] hover:bg-stone-900 rounded-xl"
+                className="flex w-full items-center justify-center border border-stone-700 text-stone-300 py-3.5 text-xs font-semibold uppercase tracking-[0.22em] hover:bg-surface-elevated rounded-xl"
               >
                 {user || profile ? "Enter Client Portal" : "Private Client Sign In"}
               </Link>

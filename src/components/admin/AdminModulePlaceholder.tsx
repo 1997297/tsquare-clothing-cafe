@@ -17,7 +17,7 @@ export function AdminModulePlaceholder({
       <h1 className="font-display text-3xl sm:text-4xl">{title}</h1>
       <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-400">{description}</p>
 
-      <section className="mt-10 rounded-3xl border border-stone-800 bg-stone-950/60 p-7 sm:p-10">
+      <section className="mt-10 rounded-3xl border border-stone-800 bg-surface p-7 sm:p-10">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-champagne/30 bg-champagne/10">
           <LockKeyhole className="h-5 w-5 text-champagne" />
         </div>

@@ -132,7 +132,7 @@ export default function AccountMeasurementsPage() {
         {!isEditing && (
           <button
             onClick={handleStartEdit}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all self-start sm:self-auto"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all self-start sm:self-auto"
           >
             <Pencil className="w-3.5 h-3.5" />
             <span>Update Measurements</span>
@@ -150,7 +150,7 @@ export default function AccountMeasurementsPage() {
 
       {/* Editing Form */}
       {isEditing ? (
-        <ClientForm onSubmit={handleSave} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
+        <ClientForm onSubmit={handleSave} className="p-6 sm:p-8 rounded-3xl bg-surface fine-border space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-stone-800">
             <div>
               <h2 className="font-display text-xl text-warm-ivory">
@@ -185,7 +185,7 @@ export default function AccountMeasurementsPage() {
                     onClick={() => setFormUnit(u)}
                     className={cn(
                       "px-4 py-2 text-xs uppercase font-mono tracking-wider transition-colors",
-                      formUnit === u ? "bg-stone-800 text-champagne font-bold" : "text-stone-500 hover:text-stone-300"
+                      formUnit === u ? "bg-surface-hover text-champagne font-bold" : "text-stone-500 hover:text-stone-300"
                     )}
                   >
                     {u}
@@ -227,7 +227,7 @@ export default function AccountMeasurementsPage() {
                   type="button"
                   aria-expanded={openSection === section.id}
                   onClick={() => setOpenSection(openSection === section.id ? "upper" : section.id)}
-                  className="w-full flex items-center justify-between p-4 text-left hover:bg-stone-900/30 transition-colors"
+                  className="w-full flex items-center justify-between p-4 text-left hover:bg-surface-elevated transition-colors"
                 >
                   <span className="text-xs uppercase tracking-widest text-warm-ivory font-semibold">
                     {section.label}
@@ -254,13 +254,13 @@ export default function AccountMeasurementsPage() {
                             value={formMeasurements[field.key] ?? ""}
                             onChange={(e) => handleFieldChange(field.key, e.target.value)}
                             placeholder="—"
-                            className="w-full bg-stone-950 border border-stone-800 rounded-xl text-xs text-warm-ivory px-3.5 py-2.5 focus:outline-none focus:border-champagne"
+                            className="w-full bg-surface border border-stone-800 rounded-xl text-xs text-warm-ivory px-3.5 py-2.5 focus:outline-none focus:border-champagne"
                           />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-stone-600 uppercase">
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-ink-muted uppercase">
                             {formUnit}
                           </span>
                         </div>
-                        <p className="text-[10px] text-stone-600 mt-1 leading-tight">{field.hint}</p>
+                        <p className="text-[10px] text-ink-muted mt-1 leading-tight">{field.hint}</p>
                       </div>
                     ))}
                   </div>
@@ -287,7 +287,7 @@ export default function AccountMeasurementsPage() {
             <button
               type="submit"
               disabled={isSaving}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all"
             >
               <Save className="w-3.5 h-3.5" />
               <span>{isSaving ? "Archiving..." : "Archive as New Version"}</span>
@@ -306,7 +306,7 @@ export default function AccountMeasurementsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Profile View (3 cols) */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
+            <div className="p-6 sm:p-8 rounded-3xl bg-surface fine-border space-y-6">
               {/* Profile Meta Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-stone-800/60">
                 <div>
@@ -324,11 +324,11 @@ export default function AccountMeasurementsPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-900 border border-stone-800 text-[10px] font-mono text-stone-300 uppercase">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-elevated border border-stone-800 text-[10px] font-mono text-stone-300 uppercase">
                     <ShieldCheck className="w-3.5 h-3.5 text-champagne" />
                     {displayedProfile?.verificationStatus.replace(/_/g, " ")}
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-stone-900 border border-stone-800 text-[10px] font-mono text-stone-300 uppercase">
+                  <span className="px-3 py-1 rounded-full bg-surface-elevated border border-stone-800 text-[10px] font-mono text-stone-300 uppercase">
                     {displayedProfile?.unit.toUpperCase()}
                   </span>
                 </div>
@@ -347,7 +347,7 @@ export default function AccountMeasurementsPage() {
                         return (
                           <div
                             key={f.key}
-                            className="p-3.5 rounded-2xl bg-stone-900/50 border border-stone-800/80 text-left"
+                            className="p-3.5 rounded-2xl bg-surface-elevated border border-stone-800/80 text-left"
                           >
                             <span className="text-[10px] uppercase font-mono text-stone-500 block">
                               {f.label}
@@ -402,7 +402,7 @@ export default function AccountMeasurementsPage() {
                     className={cn(
                       "w-full text-left p-3.5 rounded-2xl border transition-colors space-y-1 block",
                       isSelected
-                        ? "bg-stone-900 border-champagne/60 text-champagne"
+                        ? "bg-surface-elevated border-champagne/60 text-champagne"
                         : "bg-near-black border-stone-800 text-stone-400 hover:border-stone-700"
                     )}
                   >

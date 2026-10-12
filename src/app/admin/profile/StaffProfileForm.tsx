@@ -281,7 +281,7 @@ export function StaffProfileForm({ profile }: StaffProfileFormProps) {
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
                 placeholder="+234 800 000 0000"
-                className="w-full rounded-xl border border-stone-800 bg-near-black px-4 py-3 font-mono text-sm text-warm-ivory outline-none transition-colors placeholder:text-stone-600 focus:border-champagne focus:ring-1 focus:ring-champagne"
+                className="w-full rounded-xl border border-stone-800 bg-near-black px-4 py-3 font-mono text-sm text-warm-ivory outline-none transition-colors placeholder:text-ink-muted focus:border-champagne focus:ring-1 focus:ring-champagne"
               />
             </div>
 
@@ -293,7 +293,7 @@ export function StaffProfileForm({ profile }: StaffProfileFormProps) {
               <button
                 type="submit"
                 disabled={isSaving || isUploadingAvatar}
-                className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-champagne px-6 py-3 text-xs font-bold uppercase tracking-widest text-near-black transition-colors hover:bg-champagne-light focus:outline-none focus-visible:ring-2 focus-visible:ring-champagne focus-visible:ring-offset-2 focus-visible:ring-offset-near-black disabled:cursor-wait disabled:opacity-50 sm:w-auto"
+                className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-action px-6 py-3 text-xs font-bold uppercase tracking-widest text-on-action transition-colors hover:bg-action-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-champagne focus-visible:ring-offset-2 focus-visible:ring-offset-near-black disabled:cursor-wait disabled:opacity-50 sm:w-auto"
               >
                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {isSaving ? "Saving..." : "Save Changes"}
@@ -301,7 +301,7 @@ export function StaffProfileForm({ profile }: StaffProfileFormProps) {
             </div>
           </section>
 
-          <aside aria-labelledby="staff-authority" className="min-w-0 space-y-4 rounded-2xl border border-stone-800 bg-stone-950/40 p-4 sm:p-5">
+          <aside aria-labelledby="staff-authority" className="min-w-0 space-y-4 rounded-2xl border border-stone-800 bg-surface p-4 sm:p-5">
             <div>
               <h2 id="staff-authority" className="font-display text-xl text-warm-ivory">Account access</h2>
               <p className="mt-2 text-xs leading-6 text-stone-500">

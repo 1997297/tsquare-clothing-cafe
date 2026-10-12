@@ -36,13 +36,13 @@ export default function AccountOrdersPage() {
         </div>
 
         {/* Tab Selector */}
-        <div className="flex items-center gap-2 border border-stone-800 p-1 rounded-xl bg-stone-900/60 self-start sm:self-auto">
+        <div className="flex items-center gap-2 border border-stone-800 p-1 rounded-xl bg-surface-elevated self-start sm:self-auto">
           <button
             onClick={() => setTab("active")}
             className={cn(
               "px-4 py-1.5 rounded-lg text-xs uppercase font-mono tracking-wider font-semibold transition-colors",
               tab === "active"
-                ? "bg-champagne text-near-black shadow-sm"
+                ? "bg-action text-on-action shadow-sm"
                 : "text-stone-400 hover:text-warm-ivory"
             )}
           >
@@ -53,7 +53,7 @@ export default function AccountOrdersPage() {
             className={cn(
               "px-4 py-1.5 rounded-lg text-xs uppercase font-mono tracking-wider font-semibold transition-colors",
               tab === "completed"
-                ? "bg-champagne text-near-black shadow-sm"
+                ? "bg-action text-on-action shadow-sm"
                 : "text-stone-400 hover:text-warm-ivory"
             )}
           >
@@ -73,7 +73,7 @@ export default function AccountOrdersPage() {
             return (
               <div
                 key={order.id}
-                className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6 hover:border-stone-700/80 transition-colors"
+                className="p-6 sm:p-8 rounded-3xl bg-surface fine-border space-y-6 hover:border-stone-700/80 transition-colors"
               >
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-stone-800/60">
@@ -82,7 +82,7 @@ export default function AccountOrdersPage() {
                       <span className="text-xs font-mono font-bold text-champagne tracking-wider">
                         {order.orderReference}
                       </span>
-                      <span className="text-stone-600">•</span>
+                      <span className="text-ink-muted">•</span>
                       <span className="text-xs text-stone-400 font-mono">
                         {order.styleCode}
                       </span>
@@ -123,7 +123,7 @@ export default function AccountOrdersPage() {
                           <div
                             className={cn(
                               "h-1.5 rounded-full transition-all duration-300",
-                              isPassed ? "bg-champagne" : "bg-stone-800"
+                              isPassed ? "bg-action" : "bg-surface-hover"
                             )}
                           />
                           <p
@@ -133,7 +133,7 @@ export default function AccountOrdersPage() {
                                 ? "text-champagne font-bold"
                                 : isPassed
                                 ? "text-stone-300"
-                                : "text-stone-600"
+                                : "text-ink-muted"
                             )}
                           >
                             {stage.label}
@@ -164,8 +164,8 @@ export default function AccountOrdersPage() {
           })}
         </div>
       ) : (
-        <div className="p-12 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
-          <Package className="w-8 h-8 text-stone-600 mx-auto" />
+        <div className="p-12 bg-surface fine-border rounded-3xl text-center space-y-4">
+          <Package className="w-8 h-8 text-ink-muted mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
             {tab === "active" ? "No Active Orders Under Tailoring" : "No Completed Garments Yet"}
           </h3>
@@ -178,7 +178,7 @@ export default function AccountOrdersPage() {
             <div className="pt-2">
               <Link
                 href="/collections"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all"
               >
                 <span>Browse The Collections</span>
                 <ArrowRight className="w-4 h-4" />

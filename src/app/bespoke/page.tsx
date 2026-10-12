@@ -49,7 +49,7 @@ export default function BespokePage() {
   ];
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory selection:bg-champagne selection:text-near-black">
+    <div className="bg-near-black min-h-screen text-warm-ivory selection:bg-action selection:text-on-action">
       {/* Editorial Hero */}
       <section className="relative min-h-[75vh] flex items-center justify-center overflow-hidden pt-28 pb-16">
         <div className="absolute inset-0 z-0">

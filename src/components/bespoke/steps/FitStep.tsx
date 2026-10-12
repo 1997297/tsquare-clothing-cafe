@@ -70,14 +70,14 @@ export function FitStep({
               className={cn(
                 "relative flex flex-col items-center text-center p-6 rounded-2xl border transition-all duration-200 group",
                 isSelected
-                  ? "border-champagne/60 bg-stone-900/70 ring-1 ring-champagne/20"
-                  : "border-stone-800 hover:border-stone-700 hover:bg-stone-900/30"
+                  ? "border-champagne/60 bg-surface-elevated ring-1 ring-champagne/20"
+                  : "border-stone-800 hover:border-stone-700 hover:bg-surface-elevated"
               )}
             >
               {/* Silhouette icon */}
               <div className={cn(
                 "mb-4 transition-colors duration-200",
-                isSelected ? "text-champagne" : "text-stone-700 group-hover:text-stone-500"
+                isSelected ? "text-champagne" : "text-ink-muted group-hover:text-stone-500"
               )}>
                 <FitIcon type={fit.id} />
               </div>
@@ -97,9 +97,9 @@ export function FitStep({
 
               {/* Selection ring */}
               {isSelected && (
-                <div className="absolute top-3 right-3 w-4 h-4 rounded-full bg-champagne flex items-center justify-center">
-                  <svg viewBox="0 0 10 10" className="w-2.5 h-2.5">
-                    <path d="M1.5 5l2.5 2.5L8.5 2.5" stroke="#11110F" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                <div className="absolute top-3 right-3 w-4 h-4 rounded-full bg-action flex items-center justify-center">
+                  <svg viewBox="0 0 10 10" className="w-2.5 h-2.5 text-on-action">
+                    <path d="M1.5 5l2.5 2.5L8.5 2.5" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
               )}
@@ -108,7 +108,7 @@ export function FitStep({
         })}
       </div>
 
-      <p className="text-[10px] text-stone-600 italic mb-8 leading-relaxed">
+      <p className="text-[10px] text-ink-muted italic mb-8 leading-relaxed">
         This preference guides your pattern. Final fit is always refined through progressive fitting appointments.
       </p>
 
@@ -128,8 +128,8 @@ export function FitStep({
           className={cn(
             "flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl transition-all duration-200",
             config.fitPreference
-              ? "bg-champagne text-near-black hover:bg-champagne-light"
-              : "bg-stone-900 text-stone-600 cursor-not-allowed"
+              ? "bg-action text-on-action hover:bg-action-hover"
+              : "bg-surface-elevated text-ink-muted cursor-not-allowed"
           )}
         >
           Continue

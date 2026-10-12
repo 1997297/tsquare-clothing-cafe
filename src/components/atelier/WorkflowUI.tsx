@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const STATUS_TONES: Record<string, string> = {
-  submitted: "border-stone-600 bg-stone-800/60 text-stone-200",
+  submitted: "border-stone-600 bg-surface-hover text-stone-200",
   under_review: "border-blue-700/60 bg-blue-950/40 text-blue-300",
   needs_clarification: "border-amber-700/60 bg-amber-950/40 text-amber-300",
   confirmed: "border-emerald-700/60 bg-emerald-950/40 text-emerald-300",
@@ -20,7 +20,7 @@ const STATUS_TONES: Record<string, string> = {
   in_production: "border-amber-700/60 bg-amber-950/40 text-amber-300",
   finishing: "border-violet-700/60 bg-violet-950/40 text-violet-300",
   ready: "border-emerald-700/60 bg-emerald-950/40 text-emerald-300",
-  completed: "border-stone-600 bg-stone-800/60 text-stone-200",
+  completed: "border-stone-600 bg-surface-hover text-stone-200",
 };
 
 export function RequestStatusBadge({ status }: { status: string }) {
@@ -46,10 +46,10 @@ function humanize(value: string) {
 
 export function WorkflowTimeline({ events, emptyLabel = "No workflow activity has been recorded yet." }: { events: WorkflowEvent[]; emptyLabel?: string }) {
   return (
-    <section className="rounded-3xl border border-stone-800 bg-white/80 p-6 dark:bg-stone-950/60 sm:p-8">
+    <section className="rounded-3xl border border-line bg-surface p-6 sm:p-8">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="font-display text-xl text-stone-950 dark:text-warm-ivory">Commission timeline</h2>
+          <h2 className="font-display text-xl text-ink">Commission timeline</h2>
         </div>
         <Clock3 className="h-5 w-5 text-stone-500" />
       </div>
@@ -65,14 +65,14 @@ export function WorkflowTimeline({ events, emptyLabel = "No workflow activity ha
                 : undefined;
             return (
               <li key={event.id} className="relative grid grid-cols-[18px_1fr] gap-3 pb-6 last:pb-0">
-                {index < events.length - 1 && <span className="absolute left-[8px] top-4 h-full w-px bg-stone-800" />}
-                <span className="relative mt-1 h-4 w-4 rounded-full border-4 border-white bg-champagne dark:border-stone-950" />
+                {index < events.length - 1 && <span className="absolute left-[8px] top-4 h-full w-px bg-surface-hover" />}
+                <span className="relative mt-1 h-4 w-4 rounded-full border-4 border-surface bg-action" />
                 <div>
-                  <p className="text-sm text-stone-900 dark:text-stone-200">{humanize(event.eventType)}</p>
+                  <p className="text-sm text-ink">{humanize(event.eventType)}</p>
                   <p className="mt-1 text-[10px] uppercase tracking-wider text-stone-500">
                     {event.actorType} · {new Intl.DateTimeFormat("en-NG", { dateStyle: "medium", timeStyle: "short" }).format(new Date(event.createdAt))}
                   </p>
-                  {publicMessage && <p className="mt-2 rounded-xl bg-stone-100 p-3 text-xs leading-5 text-stone-600 dark:bg-stone-900 dark:text-stone-300">{publicMessage}</p>}
+                  {publicMessage && <p className="mt-2 rounded-xl bg-surface-elevated p-3 text-xs leading-5 text-ink-secondary">{publicMessage}</p>}
                 </div>
               </li>
             );

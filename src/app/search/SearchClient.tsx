@@ -31,7 +31,7 @@ export default function SearchClient() {
   ];
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-champagne selection:text-near-black">
+    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-action selection:text-on-action">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Search Header */}
         <div className="max-w-3xl mx-auto text-center mb-12">
@@ -43,7 +43,7 @@ export default function SearchClient() {
           </p>
 
           {/* Search Input Box */}
-          <div className="mt-8 relative flex items-center bg-stone-950 fine-border p-2">
+          <div className="mt-8 relative flex items-center bg-surface fine-border p-2">
             <Search className="h-5 w-5 text-stone-400 ml-3" />
             <label htmlFor="collection-search" className="sr-only">Search the collection</label>
             <input
@@ -106,7 +106,7 @@ export default function SearchClient() {
           </div>
 
           {results.length === 0 ? (
-            <div className="py-20 text-center fine-border bg-stone-950 p-12">
+            <div className="py-20 text-center fine-border bg-surface p-12">
               <h3 className="font-display text-2xl text-stone-300">
                 No garments found matching &ldquo;{query}&rdquo;
               </h3>

@@ -11,7 +11,7 @@ export default async function HomePage() {
   const featuredStyles = styles.filter((style) => style.featured);
 
   return (
-    <div className="flex flex-col bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black font-sans">
+    <div className="flex flex-col bg-near-black text-warm-ivory selection:bg-action selection:text-on-action font-sans">
       {/* ------------------------------------------------------------- */}
       {/* 1. HERO SECTION                                              */}
       {/* ------------------------------------------------------------- */}
@@ -32,12 +32,12 @@ export default async function HomePage() {
         </div>
 
         {/* Hero Copy */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-16 flex flex-col items-center">
-          <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight text-[#FAF8F5] leading-[1.12] max-w-4xl animate-in fade-in slide-in-from-bottom-3 duration-700 drop-shadow-sm">
+        <div className="photo-copy relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-16 flex flex-col items-center">
+          <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight text-photo leading-[1.12] max-w-4xl animate-in fade-in slide-in-from-bottom-3 duration-700 drop-shadow-sm">
             Crafted for the man who commands presence.
           </h1>
 
-          <p className="mt-5 sm:mt-7 text-sm sm:text-lg md:text-xl text-[#FAF8F5]/90 font-sans font-light max-w-2xl leading-relaxed tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+          <p className="mt-5 sm:mt-7 text-sm sm:text-lg md:text-xl text-photo/90 font-sans font-light max-w-2xl leading-relaxed tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
             Bespoke menswear shaped by craftsmanship, character and individuality.
           </p>
 
@@ -57,7 +57,7 @@ export default async function HomePage() {
               href="/book-a-fitting"
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto text-[#FAF8F5] border-white/30 hover:border-champagne hover:text-champagne hover:bg-white/5 rounded-xl backdrop-blur-sm"
+              className="w-full sm:w-auto text-photo border-photo/70 hover:border-champagne hover:text-champagne hover:bg-white/5 rounded-xl backdrop-blur-sm"
             >
               Book A Fitting
             </Button>
@@ -65,7 +65,7 @@ export default async function HomePage() {
         </div>
 
         {/* Down Scroll Indicator */}
-        <div className="absolute bottom-6 inset-x-0 flex justify-center text-stone-400/80 animate-bounce pointer-events-none">
+        <div className="absolute bottom-6 inset-x-0 flex justify-center text-ink-secondary animate-bounce pointer-events-none">
           <span className="text-[9px] uppercase tracking-[0.25em] font-mono">
             Scroll To Discover
           </span>
@@ -169,8 +169,8 @@ export default async function HomePage() {
                 className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity" />
-              <div className="absolute bottom-6 sm:bottom-10 left-6 sm:left-10 right-6 z-10">
-                <h3 className="font-display text-2xl sm:text-4xl text-[#FAF8F5] mt-1">
+              <div className="photo-copy absolute bottom-6 sm:bottom-10 left-6 sm:left-10 right-6 z-10">
+                <h3 className="font-display text-2xl sm:text-4xl text-photo mt-1">
                   {COLLECTIONS[0].name}
                 </h3>
                 <p className="mt-2 text-xs sm:text-sm text-stone-200 font-light max-w-md hidden sm:block">
@@ -178,7 +178,7 @@ export default async function HomePage() {
                 </p>
                 <Link
                   href={`/collections/${COLLECTIONS[0].slug}`}
-                  className="mt-4 inline-flex items-center text-xs uppercase tracking-[0.2em] font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
+                  className="mt-4 inline-flex items-center text-xs uppercase tracking-[0.2em] font-semibold text-photo hover:text-champagne transition-colors"
                 >
                   Explore Agbada Collection <ArrowRight className="ml-2 h-3.5 w-3.5" />
                 </Link>
@@ -195,8 +195,8 @@ export default async function HomePage() {
                 className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity" />
-              <div className="absolute bottom-6 sm:bottom-10 left-6 sm:left-8 right-6 z-10">
-                <h3 className="font-display text-2xl sm:text-3xl text-[#FAF8F5] mt-1">
+              <div className="photo-copy absolute bottom-6 sm:bottom-10 left-6 sm:left-8 right-6 z-10">
+                <h3 className="font-display text-2xl sm:text-3xl text-photo mt-1">
                   {COLLECTIONS[1].name}
                 </h3>
                 <p className="mt-2 text-xs text-stone-200 font-light hidden sm:block">
@@ -204,7 +204,7 @@ export default async function HomePage() {
                 </p>
                 <Link
                   href={`/collections/${COLLECTIONS[1].slug}`}
-                  className="mt-4 inline-flex items-center text-xs uppercase tracking-[0.2em] font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
+                  className="mt-4 inline-flex items-center text-xs uppercase tracking-[0.2em] font-semibold text-photo hover:text-champagne transition-colors"
                 >
                   Explore Senator <ArrowRight className="ml-2 h-3.5 w-3.5" />
                 </Link>
@@ -221,13 +221,13 @@ export default async function HomePage() {
                 className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90" />
-              <div className="absolute bottom-6 left-6 right-6 z-10">
-                <h3 className="font-display text-xl sm:text-2xl text-[#FAF8F5] mt-0.5">
+              <div className="photo-copy absolute bottom-6 left-6 right-6 z-10">
+                <h3 className="font-display text-xl sm:text-2xl text-photo mt-0.5">
                   {COLLECTIONS[2].name}
                 </h3>
                 <Link
                   href={`/collections/${COLLECTIONS[2].slug}`}
-                  className="mt-3 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
+                  className="mt-3 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-photo hover:text-champagne transition-colors"
                 >
                   View Collection →
                 </Link>
@@ -244,13 +244,13 @@ export default async function HomePage() {
                 className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-90" />
-              <div className="absolute bottom-6 left-6 right-6 z-10">
-                <h3 className="font-display text-xl sm:text-2xl text-[#FAF8F5] mt-0.5">
+              <div className="photo-copy absolute bottom-6 left-6 right-6 z-10">
+                <h3 className="font-display text-xl sm:text-2xl text-photo mt-0.5">
                   {COLLECTIONS[3].name}
                 </h3>
                 <Link
                   href={`/collections/${COLLECTIONS[3].slug}`}
-                  className="mt-3 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
+                  className="mt-3 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-photo hover:text-champagne transition-colors"
                 >
                   View Collection →
                 </Link>
@@ -269,13 +269,13 @@ export default async function HomePage() {
                   className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-95" />
-                <div className="relative z-10">
-                  <h3 className="font-display text-xl text-[#FAF8F5] mt-0.5">
+                <div className="photo-copy relative z-10">
+                  <h3 className="font-display text-xl text-photo mt-0.5">
                     {COLLECTIONS[4].name}
                   </h3>
                   <Link
                     href={`/collections/${COLLECTIONS[4].slug}`}
-                    className="mt-2 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
+                    className="mt-2 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-photo hover:text-champagne transition-colors"
                   >
                     Explore Bespoke →
                   </Link>
@@ -292,13 +292,13 @@ export default async function HomePage() {
                   className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-95" />
-                <div className="relative z-10">
-                  <h3 className="font-display text-xl text-[#FAF8F5] mt-0.5">
+                <div className="photo-copy relative z-10">
+                  <h3 className="font-display text-xl text-photo mt-0.5">
                     {COLLECTIONS[5].name}
                   </h3>
                   <Link
                     href={`/collections/${COLLECTIONS[5].slug}`}
-                    className="mt-2 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-[#FAF8F5] hover:text-champagne transition-colors"
+                    className="mt-2 inline-flex items-center text-xs uppercase tracking-widest font-semibold text-photo hover:text-champagne transition-colors"
                   >
                     Explore Formal →
                   </Link>
@@ -340,7 +340,7 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* 5. BESPOKE HOMEPAGE INTRODUCTION                             */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-24 sm:py-32 bg-stone-950 relative overflow-hidden">
+      <section className="py-24 sm:py-32 bg-surface relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
             <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
@@ -525,8 +525,8 @@ export default async function HomePage() {
                   className="object-cover transition-transform duration-700 group-hover:scale-105 filter brightness-[0.7] group-hover:brightness-[0.85]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-                <div className="relative z-10">
-                  <h3 className="font-display text-base sm:text-xl text-[#FAF8F5] group-hover:text-champagne transition-colors">
+                <div className="photo-copy relative z-10">
+                  <h3 className="font-display text-base sm:text-xl text-photo group-hover:text-champagne transition-colors">
                     {occ.name}
                   </h3>
                   <p className="mt-1 text-[11px] text-stone-200 font-light line-clamp-2 hidden sm:block">
@@ -556,7 +556,7 @@ export default async function HomePage() {
               { title: "Your orders.", sub: "Live bespoke production tracker" },
               { title: "Your wardrobe.", sub: "Permanent digital garments library" },
             ].map((item, idx) => (
-              <div key={idx} className="p-5 bg-stone-900/40 fine-border rounded-2xl shadow-sm">
+              <div key={idx} className="p-5 bg-surface-elevated fine-border rounded-2xl shadow-sm">
                 <div className="font-display text-base sm:text-lg text-warm-ivory font-medium">
                   {item.title}
                 </div>
@@ -591,10 +591,10 @@ export default async function HomePage() {
             className="object-cover object-top filter brightness-[0.4]"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-near-black/75" />
+          <div className="absolute inset-0 bg-black/75" />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="photo-copy relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
           <h2 className="font-display text-3xl sm:text-5xl font-normal tracking-tight text-warm-ivory">
             Some things should be made in person.

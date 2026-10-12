@@ -43,7 +43,7 @@ export default function StyleDetailClient({
   };
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory pt-24 sm:pt-32 pb-24 selection:bg-champagne selection:text-near-black font-sans">
+    <div className="bg-near-black min-h-screen text-warm-ivory pt-24 sm:pt-32 pb-24 selection:bg-action selection:text-on-action font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {previewMode && (
           <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-amber-800/60 bg-amber-950/30 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -201,7 +201,7 @@ export default function StyleDetailClient({
 
             {/* Fabric & Fit Specifications with Rounded-2xl */}
             <div className="space-y-4 text-xs">
-              <div className="p-4 bg-stone-950 fine-border rounded-2xl space-y-2">
+              <div className="p-4 bg-surface fine-border rounded-2xl space-y-2">
                 <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-stone-400 font-semibold block">
                   Fabric Architecture
                 </span>
@@ -226,7 +226,7 @@ export default function StyleDetailClient({
                 )}
               </div>
 
-              <div className="p-4 bg-stone-950 fine-border rounded-2xl space-y-1">
+              <div className="p-4 bg-surface fine-border rounded-2xl space-y-1">
                 <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-stone-400 font-semibold block">
                   Anatomical Cut & Fit
                 </span>
@@ -246,7 +246,7 @@ export default function StyleDetailClient({
                   {style.availableColours.map((c, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-stone-900/60 border border-stone-800 text-xs text-stone-300 rounded-xl"
+                      className="flex items-center gap-2 px-3 py-1.5 bg-surface-elevated border border-stone-800 text-xs text-stone-300 rounded-xl"
                     >
                       <span
                         className="h-3 w-3 rounded-full border border-stone-600"
@@ -294,7 +294,7 @@ export default function StyleDetailClient({
                   variant="outline"
                   size="md"
                   onClick={() => toggle(style.id)}
-                  className="text-warm-ivory border-stone-700 hover:bg-stone-900 rounded-xl"
+                  className="text-warm-ivory border-stone-700 hover:bg-surface-elevated rounded-xl"
                 >
                   <Heart
                     className={cn(
@@ -309,7 +309,7 @@ export default function StyleDetailClient({
                   href={`/book-a-fitting?style=${encodeURIComponent(style.code)}`}
                   variant="secondary"
                   size="md"
-                  className="bg-stone-800 text-warm-ivory border-stone-700 hover:bg-stone-700 rounded-xl"
+                  className="bg-surface-elevated text-warm-ivory border-control hover:bg-surface-hover rounded-xl"
                 >
                   <Calendar className="mr-2 h-4 w-4" />
                   Book Fitting

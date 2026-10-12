@@ -89,7 +89,7 @@ export function ConciergeMessages({ requestId, initialMessages, initialHasMore, 
       followLatest.current = node.scrollHeight - node.scrollTop - node.clientHeight < 64;
       if (followLatest.current) setNewMessages(false);
     }}>
-      <ol aria-label="Conversation messages" className="space-y-4">{messages.map(message => <li key={message.id} data-sender={message.sender_type} className={`w-fit min-w-0 max-w-[92%] rounded-2xl px-4 py-3 sm:max-w-[85%] sm:px-5 ${message.sender_type === "concierge" ? "ml-auto rounded-br-sm bg-champagne/25" : "mr-auto rounded-bl-sm bg-stone-900"}`}>
+      <ol aria-label="Conversation messages" className="space-y-4">{messages.map(message => <li key={message.id} data-sender={message.sender_type} className={`w-fit min-w-0 max-w-[92%] rounded-2xl px-4 py-3 sm:max-w-[85%] sm:px-5 ${message.sender_type === "concierge" ? "ml-auto rounded-br-sm bg-champagne/25" : "mr-auto rounded-bl-sm bg-surface-elevated"}`}>
         <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-1"><span className="text-xs font-semibold text-warm-ivory">{message.sender_type === "concierge" ? "TCC Concierge" : staff ? "Client" : "You"}</span><time dateTime={message.created_at} className="text-[11px] text-stone-400">{formatAtelierInstant(message.created_at)}</time></div>
         <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-stone-300 [overflow-wrap:anywhere]">{message.message}</p>
       </li>)}</ol>

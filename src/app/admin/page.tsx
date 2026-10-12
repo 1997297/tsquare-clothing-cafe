@@ -38,7 +38,7 @@ export default async function AdminOverviewPage() {
 
       <section aria-label="Operational summaries" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {overview.metrics.map((metric) => (
-          <div key={metric.label} className="rounded-2xl border border-stone-800 bg-stone-950/60 p-5">
+          <div key={metric.label} className="rounded-2xl border border-stone-800 bg-surface p-5">
             <p className="text-[9px] font-mono uppercase tracking-[0.22em] text-stone-500">{metric.label}</p>
             <p className="mt-5 font-display text-4xl text-warm-ivory">
               {metric.value == null ? "—" : metric.value}
@@ -51,12 +51,12 @@ export default async function AdminOverviewPage() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-        <div className="rounded-3xl border border-stone-800 bg-stone-950/60 p-6 sm:p-8">
+        <div className="rounded-3xl border border-stone-800 bg-surface p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="font-display text-2xl">Recent Activity</h2>
             </div>
-            <Clock3 className="h-5 w-5 text-stone-600" />
+            <Clock3 className="h-5 w-5 text-ink-muted" />
           </div>
 
           {overview.activity.length === 0 ? (
@@ -67,10 +67,10 @@ export default async function AdminOverviewPage() {
             <div className="mt-7 divide-y divide-stone-800/80">
               {overview.activity.map((item) => (
                 <div key={item.id} className="flex items-start gap-4 py-4 first:pt-0 last:pb-0">
-                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-champagne" />
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-action" />
                   <div className="min-w-0">
                     <p className="text-sm text-stone-200">{humanize(item.eventType)}</p>
-                    <p className="mt-1 text-[10px] uppercase tracking-wider text-stone-600">
+                    <p className="mt-1 text-[10px] uppercase tracking-wider text-ink-muted">
                       {humanize(item.entityType)} · {new Intl.DateTimeFormat("en-NG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Lagos" }).format(new Date(item.createdAt))} WAT
                     </p>
                   </div>
@@ -80,7 +80,7 @@ export default async function AdminOverviewPage() {
           )}
         </div>
 
-        <div className="rounded-3xl border border-stone-800 bg-stone-950/60 p-6 sm:p-8">
+        <div className="rounded-3xl border border-stone-800 bg-surface p-6 sm:p-8">
           <h2 className="font-display text-2xl">Shape the Collection</h2>
           <p className="mt-4 text-sm leading-7 text-stone-400">
             Review Fit details, galleries and available fabrics before publishing. Archive a Fit to remove it from the public Collection while retaining its history.

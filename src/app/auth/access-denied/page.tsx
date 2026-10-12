@@ -25,7 +25,7 @@ export default async function AccessDeniedPage({
 
   return (
     <div className="min-h-screen bg-near-black text-warm-ivory flex items-center justify-center px-4 py-20">
-      <div className="w-full max-w-lg rounded-3xl border border-stone-800 bg-stone-950/70 p-8 sm:p-12 text-center shadow-2xl">
+      <div className="w-full max-w-lg rounded-3xl border border-stone-800 bg-surface p-8 sm:p-12 text-center shadow-2xl">
         <BrandLogo variant="light" size="md" />
         <div className="mx-auto mt-10 flex h-14 w-14 items-center justify-center rounded-full border border-champagne/30 bg-champagne/10">
           <LockKeyhole className="h-6 w-6 text-champagne" />
@@ -37,7 +37,7 @@ export default async function AccessDeniedPage({
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           {!isInactive && <Link
             href="/account"
-            className="inline-flex items-center justify-center rounded-xl bg-champagne px-5 py-3 text-xs font-bold uppercase tracking-widest text-near-black"
+            className="inline-flex items-center justify-center rounded-xl bg-action px-5 py-3 text-xs font-bold uppercase tracking-widest text-on-action"
           >
             Client Area
           </Link>}

@@ -44,7 +44,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const categoryStyles = getStylesByCategory(styles, collection.slug as ProductCategory);
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory selection:bg-champagne selection:text-near-black font-sans">
+    <div className="bg-near-black min-h-screen text-warm-ivory selection:bg-action selection:text-on-action font-sans">
       {/* ------------------------------------------------------------- */}
       {/* Editorial Category Hero                                       */}
       {/* ------------------------------------------------------------- */}
@@ -62,17 +62,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-near-black to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="photo-copy relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <Link
             href="/collections"
-            className="inline-flex items-center text-[10px] uppercase font-mono tracking-[0.25em] text-[#FAF8F5] hover:text-champagne transition-colors mb-6 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20"
+            className="inline-flex items-center text-[10px] uppercase font-mono tracking-[0.25em] text-photo hover:text-champagne transition-colors mb-6 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20"
           >
             <ArrowLeft className="mr-2 h-3.5 w-3.5" />
             Back To All Collections
           </Link>
 
 
-          <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-normal tracking-tight text-[#FAF8F5] leading-tight drop-shadow-sm">
+          <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-normal tracking-tight text-photo leading-tight drop-shadow-sm">
             {collection.name}
           </h1>
 
@@ -85,7 +85,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       {/* ------------------------------------------------------------- */}
       {/* Narrative & Architectural Characteristics                     */}
       {/* ------------------------------------------------------------- */}
-      <section className="border-y border-stone-800/80 bg-stone-950 py-12">
+      <section className="border-y border-stone-800/80 bg-surface py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6">
@@ -137,7 +137,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         )}
 
         {/* Bottom Consultation Link with Rounded-3xl */}
-        <div className="mt-20 p-8 sm:p-12 bg-stone-950 fine-border rounded-3xl text-center max-w-3xl mx-auto shadow-md">
+        <div className="mt-20 p-8 sm:p-12 bg-surface fine-border rounded-3xl text-center max-w-3xl mx-auto shadow-md">
           <h3 className="font-display text-2xl text-warm-ivory">
             Require a custom variant of {collection.name}?
           </h3>
@@ -147,7 +147,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <div className="mt-6">
             <Link
               href="/book-a-fitting"
-              className="inline-flex items-center justify-center bg-champagne text-near-black text-xs uppercase tracking-[0.2em] font-bold px-8 py-3.5 hover:bg-champagne-light transition-colors rounded-xl shadow-sm"
+              className="inline-flex items-center justify-center bg-action text-on-action text-xs uppercase tracking-[0.2em] font-bold px-8 py-3.5 hover:bg-action-hover transition-colors rounded-xl shadow-sm"
             >
               Book Atelier Consultation
             </Link>

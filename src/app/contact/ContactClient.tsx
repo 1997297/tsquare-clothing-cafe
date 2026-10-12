@@ -41,7 +41,7 @@ export default function ContactClient() {
   };
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-champagne selection:text-near-black">
+    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-action selection:text-on-action">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
@@ -56,7 +56,7 @@ export default function ContactClient() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           {/* Left Column: Atelier Information & Socials */}
           <div className="lg:col-span-5 space-y-8">
-            <div className="p-8 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl space-y-6">
+            <div className="p-8 bg-surface fine-border rounded-2xl sm:rounded-3xl space-y-6">
               <h3 className="font-display text-2xl text-warm-ivory">
                 The TCC Office
               </h3>
@@ -154,7 +154,7 @@ export default function ContactClient() {
 
           {/* Right Column: Interactive Concierge Message Form */}
           <div className="lg:col-span-7">
-            <div className="p-8 sm:p-10 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl">
+            <div className="p-8 sm:p-10 bg-surface fine-border rounded-2xl sm:rounded-3xl">
               <div className="mb-6">
                 <h3 className="font-display text-2xl text-warm-ivory">
                   Send A Message To Our Stylists

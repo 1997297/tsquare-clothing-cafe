@@ -28,13 +28,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        "bg-near-black text-warm-ivory hover:bg-espresso border border-stone-800 shadow-sm",
+        "bg-ink text-page hover:bg-ink-secondary border border-ink shadow-sm",
       secondary:
-        "bg-warm-ivory text-near-black hover:bg-white border border-stone-300 shadow-sm",
+        "bg-surface-elevated text-ink hover:bg-surface-hover border border-control shadow-sm",
       outline:
         "bg-transparent text-current border border-current hover:bg-stone-500/10",
       champagne:
-        "bg-champagne text-[#141311] hover:bg-champagne-light border border-champagne shadow-md font-bold",
+        "bg-action text-on-action hover:bg-action-hover border border-action font-bold",
       ghost:
         "bg-transparent text-current hover:text-champagne border-transparent hover:bg-stone-500/10",
     };

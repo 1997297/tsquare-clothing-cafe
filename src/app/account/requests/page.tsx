@@ -43,7 +43,7 @@ export default function AccountRequestsPage() {
 
         <Link
           href="/bespoke/create/idea"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all self-start sm:self-auto"
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>New Commission</span>
@@ -60,7 +60,7 @@ export default function AccountRequestsPage() {
             className={cn(
               "px-3.5 py-1.5 rounded-xl text-xs uppercase tracking-wider font-mono transition-colors",
               filter === f
-                ? "bg-stone-900 text-champagne border border-stone-800 font-semibold"
+                ? "bg-surface-elevated text-champagne border border-stone-800 font-semibold"
                 : "text-stone-500 hover:text-stone-300"
             )}
           >
@@ -80,7 +80,7 @@ export default function AccountRequestsPage() {
               <div
                 key={request.requestId}
                 className={cn(
-                  "p-6 rounded-3xl bg-stone-950 fine-border transition-all duration-200 space-y-4",
+                  "p-6 rounded-3xl bg-surface fine-border transition-all duration-200 space-y-4",
                   isClarificationNeeded && "border-amber-600/50 bg-amber-950/10",
                   isPricingReady && "border-champagne/50 bg-champagne/5"
                 )}
@@ -90,7 +90,7 @@ export default function AccountRequestsPage() {
                     <span className="text-xs font-mono font-bold text-champagne tracking-wider">
                       {request.requestId}
                     </span>
-                    <span className="text-stone-600">•</span>
+                    <span className="text-ink-muted">•</span>
                     <span className="text-xs text-stone-400 font-mono">
                       {new Date(request.createdAt).toLocaleDateString("en-NG", {
                         day: "numeric",
@@ -151,8 +151,8 @@ export default function AccountRequestsPage() {
           })}
         </div>
       ) : (
-        <div className="p-12 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
-          <FileText className="w-8 h-8 text-stone-600 mx-auto" />
+        <div className="p-12 bg-surface fine-border rounded-3xl text-center space-y-4">
+          <FileText className="w-8 h-8 text-ink-muted mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
             No Bespoke Requests Found
           </h3>
@@ -162,7 +162,7 @@ export default function AccountRequestsPage() {
           <div className="pt-2">
             <Link
               href="/collections"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all"
             >
               <span>Browse Styles</span>
               <ArrowRight className="w-4 h-4" />

@@ -90,8 +90,8 @@ export default function AccountNotificationsPage() {
                 className={cn(
                   "p-5 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4",
                   isUnread
-                    ? "bg-stone-950 border-champagne/40 shadow-sm"
-                    : "bg-stone-950 border-stone-800/60 opacity-80 hover:opacity-100"
+                    ? "bg-surface border-champagne/40 shadow-sm"
+                    : "bg-surface border-stone-800/60 opacity-80 hover:opacity-100"
                 )}
               >
                 <div className="flex items-start gap-4">
@@ -100,7 +100,7 @@ export default function AccountNotificationsPage() {
                       "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border mt-0.5",
                       isUnread
                         ? "bg-champagne/15 border-champagne/40 text-champagne"
-                        : "bg-stone-900 border-stone-800 text-stone-500"
+                        : "bg-surface-elevated border-stone-800 text-stone-500"
                     )}
                   >
                     {notif.type.includes("payment") ? (
@@ -131,7 +131,7 @@ export default function AccountNotificationsPage() {
                         {notif.title}
                       </h3>
                       {isUnread && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-champagne" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-action" />
                       )}
                     </div>
                     <p className="text-xs text-stone-400 font-light leading-relaxed">
@@ -162,8 +162,8 @@ export default function AccountNotificationsPage() {
           })}
         </div>
       ) : (
-        <div className="p-12 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
-          <Bell className="w-8 h-8 text-stone-600 mx-auto" />
+        <div className="p-12 bg-surface fine-border rounded-3xl text-center space-y-4">
+          <Bell className="w-8 h-8 text-ink-muted mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
             All Caught Up
           </h3>

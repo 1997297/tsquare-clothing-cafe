@@ -49,8 +49,8 @@ export function OccasionStep({
               className={cn(
                 "px-4 py-3.5 rounded-xl border text-left text-xs transition-all duration-200",
                 isSelected
-                  ? "border-champagne/60 bg-stone-900/70 text-champagne ring-1 ring-champagne/20"
-                  : "border-stone-800 text-stone-300 hover:border-stone-700 hover:bg-stone-900/30 hover:text-warm-ivory"
+                  ? "border-champagne/60 bg-surface-elevated text-champagne ring-1 ring-champagne/20"
+                  : "border-stone-800 text-stone-300 hover:border-stone-700 hover:bg-surface-elevated hover:text-warm-ivory"
               )}
             >
               {occ.label}
@@ -61,7 +61,7 @@ export function OccasionStep({
 
       {/* Optional event details */}
       {config.occasion && (
-        <div className="space-y-4 mb-8 p-5 bg-stone-950 border border-stone-800/50 rounded-2xl animate-in fade-in duration-200">
+        <div className="space-y-4 mb-8 p-5 bg-surface border border-stone-800/50 rounded-2xl animate-in fade-in duration-200">
           <p className="text-[10px] uppercase tracking-widest text-stone-500 font-mono">
             Event Details (Optional)
           </p>
@@ -78,7 +78,7 @@ export function OccasionStep({
               value={config.eventName ?? ""}
               onChange={(e) => onEventNameChange(e.target.value)}
               placeholder="e.g. The Adeyemi Wedding, Lagos"
-              className="w-full bg-near-black border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none focus:border-champagne/50"
+              className="w-full bg-near-black border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-ink-muted px-4 py-3 focus:outline-none focus:border-champagne/50"
             />
           </div>
           <div>
@@ -116,8 +116,8 @@ export function OccasionStep({
           className={cn(
             "flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl transition-all duration-200",
             config.occasion
-              ? "bg-champagne text-near-black hover:bg-champagne-light"
-              : "bg-stone-900 text-stone-600 cursor-not-allowed"
+              ? "bg-action text-on-action hover:bg-action-hover"
+              : "bg-surface-elevated text-ink-muted cursor-not-allowed"
           )}
         >
           Continue

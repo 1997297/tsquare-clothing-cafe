@@ -35,7 +35,7 @@ export default function ConfirmationPage() {
           </p>
           <Link
             href="/collections"
-            className="inline-flex items-center gap-2 px-6 py-3 text-xs uppercase tracking-widest font-bold bg-champagne text-near-black hover:bg-champagne-light rounded-2xl transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 text-xs uppercase tracking-widest font-bold bg-action text-on-action hover:bg-action-hover rounded-2xl transition-all"
           >
             Browse Collections
             <ArrowRight className="w-4 h-4" />
@@ -68,7 +68,7 @@ export default function ConfirmationPage() {
           </div>
 
           {/* Request details card */}
-          <div className="bg-stone-950 border border-stone-800/50 rounded-2xl p-6 sm:p-8 text-left space-y-5">
+          <div className="bg-surface border border-stone-800/50 rounded-2xl p-6 sm:p-8 text-left space-y-5">
             {/* Reference */}
             <div>
               <p className="text-[10px] uppercase tracking-[0.25em] text-stone-500 font-mono mb-1">
@@ -140,7 +140,7 @@ export default function ConfirmationPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
             <Link
               href="/collections"
-              className="inline-flex items-center gap-2 px-6 py-3.5 text-xs uppercase tracking-widest font-bold bg-champagne text-near-black hover:bg-champagne-light rounded-2xl transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3.5 text-xs uppercase tracking-widest font-bold bg-action text-on-action hover:bg-action-hover rounded-2xl transition-all"
             >
               <Layers className="w-4 h-4" />
               Explore More Styles

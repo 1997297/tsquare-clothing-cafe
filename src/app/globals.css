@@ -4,197 +4,193 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Semantic RGB channels support Tailwind alpha utilities without a second theme system. */
 :root {
   --font-clash: 'Clash Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --color-near-black: 17 17 15;
-  --color-warm-ivory: 243 239 231;
-  --color-warm-ivory-light: 250 247 242;
-  --color-espresso: 48 37 31;
-  --color-stone-50: 247 246 244;
-  --color-stone-100: 239 236 232;
-  --color-stone-200: 221 215 206;
-  --color-stone-300: 198 189 173;
-  --color-stone-400: 179 166 148;
-  --color-stone-500: 167 156 140;
-  --color-stone-600: 139 127 111;
-  --color-stone-700: 108 97 83;
-  --color-stone-800: 73 65 55;
-  --color-stone-900: 43 38 32;
-  --color-stone-950: 20 20 18;
-  --color-champagne: 183 154 104;
-  --color-champagne-light: 209 184 139;
-  --color-champagne-dark: 150 122 73;
-  --calendar-icon-filter: invert(1) sepia(0.18) saturate(0.8) brightness(1.18);
+  --theme-page: 16 17 19;
+  --theme-surface: 34 37 42;
+  --theme-elevated: 43 46 52;
+  --theme-hover: 53 57 65;
+  --theme-text: 245 244 241;
+  --theme-secondary: 195 198 203;
+  --theme-muted: 173 178 186;
+  --theme-border: 70 75 84;
+  --theme-control-border: 128 135 145;
+  --theme-focus: 210 189 152;
+  --theme-accent: 198 175 138;
+  --theme-accent-hover: 222 203 170;
+  --theme-action: 184 161 125;
+  --theme-action-hover: 207 184 145;
+  --theme-on-action: 23 23 23;
+  --theme-success: 141 216 178;
+  --theme-success-surface: 24 55 45;
+  --theme-success-border: 70 137 103;
+  --theme-warning: 240 206 136;
+  --theme-warning-surface: 58 48 28;
+  --theme-warning-border: 150 116 61;
+  --theme-error: 255 173 182;
+  --theme-error-surface: 68 38 45;
+  --theme-error-border: 180 101 117;
+  --theme-info: 170 204 245;
+  --theme-info-surface: 37 52 74;
+  --theme-info-border: 111 143 179;
+  --theme-progress: 212 184 243;
+  --theme-progress-surface: 55 43 72;
+  --theme-progress-border: 151 123 184;
+  --theme-pending: 255 208 214;
+  --theme-pending-surface: 68 38 45;
+  --theme-pending-border: 195 122 134;
+  --theme-badge: 190 18 60;
+  --theme-on-badge: 255 255 255;
+  --theme-photo-text: 250 248 245;
+  --theme-photo-secondary: 226 226 223;
+  --theme-photo-accent: 222 203 170;
+  --theme-overlay: 10 11 13;
   color-scheme: dark;
+
+  /* Compatibility aliases keep established components on the same semantic palette. */
+  --color-near-black: var(--theme-page);
+  --color-warm-ivory: var(--theme-text);
+  --color-warm-ivory-light: var(--theme-text);
+  --color-espresso: var(--theme-elevated);
+  --color-stone-50: var(--theme-text);
+  --color-stone-100: var(--theme-text);
+  --color-stone-200: var(--theme-text);
+  --color-stone-300: var(--theme-secondary);
+  --color-stone-400: var(--theme-secondary);
+  --color-stone-500: var(--theme-muted);
+  --color-stone-600: var(--theme-muted);
+  --color-stone-700: var(--theme-control-border);
+  --color-stone-800: var(--theme-border);
+  --color-stone-900: var(--theme-elevated);
+  --color-stone-950: var(--theme-surface);
+  --color-champagne: var(--theme-accent);
+  --color-champagne-light: var(--theme-accent-hover);
+  --color-champagne-dark: var(--theme-accent);
 }
 
 :root[data-theme="light"] {
-  --color-near-black: 250 248 245;
-  --color-warm-ivory: 20 19 17;
-  --color-warm-ivory-light: 15 14 12;
-  --color-espresso: 255 255 255;
-  --color-stone-50: 16 14 12;
-  --color-stone-100: 24 20 16;
-  --color-stone-200: 38 33 27;
-  --color-stone-300: 62 54 45;
-  --color-stone-400: 98 87 75;
-  --color-stone-500: 134 122 107;
-  --color-stone-600: 172 160 144;
-  --color-stone-700: 212 202 188;
-  --color-stone-800: 230 223 213;
-  --color-stone-900: 252 250 246;
-  --color-stone-950: 255 255 255;
-  --color-champagne: 162 124 58;
-  --color-champagne-light: 188 148 78;
-  --color-champagne-dark: 130 96 38;
-  --calendar-icon-filter: brightness(0.2) sepia(0.3) saturate(2);
+  --theme-page: 244 239 230;
+  --theme-surface: 255 252 247;
+  --theme-elevated: 236 229 217;
+  --theme-hover: 229 219 201;
+  --theme-text: 23 23 23;
+  --theme-secondary: 75 72 67;
+  --theme-muted: 102 95 85;
+  --theme-border: 217 208 195;
+  --theme-control-border: 136 123 105;
+  --theme-focus: 112 82 47;
+  --theme-accent: 119 89 52;
+  --theme-accent-hover: 91 65 33;
+  --theme-action: 165 139 98;
+  --theme-action-hover: 183 157 115;
+  --theme-success: 23 100 63;
+  --theme-success-surface: 232 243 233;
+  --theme-success-border: 97 148 112;
+  --theme-warning: 128 87 21;
+  --theme-warning-surface: 251 240 212;
+  --theme-warning-border: 182 154 93;
+  --theme-error: 156 35 61;
+  --theme-error-surface: 252 232 236;
+  --theme-error-border: 186 104 121;
+  --theme-info: 40 85 128;
+  --theme-info-surface: 233 240 248;
+  --theme-info-border: 132 158 183;
+  --theme-progress: 103 64 128;
+  --theme-progress-surface: 241 233 247;
+  --theme-progress-border: 161 132 178;
+  --theme-pending: 156 35 61;
+  --theme-pending-surface: 251 231 235;
+  --theme-pending-border: 189 110 126;
   color-scheme: light;
 }
 
 @layer base {
   body {
-    @apply bg-near-black text-warm-ivory font-sans antialiased selection:bg-champagne selection:text-near-black;
+    @apply bg-page text-ink font-sans antialiased;
     text-rendering: optimizeLegibility;
   }
-
-  /* Custom Luxury Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+  ::selection {
+    background: rgb(var(--theme-action));
+    color: rgb(var(--theme-on-action));
   }
-  ::-webkit-scrollbar-track {
-    background: rgb(var(--color-near-black));
-  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: rgb(var(--theme-page)); }
   ::-webkit-scrollbar-thumb {
-    background: rgb(var(--color-espresso));
-    border-radius: 0px;
+    background: rgb(var(--theme-control-border));
+    border-radius: 6px;
   }
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--color-champagne));
-  }
-
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    filter: var(--calendar-icon-filter);
-    opacity: 0.82;
-    transition: filter 160ms ease, opacity 160ms ease;
-  }
-
-  input[type="date"]:hover::-webkit-calendar-picker-indicator,
-  input[type="date"]:focus::-webkit-calendar-picker-indicator {
+  ::-webkit-scrollbar-thumb:hover { background: rgb(var(--theme-accent)); }
+  input, select, textarea { accent-color: rgb(var(--theme-accent)); }
+  input::placeholder, textarea::placeholder {
+    color: rgb(var(--theme-muted));
     opacity: 1;
   }
-
-  input[type="date"]:disabled::-webkit-calendar-picker-indicator {
-    cursor: not-allowed;
-    opacity: 0.35;
+  select option { background: rgb(var(--theme-surface)); color: rgb(var(--theme-text)); }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
   }
+  input[type="date"]:disabled::-webkit-calendar-picker-indicator { opacity: 0.5; }
 }
 
-/* Subtle Editorial Image Dark Gradient Overlay */
+/* Controls need a stronger edge than purely decorative card dividers. */
+:root :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea) {
+  border-color: rgb(var(--theme-control-border));
+}
+:root :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid rgb(var(--theme-focus));
+  outline-offset: 3px;
+}
+:root :is(input, select, textarea):focus-visible { outline-offset: 2px; }
+input:-webkit-autofill {
+  -webkit-text-fill-color: rgb(var(--theme-text));
+  -webkit-box-shadow: 0 0 0 1000px rgb(var(--theme-elevated)) inset;
+  caret-color: rgb(var(--theme-text));
+}
+:where(button, input, select, textarea):disabled { cursor: not-allowed; }
+
+/* Existing photograph treatments remain dark in both themes. */
 .editorial-overlay {
-  background: linear-gradient(
-    180deg,
-    rgba(17, 17, 15, 0.2) 0%,
-    rgba(17, 17, 15, 0.4) 60%,
-    rgba(17, 17, 15, 0.95) 100%
-  );
+  background: linear-gradient(180deg, rgb(var(--theme-overlay) / 0.2) 0%,
+    rgb(var(--theme-overlay) / 0.45) 60%, rgb(var(--theme-overlay) / 0.95) 100%);
 }
-
 .hero-vignette {
-  background: radial-gradient(
-    circle at center,
-    rgba(17, 17, 15, 0.2) 0%,
-    rgba(17, 17, 15, 0.85) 100%
-  );
+  background: radial-gradient(circle at center,
+    rgb(var(--theme-overlay) / 0.2) 0%, rgb(var(--theme-overlay) / 0.85) 100%);
 }
-
-/* Restrained fine border */
-.fine-border {
-  border: 1px solid rgb(var(--color-stone-700) / 0.8);
+.photo-copy {
+  --theme-focus: var(--theme-photo-accent);
+  --color-warm-ivory: var(--theme-photo-text);
+  --color-stone-200: var(--theme-photo-text);
+  --color-stone-300: var(--theme-photo-secondary);
+  --color-stone-400: var(--theme-photo-secondary);
+  --color-stone-500: var(--theme-photo-secondary);
+  --color-champagne: var(--theme-photo-accent);
+  --color-champagne-light: var(--theme-photo-text);
+  --color-champagne-dark: var(--theme-photo-accent);
 }
-
-:root[data-theme="dark"] .fine-border {
-  border: 1px solid rgb(var(--color-stone-500) / 0.18);
-}
-
-/* Luxury surface card with tailored ambient elevation in light mode */
+.fine-border { border: 1px solid rgb(var(--theme-border)); }
 .atelier-surface {
-  background-color: rgb(var(--color-stone-900));
-  border: 1px solid rgb(var(--color-stone-700) / 0.8);
-  box-shadow: 0 1px 3px 0 rgba(20, 18, 15, 0.03), 0 6px 20px -3px rgba(20, 18, 15, 0.04);
+  background-color: rgb(var(--theme-surface));
+  border: 1px solid rgb(var(--theme-border));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
 }
 
-:root[data-theme="dark"] .atelier-surface {
-  background-color: rgb(var(--color-stone-900) / 0.6);
-  border: 1px solid rgb(var(--color-stone-800));
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
-}
-
-/* Luxury high-contrast text on champagne elements across both themes */
-.bg-champagne.text-near-black,
-.bg-champagne .text-near-black,
-button.bg-champagne,
-a.bg-champagne {
-  color: #141311;
-}
-
-.bg-champagne svg.fill-near-black,
-.bg-champagne .fill-near-black {
-  fill: #141311;
-}
-
-/* Luxury status badges & notices in light theme */
-:root[data-theme="light"] .bg-emerald-950\/40,
-:root[data-theme="light"] .bg-emerald-950\/30,
-:root[data-theme="light"] .bg-emerald-950\/20 {
-  background-color: #ECFDF5 !important;
-  border-color: #A7F3D0 !important;
-  color: #065F46 !important;
-}
-
-:root[data-theme="light"] .bg-amber-950\/40,
-:root[data-theme="light"] .bg-amber-950\/20,
-:root[data-theme="light"] .bg-amber-950\/10 {
-  background-color: #FFFBEB !important;
-  border-color: #FDE68A !important;
-  color: #92400E !important;
-}
-
-:root[data-theme="light"] .bg-blue-950\/40 {
-  background-color: #EFF6FF !important;
-  border-color: #BFDBFE !important;
-  color: #1E40AF !important;
-}
-
-:root[data-theme="light"] .bg-rose-950\/40 {
-  background-color: #FFF1F2 !important;
-  border-color: #FECDD3 !important;
-  color: #9F1239 !important;
-}
-
-/* Payment feedback must remain readable on the light financial surfaces. */
 .staff-attention-badge {
-  background-color: #be123c;
-  color: #ffffff;
+  background-color: rgb(var(--theme-badge));
+  color: rgb(var(--theme-on-badge));
 }
 .payment-needs-verification {
-  background-color: #291a1e;
-  border-color: #9f4354;
+  background-color: rgb(var(--theme-pending-surface));
+  border-color: rgb(var(--theme-pending-border));
 }
-.payment-verification-label { color: #fda4af; }
-:root[data-theme="light"] .payment-needs-verification {
-  background-color: #fff1f2;
-  border-color: #fda4af;
-}
-:root[data-theme="light"] .payment-verification-label { color: #9f1239; }
+.payment-verification-label { color: rgb(var(--theme-pending)); }
 
-:root[data-theme="light"] .payment-panel .text-rose-400,
-:root[data-theme="light"] .atelier-panel .text-rose-400 {
-  color: #be123c;
-}
-
-:root[data-theme="light"] .payment-panel .text-amber-400,
-:root[data-theme="light"] .atelier-panel .text-amber-400 {
-  color: #92400e;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

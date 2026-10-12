@@ -93,7 +93,7 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
         Review your selections below. Tap Edit on any section to make changes.
       </p>
 
-      <div className="bg-stone-950 border border-stone-800/50 rounded-2xl px-5 sm:px-6 divide-y-0 mb-8">
+      <div className="bg-surface border border-stone-800/50 rounded-2xl px-5 sm:px-6 divide-y-0 mb-8">
         {/* Style */}
         <Section title="Style" step={0} onEdit={onEdit}>
           <Row label="Style Code" value={config.isIdeaPath ? "Custom Vision" : config.styleCode} />
@@ -131,7 +131,7 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
               <span className="text-xs text-stone-300">{config.colour.name}</span>
             </div>
           ) : (
-            <span className="text-xs text-stone-600 italic">Not selected</span>
+            <span className="text-xs text-ink-muted italic">Not selected</span>
           )}
         </Section>
 
@@ -164,7 +164,7 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
           {config.preferences.specialInstructions && (
             <div className="mt-2">
               <p className="text-[10px] text-stone-500 mb-1">Special Instructions</p>
-              <p className="text-xs text-stone-400 bg-stone-900/50 rounded-lg px-3 py-2 leading-relaxed">
+              <p className="text-xs text-stone-400 bg-surface-elevated rounded-lg px-3 py-2 leading-relaxed">
                 {config.preferences.specialInstructions}
               </p>
             </div>
@@ -178,7 +178,7 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
                 {config.preferences.referenceImages!.map((img) => (
                   <div
                     key={img.id}
-                    className="w-12 h-12 rounded-lg overflow-hidden bg-stone-900 border border-stone-800"
+                    className="w-12 h-12 rounded-lg overflow-hidden bg-surface-elevated border border-stone-800"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={img.localUrl} alt={img.filename} className="w-full h-full object-cover" />
@@ -229,7 +229,7 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
                 .filter(([, v]) => v !== undefined)
                 .map(([key, val]) => (
                   <div key={key} className="flex justify-between text-[11px]">
-                    <span className="text-stone-600 capitalize">
+                    <span className="text-ink-muted capitalize">
                       {key.replace(/([A-Z])/g, " $1").trim()}
                     </span>
                     <span className="text-stone-400">
@@ -291,11 +291,11 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
       </div>
 
       {/* Pricing notice */}
-      <div className="p-5 bg-stone-900/50 border border-stone-800/60 rounded-2xl mb-10">
+      <div className="p-5 bg-surface-elevated border border-stone-800/60 rounded-2xl mb-10">
         <p className="text-xs text-stone-300 leading-relaxed">
           Your request will be reviewed by the TSquare team. Once confirmed, your order details and pricing will be made available to you.
         </p>
-        <p className="text-[10px] text-stone-600 mt-2 leading-relaxed">
+        <p className="text-[10px] text-ink-muted mt-2 leading-relaxed">
           No payment is required at this stage. This is a request, not a confirmed order.
         </p>
       </div>
@@ -317,7 +317,7 @@ export function ReviewStep({ config, onEdit, onSubmit, onBack }: ReviewStepProps
           type="button"
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-4 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-champagne text-near-black hover:bg-champagne-light transition-all duration-200 shadow-lg shadow-champagne/20"
+          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-4 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-action text-on-action hover:bg-action-hover transition-all duration-200 shadow-lg shadow-champagne/20"
         >
           {isSubmitting ? "Submitting Request…" : "Submit Bespoke Request"}
         </button>

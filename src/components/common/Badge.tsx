@@ -12,10 +12,10 @@ export function Badge({
   variant = "outline",
 }: BadgeProps) {
   const variants = {
-    outline: "border border-stone-400/40 text-stone-700 bg-transparent",
+    outline: "border border-line text-ink-secondary bg-transparent",
     champagne: "border border-champagne/40 text-champagne-dark bg-champagne/10",
-    dark: "border border-near-black/20 text-warm-ivory bg-near-black",
-    stone: "border border-stone-200 text-stone-800 bg-stone-100",
+    dark: "border border-line text-ink bg-surface-elevated",
+    stone: "border border-line text-ink-secondary bg-surface",
   };
 
   return (

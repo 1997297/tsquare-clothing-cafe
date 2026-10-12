@@ -3,7 +3,7 @@ import { Button } from "@/components/common/Button";
 
 export default function NotFound() {
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory flex flex-col justify-center items-center px-4 py-32 text-center selection:bg-champagne selection:text-near-black">
+    <div className="bg-near-black min-h-screen text-warm-ivory flex flex-col justify-center items-center px-4 py-32 text-center selection:bg-action selection:text-on-action">
       <div className="max-w-md w-full space-y-6">
         <BrandLogo variant="light" size="lg" />
 

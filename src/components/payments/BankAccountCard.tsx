@@ -18,7 +18,7 @@ export function BankAccountCard({ bank, copy = false }: { bank: PaymentRequest["
       setFeedback("Copy is unavailable. Select and copy the account number above.");
     }
   };
-  return <div className="min-w-0 rounded-2xl bg-stone-900 p-5 sm:p-6">
+  return <div className="min-w-0 rounded-2xl bg-surface-elevated p-5 sm:p-6">
     <dl className="space-y-5 [overflow-wrap:anywhere]">
       <div><dt className="text-xs text-stone-400">Bank name</dt><dd className="mt-1 text-base text-warm-ivory">{bank.bank_name}</dd></div>
       <div><dt className="text-xs text-stone-400">Account name</dt><dd className="mt-1 text-base text-warm-ivory">{bank.account_name}</dd></div>

@@ -32,7 +32,7 @@ export function ConfirmDialog({ open, title, description, confirmLabel, busy = f
   if (!open) return null;
 
   return (
-    <dialog ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="confirm-dialog-title" tabIndex={-1} onKeyDown={(event) => trapTabKey(event.nativeEvent, dialogRef.current)} className="m-auto w-[calc(100%-2rem)] max-w-md rounded-3xl border border-stone-700 bg-stone-950 p-6 text-warm-ivory shadow-2xl backdrop:bg-black/75 backdrop:backdrop-blur-sm" onCancel={(event) => { event.preventDefault(); if (!busy) onCancel(); }} onClick={(event) => { if (event.target === event.currentTarget && !busy) onCancel(); }}>
+    <dialog ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="confirm-dialog-title" tabIndex={-1} onKeyDown={(event) => trapTabKey(event.nativeEvent, dialogRef.current)} className="m-auto w-[calc(100%-2rem)] max-w-md rounded-3xl border border-stone-700 bg-surface p-6 text-warm-ivory shadow-2xl backdrop:bg-black/75 backdrop:backdrop-blur-sm" onCancel={(event) => { event.preventDefault(); if (!busy) onCancel(); }} onClick={(event) => { if (event.target === event.currentTarget && !busy) onCancel(); }}>
       <div>
         <h2 id="confirm-dialog-title" className="font-display text-2xl text-warm-ivory">{title}</h2>
         <p className="mt-3 text-sm leading-6 text-stone-400">{description}</p>

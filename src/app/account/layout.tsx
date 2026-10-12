@@ -92,19 +92,19 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
       const Icon = item.icon;
       const active = item.href === "/account" ? pathname === "/account" : pathname.startsWith(item.href);
       return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
-        className={cn("flex items-center gap-3 rounded-xl border px-3 py-3 text-xs uppercase tracking-wider transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-champagne", active ? "border-champagne/30 bg-champagne/10 text-champagne" : "border-transparent text-stone-400 hover:border-stone-800 hover:bg-stone-900/70 hover:text-warm-ivory")}>
+        className={cn("flex items-center gap-3 rounded-xl border px-3 py-3 text-xs uppercase tracking-wider transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-champagne", active ? "border-champagne/30 bg-champagne/10 text-champagne" : "border-transparent text-stone-400 hover:border-stone-800 hover:bg-surface-elevated hover:text-warm-ivory")}>
         <Icon className="h-4 w-4 shrink-0" /><span>{item.label}</span>
-        {item.href === "/account/notifications" && unreadNotificationsCount > 0 && <span className="ml-auto rounded-full bg-champagne px-2 py-0.5 text-[10px] text-near-black">{unreadNotificationsCount}</span>}
+        {item.href === "/account/notifications" && unreadNotificationsCount > 0 && <span className="ml-auto rounded-full bg-action px-2 py-0.5 text-[10px] text-on-action">{unreadNotificationsCount}</span>}
       </Link>;
     })}
   </nav>;
 
   return (
-    <div className="min-h-screen bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black flex flex-col">
+    <div className="min-h-screen bg-near-black text-warm-ivory selection:bg-action selection:text-on-action flex flex-col">
       <meta name="robots" content="noindex, nofollow, noarchive" />
       <meta name="googlebot" content="noindex, nofollow, noarchive" />
       {/* ── Top Concierge Banner ── */}
-      <header aria-label="Private client header" className="border-b border-stone-800/80 bg-near-black/95 backdrop-blur-2xl sticky top-0 z-40 shadow-[0_4px_30px_rgba(0,0,0,0.35)]">
+      <header aria-label="Private client header" className="border-b border-line bg-surface/95 backdrop-blur-2xl sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
           {/* Brand Anchor & Boutique Navigation */}
           <div className="flex min-w-0 items-center gap-3 sm:gap-6">
@@ -146,19 +146,19 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             {/* Quick Notification Bell */}
             <Link
               href="/account/notifications"
-              className="relative p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-stone-800/40 rounded-xl transition-colors focus:outline-none"
+              className="relative p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-surface-hover rounded-xl transition-colors focus:outline-none"
               title="Notifications"
               aria-label={`Notifications (${unreadNotificationsCount} unread)`}
             >
               <Bell className="w-4 h-4" />
               {unreadNotificationsCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-champagne text-[9px] font-bold text-near-black ring-2 ring-near-black">
+                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-action text-[9px] font-bold text-on-action ring-2 ring-near-black">
                   {unreadNotificationsCount}
                 </span>
               )}
             </Link>
 
-            <div className="h-5 w-px bg-stone-800/80 hidden sm:block" />
+            <div className="h-5 w-px bg-surface-hover hidden sm:block" />
 
             {/* Profile Avatar & Name */}
             <Link
@@ -189,7 +189,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
               }}
               title="Sign Out"
               aria-label="Sign out from private client portal"
-              className="p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-stone-800/50 rounded-xl transition-colors focus:outline-none ml-1"
+              className="p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-surface-hover rounded-xl transition-colors focus:outline-none ml-1"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -199,7 +199,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
       </header>
       <NavigationDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} id="client-navigation" title="Client navigation">{navigation}</NavigationDrawer>
       <div className="mx-auto flex w-full max-w-[1600px] flex-1">
-        <aside className="sticky top-20 hidden h-[calc(100dvh-5rem)] w-64 shrink-0 overflow-y-auto overscroll-contain border-r border-stone-800/70 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:block">{navigation}</aside>
+        <aside className="sticky top-20 hidden h-[calc(100dvh-5rem)] w-64 shrink-0 overflow-y-auto overscroll-contain border-r border-line bg-surface p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:block">{navigation}</aside>
       {/* ── Main Content Area ── */}
       <main id="account-content" className="min-w-0 flex-1 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         {accountError ? (
@@ -207,7 +207,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             <ShieldCheck className="w-9 h-9 text-amber-400 mx-auto" />
             <h1 className="font-display text-2xl">Private account data is unavailable</h1>
             <p className="text-sm text-stone-400">{accountError}</p>
-            <button onClick={() => void reloadData()} className="px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-wider font-bold">Try Again</button>
+            <button onClick={() => void reloadData()} className="px-5 py-2.5 rounded-xl bg-action text-on-action text-xs uppercase tracking-wider font-bold">Try Again</button>
           </div>
         ) : children}
       </main>

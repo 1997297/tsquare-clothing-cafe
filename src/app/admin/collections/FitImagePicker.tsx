@@ -22,12 +22,12 @@ export function FitImagePicker({ images, onChange, disabled, onCheckingChange }:
     next.splice(destination, 0, image);
     onChange(next);
   };
-  return <section className="rounded-3xl border border-stone-800 bg-stone-950/50 p-5 sm:p-7">
+  return <section className="rounded-3xl border border-stone-800 bg-surface p-5 sm:p-7">
     <h2 className="font-display text-2xl">Fit photographs</h2>
     <p className="mt-2 text-sm text-stone-400">Choose photographs of this Fit. The first image is the cover. JPEG, PNG or WebP, up to 8 MB each. Files upload when you save.</p>
     <label className="mt-5 block rounded-xl border border-dashed border-champagne/50 p-4 text-sm text-champagne">
       <span className="mb-3 flex items-center gap-2"><ImagePlus className="h-5 w-5" />{checking ? "Checking photographs…" : "Add photographs"}</span>
-      <input type="file" multiple accept="image/jpeg,image/png,image/webp" disabled={disabled || checking} className="block w-full text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-champagne file:px-3 file:py-2 file:text-near-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-champagne disabled:opacity-50"
+      <input type="file" multiple accept="image/jpeg,image/png,image/webp" disabled={disabled || checking} className="block w-full text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-action file:px-3 file:py-2 file:text-on-action focus-visible:outline focus-visible:outline-2 focus-visible:outline-champagne disabled:opacity-50"
         onChange={async event => {
           const files = Array.from(event.target.files ?? []); event.target.value = "";
           setChecking(true); onCheckingChange(true); setError("");

@@ -123,7 +123,7 @@ export default function BookFittingClient() {
   };
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-champagne selection:text-near-black font-sans">
+    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-action selection:text-on-action font-sans">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 sm:mb-10">
           <ReturnLink href="/account" label="Return to Dashboard" />
@@ -139,7 +139,7 @@ export default function BookFittingClient() {
         </div>
 
         {isSubmitted ? (
-          <div className="p-8 sm:p-14 bg-stone-950 fine-border rounded-3xl text-center space-y-6 animate-in fade-in duration-300 shadow-xl">
+          <div className="p-8 sm:p-14 bg-surface fine-border rounded-3xl text-center space-y-6 animate-in fade-in duration-300 shadow-xl">
             <CheckCircle2 className="h-16 w-16 text-champagne mx-auto" />
             <h2 className="font-display text-3xl sm:text-4xl text-warm-ivory">
               Fitting Request Logged
@@ -171,7 +171,7 @@ export default function BookFittingClient() {
             </div>
 
             {/* Confirmation boundary */}
-            <div className="p-4 bg-stone-900/60 fine-border rounded-2xl max-w-lg mx-auto text-stone-400 text-xs leading-relaxed text-left flex items-start gap-3">
+            <div className="p-4 bg-surface-elevated fine-border rounded-2xl max-w-lg mx-auto text-stone-400 text-xs leading-relaxed text-left flex items-start gap-3">
               <ShieldCheck className="h-5 w-5 text-champagne shrink-0 mt-0.5" />
               <div>
                 <strong className="text-warm-ivory block uppercase tracking-wider text-[10px] mb-0.5">
@@ -216,11 +216,11 @@ export default function BookFittingClient() {
             </div>
           </div>
         ) : (
-          <ClientForm onSubmit={handleSubmit} className="p-6 sm:p-12 bg-stone-950 fine-border rounded-3xl space-y-10 shadow-xl">
+          <ClientForm onSubmit={handleSubmit} className="p-6 sm:p-12 bg-surface fine-border rounded-3xl space-y-10 shadow-xl">
             {/* 1. Appointment Type Selection */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <span className="flex h-6 w-6 items-center justify-center bg-champagne text-near-black text-xs font-bold font-mono rounded-full">
+                <span className="flex h-6 w-6 items-center justify-center bg-action text-on-action text-xs font-bold font-mono rounded-full">
                   1
                 </span>
                 <h3 className="font-display text-lg text-warm-ivory uppercase tracking-wider">
@@ -240,7 +240,7 @@ export default function BookFittingClient() {
                     className={`cursor-pointer p-4 border transition-all text-left flex flex-col justify-between rounded-2xl ${
                       formData.appointmentType === apt.type
                         ? "border-champagne bg-near-black ring-1 ring-champagne shadow-md"
-                        : "border-stone-800 bg-stone-900/30 hover:border-stone-700"
+                        : "border-stone-800 bg-surface-elevated hover:border-stone-700"
                     }`}
                   >
                     <div>
@@ -268,7 +268,7 @@ export default function BookFittingClient() {
             {/* 2. Date & Time Selection */}
             <div className="pt-6 border-t border-stone-800/80">
               <div className="flex items-center gap-2 mb-4">
-                <span className="flex h-6 w-6 items-center justify-center bg-champagne text-near-black text-xs font-bold font-mono rounded-full">
+                <span className="flex h-6 w-6 items-center justify-center bg-action text-on-action text-xs font-bold font-mono rounded-full">
                   2
                 </span>
                 <h3 className="font-display text-lg text-warm-ivory uppercase tracking-wider">
@@ -323,7 +323,7 @@ export default function BookFittingClient() {
             {/* 3. Customer Information */}
             <div className="pt-6 border-t border-stone-800/80">
               <div className="flex items-center gap-2 mb-4">
-                <span className="flex h-6 w-6 items-center justify-center bg-champagne text-near-black text-xs font-bold font-mono rounded-full">
+                <span className="flex h-6 w-6 items-center justify-center bg-action text-on-action text-xs font-bold font-mono rounded-full">
                   3
                 </span>
                 <h3 className="font-display text-lg text-warm-ivory uppercase tracking-wider">
@@ -418,7 +418,7 @@ export default function BookFittingClient() {
                   onChange={(e) =>
                     setFormData({ ...formData, isExistingCustomer: e.target.checked })
                   }
-                  className="h-4 w-4 text-champagne bg-stone-900 border-stone-700 rounded focus:ring-champagne"
+                  className="h-4 w-4 text-champagne bg-surface-elevated border-stone-700 rounded focus:ring-champagne"
                 />
                 <label htmlFor="existingClient" className="text-xs text-stone-300 select-none">
                   I am an existing TSquare client with my measurement profile on record at the TCC office.

@@ -84,7 +84,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
     >
       {/* Top Bar with Search Input */}
       <div className="border-b border-stone-800/80 px-4 sm:px-8 py-6 max-w-5xl w-full mx-auto flex items-center justify-between gap-4">
-        <div className="relative flex-1 flex items-center bg-stone-900/60 border border-stone-800 rounded-2xl px-4 py-2">
+        <div className="relative flex-1 flex items-center bg-surface-elevated border border-control rounded-2xl px-4 py-2">
           <Search className="h-5 w-5 text-stone-400 mr-3" />
           <label htmlFor="collection-search-modal" className="sr-only">Search the collection</label>
           <input
@@ -103,7 +103,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
           type="button"
           onClick={onClose}
           aria-label="Close search"
-          className="p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-stone-800/60 rounded-full transition-colors"
+          className="p-2.5 text-stone-400 hover:text-warm-ivory hover:bg-surface-hover rounded-full transition-colors"
         >
           <X className="h-6 w-6" />
         </button>
@@ -123,7 +123,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   key={term}
                   type="button"
                   onClick={() => handleQueryChange(term)}
-                  className="px-4 py-2 border border-stone-800 bg-stone-900/40 text-stone-300 hover:border-champagne hover:text-champagne text-xs uppercase tracking-widest transition-colors font-sans rounded-xl"
+                  className="px-4 py-2 border border-stone-800 bg-surface-elevated text-stone-300 hover:border-champagne hover:text-champagne text-xs uppercase tracking-widest transition-colors font-sans rounded-xl"
                 >
                   {term}
                 </button>
@@ -142,7 +142,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             </div>
 
             {results.length === 0 ? (
-              <div className="py-16 text-center rounded-2xl bg-stone-950 border border-stone-800 p-8">
+              <div className="py-16 text-center rounded-2xl bg-surface border border-stone-800 p-8">
                 <p className="font-display text-xl text-stone-400">
                   No matching garments found
                 </p>
@@ -157,7 +157,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     key={style.id}
                     href={`/styles/${style.slug}`}
                     onClick={onClose}
-                    className="group flex gap-4 p-3.5 bg-stone-900/30 border border-stone-800 hover:border-stone-700 transition-colors rounded-2xl"
+                    className="group flex gap-4 p-3.5 bg-surface-elevated border border-stone-800 hover:border-stone-700 transition-colors rounded-2xl"
                   >
                     <div className="relative h-24 w-18 shrink-0 overflow-hidden bg-espresso rounded-xl">
                       <Image

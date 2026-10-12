@@ -4,9 +4,9 @@ import { paymentPercent, PAYMENT_PURPOSES, requestPosition, requestOrderSummary 
 import { formatMinor } from "@/lib/payments/money";
 import { pendingPaymentSubmissions } from "@/lib/payments/attention";
 
-export const panelClass = "payment-panel rounded-3xl border border-stone-800 bg-stone-950/60 p-5 sm:p-7 min-w-0";
+export const panelClass = "payment-panel rounded-3xl border border-stone-800 bg-surface p-5 sm:p-7 min-w-0";
 export const inputClass = "mt-2 w-full min-w-0 rounded-xl border border-stone-700 bg-near-black px-3 py-3 text-sm text-warm-ivory focus:outline-none focus:ring-2 focus:ring-champagne/60 disabled:opacity-50";
-export const buttonClass = "rounded-xl bg-champagne px-4 py-3 text-xs font-semibold text-near-black disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne";
+export const buttonClass = "rounded-xl bg-action px-4 py-3 text-xs font-semibold text-on-action disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne";
 export function paymentDate(value: string) {
   return new Intl.DateTimeFormat("en-NG", { dateStyle: "medium", timeZone: "Africa/Lagos" }).format(new Date(value));
 }
@@ -19,7 +19,7 @@ export function FinancialCards({ summary }: { summary: FinancialSummary }) {
       ["Order total", summary.total_minor], ["Verified paid", summary.verified_minor],
       ["Awaiting verification", summary.pending_minor], ["Order outstanding balance", summary.balance_minor],
     ] as const).map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-xs text-stone-400">{label}</dt><dd className="mt-2 break-words font-display text-xl text-warm-ivory tabular-nums">{formatMinor(value)}</dd></div>)}</dl>
-    {summary.total_minor !== null && <><div className="mt-5 h-1.5 overflow-hidden rounded-full bg-stone-800" role="progressbar" aria-label="Verified payment progress" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}><div className="h-full bg-champagne" style={{ width: `${percent}%` }} /></div><p className="mt-2 text-xs text-stone-400">{percent}% paid · {balancePercent}% balance</p></>}
+    {summary.total_minor !== null && <><div className="mt-5 h-1.5 overflow-hidden rounded-full bg-surface-hover" role="progressbar" aria-label="Verified payment progress" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}><div className="h-full bg-action" style={{ width: `${percent}%` }} /></div><p className="mt-2 text-xs text-stone-400">{percent}% paid · {balancePercent}% balance</p></>}
     <p className="mt-4 text-xs leading-5 text-stone-400">Receipts awaiting verification do not reduce your balance. Only funds confirmed by TCC count as paid.</p>
   </section>;
 }

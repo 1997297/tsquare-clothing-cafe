@@ -154,7 +154,7 @@ export default function AccountProfilePage() {
         </div>
       )}
 
-      <ClientForm onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
+      <ClientForm onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-surface fine-border space-y-6">
         <div className="flex flex-col gap-5 border-b border-stone-800 pb-6 sm:flex-row sm:items-center">
           <ProfileAvatar profile={profile} className="h-24 w-24 rounded-2xl text-xl" />
           <div className="space-y-2">
@@ -226,7 +226,7 @@ export default function AccountProfilePage() {
             type="email"
             disabled
             value={profile?.email || ""}
-            className="w-full bg-stone-900/50 border border-stone-800 rounded-xl text-xs text-stone-500 px-4 py-3 cursor-not-allowed font-mono"
+            className="w-full bg-surface-elevated border border-stone-800 rounded-xl text-xs text-stone-500 px-4 py-3 cursor-not-allowed font-mono"
           />
           <p className="text-[10px] text-stone-500 mt-1">
             Email is permanently linked to your private client authentication.
@@ -292,7 +292,7 @@ export default function AccountProfilePage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all disabled:opacity-50"
           >
             {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
             <span>{isSaving ? "Saving..." : "Save Profile Changes"}</span>

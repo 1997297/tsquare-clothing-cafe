@@ -27,7 +27,7 @@ export default function RequestDetailPage({
   if (!request) {
     return (
       <div className="py-16 text-center space-y-4">
-        <AlertCircle className="w-8 h-8 text-stone-600 mx-auto" />
+        <AlertCircle className="w-8 h-8 text-ink-muted mx-auto" />
         <h2 className="font-display text-2xl text-warm-ivory">Request Not Located</h2>
         <p className="text-xs text-stone-400">
           The requested bespoke commission reference could not be found in your archive.
@@ -52,7 +52,7 @@ export default function RequestDetailPage({
               <span className="text-xs font-mono font-bold text-champagne tracking-wider">
                 {request.requestId}
               </span>
-              <span className="text-stone-600">•</span>
+              <span className="text-ink-muted">•</span>
               <span className="text-xs text-stone-400 font-mono">
                 Submitted {new Date(request.createdAt).toLocaleDateString("en-NG", {
                   day: "numeric",
@@ -84,7 +84,7 @@ export default function RequestDetailPage({
 
       {/* ── Contextual Action Callout: Pricing Ready ── */}
       {isPricingReady && (
-        <div className="p-6 sm:p-8 rounded-3xl bg-stone-950 border border-champagne/50 space-y-4">
+        <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-champagne/50 space-y-4">
           <div className="flex items-center gap-2 text-champagne font-display text-xl">
             <Sparkles className="w-5 h-5" />
             <span>Atelier Pricing Ready for Review</span>
@@ -119,12 +119,12 @@ export default function RequestDetailPage({
         {/* Left Column: Garment Specs */}
         <div className="md:col-span-2 space-y-8">
           {/* Fabric & Colour */}
-          <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-5">
+          <div className="p-6 rounded-3xl bg-surface fine-border space-y-5">
             <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
               Fabric & Colour Specifications
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="p-4 rounded-2xl bg-stone-900/60 border border-stone-800">
+              <div className="p-4 rounded-2xl bg-surface-elevated border border-stone-800">
                 <span className="text-[10px] uppercase font-mono text-stone-500 block mb-1">
                   Selected Fabric
                 </span>
@@ -137,7 +137,7 @@ export default function RequestDetailPage({
                 )}
               </div>
 
-              <div className="p-4 rounded-2xl bg-stone-900/60 border border-stone-800">
+              <div className="p-4 rounded-2xl bg-surface-elevated border border-stone-800">
                 <span className="text-[10px] uppercase font-mono text-stone-500 block mb-1">
                   Selected Colour
                 </span>
@@ -158,7 +158,7 @@ export default function RequestDetailPage({
           </div>
 
           {/* Design Preferences */}
-          <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4">
+          <div className="p-6 rounded-3xl bg-surface fine-border space-y-4">
             <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
               Tailoring Preferences
             </h3>
@@ -206,7 +206,7 @@ export default function RequestDetailPage({
                 <span className="text-[10px] uppercase text-stone-500 block font-mono mb-1">
                   Special Instructions
                 </span>
-                <p className="text-xs text-stone-300 italic bg-stone-900/40 p-3 rounded-xl border border-stone-800">
+                <p className="text-xs text-stone-300 italic bg-surface-elevated p-3 rounded-xl border border-stone-800">
                   &quot;{request.preferences.specialInstructions}&quot;
                 </p>
               </div>
@@ -215,13 +215,13 @@ export default function RequestDetailPage({
 
           {/* Measurements Snapshot Used */}
           {request.measurements && Object.keys(request.measurements).length > 0 && (
-            <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4">
+            <div className="p-6 rounded-3xl bg-surface fine-border space-y-4">
               <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
                 Physiological Measurements Snapshot
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {Object.entries(request.measurements).map(([key, val]) => (
-                  <div key={key} className="p-2.5 rounded-xl bg-stone-900/60 border border-stone-800 text-center">
+                  <div key={key} className="p-2.5 rounded-xl bg-surface-elevated border border-stone-800 text-center">
                     <span className="text-[9px] uppercase font-mono text-stone-500 block capitalize">
                       {key.replace(/([A-Z])/g, " $1")}
                     </span>
@@ -237,7 +237,7 @@ export default function RequestDetailPage({
 
         {/* Right Column: Occasion & Appointments Summary */}
         <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4 text-xs">
+          <div className="p-6 rounded-3xl bg-surface fine-border space-y-4 text-xs">
             <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
               Occasion & Schedule
             </h3>
@@ -263,7 +263,7 @@ export default function RequestDetailPage({
 
           {/* Appointment Request Snapshot */}
           {request.appointmentRequest?.type && request.appointmentRequest.type !== "none" && (
-            <div className="p-6 rounded-3xl bg-stone-950 fine-border space-y-3 text-xs">
+            <div className="p-6 rounded-3xl bg-surface fine-border space-y-3 text-xs">
               <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne font-semibold">
                 Requested Fitting Visit
               </h3>
@@ -280,7 +280,7 @@ export default function RequestDetailPage({
           )}
 
           {/* Atelier Discretion Guarantee */}
-          <div className="p-5 rounded-2xl bg-stone-900/30 border border-stone-800 text-center space-y-2">
+          <div className="p-5 rounded-2xl bg-surface-elevated border border-stone-800 text-center space-y-2">
             <span className="text-[9px] uppercase font-mono text-stone-500 tracking-widest block">
               Atelier Standard
             </span>

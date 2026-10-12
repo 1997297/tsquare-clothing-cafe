@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-champagne selection:text-near-black">
+    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-action selection:text-on-action">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
@@ -24,7 +24,7 @@ export default function TermsPage() {
         </h1>
         <p role="note" className="mb-8 rounded-xl border border-champagne/30 p-4 text-sm leading-6 text-stone-300">Draft for TCC and legal review. Final payment, cancellation, alteration, delivery and dispute terms require approval before commercial launch.</p>
 
-        <div className="p-8 bg-stone-950 fine-border space-y-8 text-xs sm:text-sm text-stone-300 font-sans font-light leading-relaxed">
+        <div className="p-8 bg-surface fine-border space-y-8 text-xs sm:text-sm text-stone-300 font-sans font-light leading-relaxed">
           <section className="space-y-3">
             <h2 className="font-display text-lg text-warm-ivory uppercase tracking-wider">
               1. The Bespoke Nature of Commissions

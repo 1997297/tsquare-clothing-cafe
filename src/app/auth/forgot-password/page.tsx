@@ -42,7 +42,7 @@ function ForgotPasswordForm() {
   };
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 selection:bg-champagne selection:text-near-black">
+    <div className="bg-near-black min-h-screen text-warm-ivory flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 selection:bg-action selection:text-on-action">
       <div className="max-w-md w-full mx-auto space-y-8">
         {/* Brand Header */}
         <div className="text-center flex flex-col items-center">
@@ -63,7 +63,7 @@ function ForgotPasswordForm() {
         )}
 
         {submitted ? (
-          <div className="p-8 bg-stone-950 fine-border rounded-3xl text-center space-y-4 animate-in zoom-in-95 duration-200">
+          <div className="p-8 bg-surface fine-border rounded-3xl text-center space-y-4 animate-in zoom-in-95 duration-200">
             <CheckCircle2 className="h-10 w-10 text-champagne mx-auto" />
             <h3 className="font-display text-xl text-warm-ivory">
               Recovery Dispatch Sent
@@ -78,7 +78,7 @@ function ForgotPasswordForm() {
             </div>
           </div>
         ) : (
-          <ClientForm onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
+          <ClientForm onSubmit={handleSubmit} className="p-8 bg-surface fine-border rounded-3xl space-y-5">
             <div>
               <label htmlFor="recovery-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
                 Client Email Address

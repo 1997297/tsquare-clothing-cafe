@@ -54,7 +54,7 @@ function SelectField({
             className={cn(
               "px-3.5 py-2 rounded-xl text-xs border transition-all duration-150",
               value === opt.id
-                ? "border-champagne/60 bg-stone-900/80 text-champagne"
+                ? "border-champagne/60 bg-surface-elevated text-champagne"
                 : "border-stone-800 text-stone-400 hover:border-stone-700 hover:text-stone-300"
             )}
           >
@@ -222,7 +222,7 @@ export function DetailsStep({
                       className={cn(
                         "px-4 py-2 rounded-xl text-xs border transition-all duration-150",
                         isSelected
-                          ? "border-champagne/60 bg-stone-900/80 text-champagne"
+                          ? "border-champagne/60 bg-surface-elevated text-champagne"
                           : "border-stone-800 text-stone-400 hover:border-stone-700"
                       )}
                     >
@@ -297,7 +297,7 @@ export function DetailsStep({
             value={prefs.specialInstructions ?? ""}
             onChange={(e) => set("specialInstructions", e.target.value)}
             placeholder="Tell us anything you would like your stylist to know, such as a specific detail, family motif, occasion detail, or personal note."
-            className="w-full bg-stone-950 border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none focus:border-champagne/50 resize-none leading-relaxed"
+            className="w-full bg-surface border border-stone-800 rounded-xl text-xs text-warm-ivory placeholder:text-ink-muted px-4 py-3 focus:outline-none focus:border-champagne/50 resize-none leading-relaxed"
           />
         </div>
 
@@ -306,7 +306,7 @@ export function DetailsStep({
           <h3 className="block text-[10px] uppercase tracking-widest text-stone-500 mb-1 font-medium">
             Add Inspiration
           </h3>
-          <p className="text-[11px] text-stone-600 mb-4 leading-relaxed">
+          <p className="text-[11px] text-ink-muted mb-4 leading-relaxed">
             Upload embroidery ideas, fit references, colour swatches, or details. Signed-in uploads are stored privately; guest previews remain in this browser session.
           </p>
 
@@ -316,7 +316,7 @@ export function DetailsStep({
               {prefs.referenceImages!.map((img) => (
                 <div
                   key={img.id}
-                  className="relative w-20 h-20 rounded-xl overflow-hidden bg-stone-900 border border-stone-800 group"
+                  className="relative w-20 h-20 rounded-xl overflow-hidden bg-surface-elevated border border-stone-800 group"
                 >
                   {img.localUrl ? (
                     // Blob URLs are session-local previews and cannot use the Next image optimizer.
@@ -348,7 +348,7 @@ export function DetailsStep({
             >
               <Upload className="w-4 h-4" />
               {isUploading ? "Uploading Securely…" : "Upload Reference Images"}
-              <span className="text-stone-700">
+              <span className="text-ink-muted">
                 ({(prefs.referenceImages ?? []).length}/6)
               </span>
             </button>
@@ -365,7 +365,7 @@ export function DetailsStep({
           {uploadError && (
             <p className="mt-2 text-[11px] text-amber-500">{uploadError}</p>
           )}
-          <p className="mt-2 text-[10px] text-stone-700 flex items-center gap-1.5">
+          <p className="mt-2 text-[10px] text-ink-muted flex items-center gap-1.5">
             <ImageIcon className="w-3 h-3" />
             JPEG, PNG or WebP only, up to 10 MB each. Signed-in files use private account storage.
           </p>
@@ -385,7 +385,7 @@ export function DetailsStep({
           type="button"
           onClick={onContinue}
           disabled={isUploading}
-          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-champagne text-near-black hover:bg-champagne-light transition-all duration-200"
+          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-action text-on-action hover:bg-action-hover transition-all duration-200"
         >
           Continue
           <ArrowRight className="w-4 h-4" />

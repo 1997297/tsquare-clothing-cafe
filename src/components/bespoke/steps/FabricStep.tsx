@@ -48,8 +48,8 @@ export function FabricStep({
               className={cn(
                 "w-full text-left p-5 rounded-2xl border transition-all duration-200 group",
                 isSelected
-                  ? "border-champagne/60 bg-stone-900/60 ring-1 ring-champagne/20"
-                  : "border-stone-800 hover:border-stone-700 hover:bg-stone-900/30"
+                  ? "border-champagne/60 bg-surface-elevated ring-1 ring-champagne/20"
+                  : "border-stone-800 hover:border-stone-700 hover:bg-surface-elevated"
               )}
             >
               <div className="flex items-start justify-between gap-4">
@@ -62,7 +62,7 @@ export function FabricStep({
                       {fabric.name}
                     </p>
                     {fabric.weight && (
-                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-stone-900 border border-stone-700 text-stone-400 uppercase tracking-wider">
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-surface-elevated border border-stone-700 text-stone-400 uppercase tracking-wider">
                         {fabric.weight}
                       </span>
                     )}
@@ -71,7 +71,7 @@ export function FabricStep({
                     {fabric.description}
                   </p>
                   {fabric.finish && (
-                    <p className="text-[10px] text-stone-600 mt-2 uppercase tracking-widest">
+                    <p className="text-[10px] text-ink-muted mt-2 uppercase tracking-widest">
                       Finish: {fabric.finish}
                     </p>
                   )}
@@ -81,7 +81,7 @@ export function FabricStep({
                 <div className={cn(
                   "flex-shrink-0 w-5 h-5 rounded-full border-2 transition-all duration-200 mt-0.5",
                   isSelected
-                    ? "border-champagne bg-champagne"
+                    ? "border-champagne bg-action"
                     : "border-stone-700 bg-transparent"
                 )}>
                   {isSelected && (
@@ -96,7 +96,7 @@ export function FabricStep({
         })}
       </div>
 
-      <p className="text-[10px] text-stone-600 italic mb-6 leading-relaxed">
+      <p className="text-[10px] text-ink-muted italic mb-6 leading-relaxed">
         These fabrics are representative options. Exact availability and sourcing will be confirmed during your TSquare consultation.
       </p>
 
@@ -116,8 +116,8 @@ export function FabricStep({
           className={cn(
             "flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl transition-all duration-200",
             config.fabric
-              ? "bg-champagne text-near-black hover:bg-champagne-light"
-              : "bg-stone-900 text-stone-600 cursor-not-allowed"
+              ? "bg-action text-on-action hover:bg-action-hover"
+              : "bg-surface-elevated text-ink-muted cursor-not-allowed"
           )}
         >
           Continue

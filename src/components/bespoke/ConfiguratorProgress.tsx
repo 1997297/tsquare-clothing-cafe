@@ -45,7 +45,7 @@ export function ConfiguratorProgress({
         <span className="text-[10px] text-warm-ivory uppercase tracking-widest">
           {STEPS[currentStep]?.label}
         </span>
-        <span className="text-stone-700 text-[10px]">
+        <span className="text-ink-muted text-[10px]">
           / {STEPS.length}
         </span>
         {/* Mini dot track */}
@@ -56,10 +56,10 @@ export function ConfiguratorProgress({
               className={cn(
                 "h-1 rounded-full transition-all duration-300",
                 i < currentStep
-                  ? "bg-champagne w-1.5"
+                  ? "bg-action w-1.5"
                   : i === currentStep
                   ? "bg-warm-ivory w-2.5"
-                  : "bg-stone-800 w-1"
+                  : "bg-surface-hover w-1"
               )}
             />
           ))}
@@ -83,8 +83,8 @@ export function ConfiguratorProgress({
             aria-current={isActive ? "step" : undefined}
             className={cn(
               "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all duration-200 group",
-              isActive && "bg-stone-900/60",
-              isClickable && "hover:bg-stone-900/40 cursor-pointer",
+              isActive && "bg-surface-elevated",
+              isClickable && "hover:bg-surface-elevated cursor-pointer",
               !isClickable && !isActive && "cursor-default"
             )}
           >
@@ -93,10 +93,10 @@ export function ConfiguratorProgress({
               className={cn(
                 "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 border",
                 isCompleted
-                  ? "bg-champagne border-champagne text-near-black"
+                  ? "bg-action border-champagne text-on-action"
                   : isActive
                   ? "border-warm-ivory bg-transparent text-warm-ivory"
-                  : "border-stone-800 bg-transparent text-stone-700"
+                  : "border-stone-800 bg-transparent text-ink-muted"
               )}
             >
               {isCompleted ? (
@@ -114,7 +114,7 @@ export function ConfiguratorProgress({
                   ? "text-stone-400 group-hover:text-champagne"
                   : isActive
                   ? "text-warm-ivory font-semibold"
-                  : "text-stone-700"
+                  : "text-ink-muted"
               )}
             >
               {step.label}
@@ -122,7 +122,7 @@ export function ConfiguratorProgress({
 
             {/* Active line indicator */}
             {isActive && (
-              <div className="ml-auto w-1 h-4 rounded-full bg-champagne" />
+              <div className="ml-auto w-1 h-4 rounded-full bg-action" />
             )}
           </button>
         );

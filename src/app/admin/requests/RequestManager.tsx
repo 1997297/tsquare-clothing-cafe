@@ -46,10 +46,10 @@ export function RequestManager({ requests, initialFilter = "all" }: { requests: 
       </header>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(260px,0.7fr)_1.3fr]">
-        <label className="flex items-center gap-3 rounded-2xl border border-stone-800 bg-stone-950/60 px-4 py-3">
+        <label className="flex items-center gap-3 rounded-2xl border border-control bg-surface px-4 py-3">
           <Search className="h-4 w-4 text-stone-500" />
           <span className="sr-only">Search requests</span>
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Reference, client, email or Fit" className="w-full bg-transparent text-sm text-warm-ivory outline-none placeholder:text-stone-600" />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Reference, client, email or Fit" className="w-full bg-transparent text-sm text-warm-ivory outline-none placeholder:text-ink-muted" />
         </label>
         <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Request status filters">
           {FILTERS.map((item) => (
@@ -61,12 +61,12 @@ export function RequestManager({ requests, initialFilter = "all" }: { requests: 
       {filter === "attention" && <p className="text-sm text-stone-400">Submitted and under-review requests need a staff decision. Approved requests await deliberate order conversion.</p>}
       {visible.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-stone-800 p-12 text-center">
-          <ClipboardList className="mx-auto h-8 w-8 text-stone-600" />
+          <ClipboardList className="mx-auto h-8 w-8 text-ink-muted" />
           <h2 className="mt-4 font-display text-xl">No matching requests</h2>
           <p className="mt-2 text-sm text-stone-500">New client submissions will appear here automatically.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-3xl border border-stone-800 bg-stone-950/50">
+        <div className="overflow-hidden rounded-3xl border border-stone-800 bg-surface">
           <div className="divide-y divide-stone-800/80">
             {visible.map((request) => (
               <article key={request.id} className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[1fr_auto] lg:items-center">
@@ -79,7 +79,7 @@ export function RequestManager({ requests, initialFilter = "all" }: { requests: 
                   <p className="mt-2 text-xs text-stone-400">
                     {request.customer ? `${request.customer.firstName} ${request.customer.lastName} · ${request.customer.email}` : "Client profile unavailable"}
                   </p>
-                  <p className="mt-1 text-[10px] uppercase tracking-wider text-stone-600">
+                  <p className="mt-1 text-[10px] uppercase tracking-wider text-ink-muted">
                     {REQUEST_STATUS_LABELS[request.status]} · Submitted {new Intl.DateTimeFormat("en-NG", { dateStyle: "medium" }).format(new Date(request.submittedAt ?? request.createdAt))}
                   </p>
                 </div>

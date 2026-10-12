@@ -61,7 +61,7 @@ export function StyleStep({
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
                   {isSelected && (
-                    <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-champagne flex items-center justify-center">
+                    <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-action flex items-center justify-center">
                       <svg viewBox="0 0 10 10" className="w-3 h-3 fill-near-black">
                         <path d="M1.5 5l2.5 2.5L8.5 2.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -71,7 +71,7 @@ export function StyleStep({
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <p className={cn(
                     "text-sm font-semibold uppercase tracking-widest mb-1 transition-colors",
-                    isSelected ? "text-champagne-light" : "text-white"
+                    isSelected ? "text-champagne-light" : "text-ink"
                   )}>
                     {cat.label}
                   </p>
@@ -91,8 +91,8 @@ export function StyleStep({
           className={cn(
             "w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl transition-all duration-200",
             config.garmentCategory
-              ? "bg-champagne text-near-black hover:bg-champagne-light"
-              : "bg-stone-900 text-stone-600 cursor-not-allowed"
+              ? "bg-action text-on-action hover:bg-action-hover"
+              : "bg-surface-elevated text-ink-muted cursor-not-allowed"
           )}
         >
           Continue
@@ -118,7 +118,7 @@ export function StyleStep({
       </p>
 
       {/* Style card */}
-      <div className="flex flex-col sm:flex-row gap-6 p-5 bg-stone-950 border border-stone-800/60 rounded-2xl mb-8">
+      <div className="flex flex-col sm:flex-row gap-6 p-5 bg-surface border border-stone-800/60 rounded-2xl mb-8">
         {/* Image */}
         <div className="relative w-full sm:w-32 h-48 sm:h-40 rounded-xl overflow-hidden shrink-0 bg-espresso">
           <Image
@@ -143,13 +143,13 @@ export function StyleStep({
               {style.description}
             </p>
             <div className="flex flex-wrap gap-1.5">
-              <span className="px-2.5 py-1 rounded-full bg-stone-900 text-[10px] text-stone-300 uppercase tracking-wider border border-stone-800">
+              <span className="px-2.5 py-1 rounded-full bg-surface-elevated text-[10px] text-stone-300 uppercase tracking-wider border border-stone-800">
                 {style.categoryLabel}
               </span>
               {style.occasions.slice(0, 2).map((occ) => (
                 <span
                   key={occ}
-                  className="px-2.5 py-1 rounded-full bg-stone-900/60 text-[10px] text-stone-500 uppercase tracking-wider border border-stone-800/60"
+                  className="px-2.5 py-1 rounded-full bg-surface-elevated text-[10px] text-stone-500 uppercase tracking-wider border border-stone-800/60"
                 >
                   {occ}
                 </span>
@@ -169,7 +169,7 @@ export function StyleStep({
 
       {/* Colour preview if available */}
       {style.availableColours.length > 0 && (
-        <div className="mb-8 p-4 bg-stone-950 border border-stone-800/60 rounded-xl">
+        <div className="mb-8 p-4 bg-surface border border-stone-800/60 rounded-xl">
           <p className="text-[10px] uppercase tracking-widest text-stone-500 mb-3">
             Starting Colours Available
           </p>
@@ -191,7 +191,7 @@ export function StyleStep({
       <button
         type="button"
         onClick={onContinue}
-        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-champagne text-near-black hover:bg-champagne-light transition-all duration-200"
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-action text-on-action hover:bg-action-hover transition-all duration-200"
       >
         Continue
         <ArrowRight className="w-4 h-4" />

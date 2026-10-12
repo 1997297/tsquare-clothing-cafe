@@ -54,7 +54,7 @@ export function StyleCard({ style, priority = false, className }: StyleCardProps
 
         {/* Category Badge with Rounded-Full */}
         <div className="absolute top-3.5 left-3.5 z-10">
-          <span className="bg-black/75 backdrop-blur-md text-[#FAF8F5] text-[9px] uppercase tracking-[0.22em] font-medium px-3 py-1 rounded-full border border-white/15 shadow-sm">
+          <span className="bg-black/75 backdrop-blur-md text-photo text-[9px] uppercase tracking-[0.22em] font-medium px-3 py-1 rounded-full border border-white/15 shadow-sm">
             {style.categoryLabel}
           </span>
         </div>
@@ -66,14 +66,14 @@ export function StyleCard({ style, priority = false, className }: StyleCardProps
           className={cn(
             "absolute top-3.5 right-3.5 z-10 flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-champagne shadow-sm",
             saved
-              ? "bg-champagne text-near-black shadow-md border border-champagne"
-              : "bg-black/65 text-[#FAF8F5] hover:bg-black/90 hover:text-champagne border border-white/15"
+              ? "bg-action text-on-action shadow-md border border-champagne"
+              : "bg-black/65 text-photo hover:bg-black/90 hover:text-photo-accent border border-white/15"
           )}
         >
           <Heart
             className={cn(
               "h-4 w-4 transition-transform duration-200",
-              saved ? "fill-near-black scale-110" : "stroke-[1.5] text-[#FAF8F5]"
+              saved ? "fill-current scale-110" : "stroke-[1.5] text-photo"
             )}
           />
         </button>
@@ -82,7 +82,7 @@ export function StyleCard({ style, priority = false, className }: StyleCardProps
         <div className="absolute bottom-3.5 inset-x-3.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
           <Link
             href={`/styles/${style.slug}`}
-            className="flex w-full items-center justify-center bg-warm-ivory text-near-black text-[10px] uppercase font-bold tracking-[0.22em] py-3 rounded-xl shadow-lg hover:bg-white transition-colors"
+            className="flex w-full items-center justify-center bg-ink text-page text-[10px] uppercase font-bold tracking-[0.22em] py-3 rounded-xl shadow-sm hover:bg-ink-secondary transition-colors"
           >
             View Style Detail
           </Link>

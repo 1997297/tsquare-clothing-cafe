@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function StoryPage() {
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory selection:bg-champagne selection:text-near-black pt-28 sm:pt-36 pb-24">
+    <div className="bg-near-black min-h-screen text-warm-ivory selection:bg-action selection:text-on-action pt-28 sm:pt-36 pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Editorial Brand Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-24">
@@ -84,7 +84,7 @@ export default function StoryPage() {
         </section>
 
         {/* Story Section 3: The TSquare Man */}
-        <section className="mb-20 p-8 sm:p-12 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl">
+        <section className="mb-20 p-8 sm:p-12 bg-surface fine-border rounded-2xl sm:rounded-3xl">
           <h2 className="font-display text-3xl sm:text-4xl text-warm-ivory font-normal mb-4">
             Who is The TSquare Man?
           </h2>

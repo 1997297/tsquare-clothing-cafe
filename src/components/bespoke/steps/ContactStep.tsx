@@ -61,7 +61,7 @@ function ContactField({
         onChange={(event) => onChange(event.target.value)}
         onBlur={onBlur}
         className={cn(
-          "w-full bg-stone-950 border rounded-xl text-sm text-warm-ivory placeholder:text-stone-700 px-4 py-3 focus:outline-none transition-colors",
+          "w-full bg-surface border rounded-xl text-sm text-warm-ivory placeholder:text-ink-muted px-4 py-3 focus:outline-none transition-colors",
           error
             ? "border-amber-700/60 focus:border-amber-500/60"
             : "border-stone-800 focus:border-champagne/50"
@@ -164,7 +164,7 @@ export function ContactStep({
 
       {/* Authenticated Client Banner or Sign in prompt */}
       {user || profile ? (
-        <div className="flex items-center gap-3 mb-8 p-4 bg-stone-900/60 border border-champagne/30 rounded-2xl">
+        <div className="flex items-center gap-3 mb-8 p-4 bg-surface-elevated border border-champagne/30 rounded-2xl">
           <ShieldCheck className="w-5 h-5 text-champagne shrink-0" />
           <div className="text-xs">
             <span className="text-warm-ivory font-medium">
@@ -176,7 +176,7 @@ export function ContactStep({
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-2 mb-8 p-4 bg-stone-900/40 border border-stone-800/60 rounded-xl">
+        <div className="flex items-center gap-2 mb-8 p-4 bg-surface-elevated border border-stone-800/60 rounded-xl">
           <span className="text-xs text-stone-500">Already a client?</span>
           <Link
             href="/auth/sign-in"
@@ -254,7 +254,7 @@ export function ContactStep({
                   className={cn(
                     "px-5 py-2.5 rounded-xl border text-xs transition-all duration-150",
                     isSelected
-                      ? "border-champagne/60 bg-stone-900/80 text-champagne"
+                      ? "border-champagne/60 bg-surface-elevated text-champagne"
                       : "border-stone-800 text-stone-400 hover:border-stone-700 hover:text-stone-300"
                   )}
                 >
@@ -269,7 +269,7 @@ export function ContactStep({
         </fieldset>
       </div>
 
-      <p className="text-[10px] text-stone-600 mb-8 leading-relaxed">
+      <p className="text-[10px] text-ink-muted mb-8 leading-relaxed">
         Your information is handled with complete discretion and used solely to process your bespoke commission request.
       </p>
 
@@ -285,7 +285,7 @@ export function ContactStep({
         <button
           type="button"
           onClick={handleContinue}
-          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-champagne text-near-black hover:bg-champagne-light transition-all duration-200"
+          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl bg-action text-on-action hover:bg-action-hover transition-all duration-200"
         >
           Review My Request
           <ArrowRight className="w-4 h-4" />

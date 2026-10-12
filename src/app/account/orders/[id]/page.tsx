@@ -34,7 +34,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   if (!order) {
     return (
       <div className="py-16 text-center space-y-4">
-        <AlertCircle className="w-8 h-8 text-stone-600 mx-auto" />
+        <AlertCircle className="w-8 h-8 text-ink-muted mx-auto" />
         <h1 className="font-display text-2xl text-warm-ivory">Order Record Not Located</h1>
         <p className="text-xs text-stone-400">This order is not present in your private account.</p>
         <ReturnLink href="/account/orders" label="Return to Orders" />
@@ -63,20 +63,20 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       </div>
 
       {order.status === "completed" && (
-        <section className="p-6 rounded-3xl bg-stone-950 border border-champagne/40 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        <section className="p-6 rounded-3xl bg-surface border border-champagne/40 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div>
             <h2 className="flex items-center gap-2 text-champagne font-display text-xl"><Sparkles className="w-5 h-5" /> Made for you. Finished by TSquare.</h2>
             <p className="text-xs text-stone-300 mt-2">The wardrobe record is created only by the trusted completion workflow.</p>
           </div>
           {wardrobeItem ? (
-            <Link href={`/account/wardrobe/${wardrobeItem.id}`} className="px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-wider font-bold">View In My Wardrobe</Link>
+            <Link href={`/account/wardrobe/${wardrobeItem.id}`} className="px-5 py-2.5 rounded-xl bg-action text-on-action text-xs uppercase tracking-wider font-bold">View In My Wardrobe</Link>
           ) : (
             <span className="px-5 py-2.5 rounded-xl border border-stone-700 text-stone-400 text-xs uppercase tracking-wider">Wardrobe archive processing</span>
           )}
         </section>
       )}
 
-      <section className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-6">
+      <section className="p-6 sm:p-8 rounded-3xl bg-surface fine-border space-y-6">
         <div>
           <h2 className="font-display text-xl text-warm-ivory">Craftsmanship Progression</h2>
         </div>
@@ -86,7 +86,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             const active = index === currentStage;
             return (
               <li key={stage} className="flex sm:flex-col items-center gap-3 sm:text-center">
-                <span className={cn("w-8 h-8 rounded-full grid place-items-center text-xs font-mono shrink-0", complete && "bg-champagne text-near-black", active && "border-2 border-champagne text-champagne", !complete && !active && "border border-stone-700 text-stone-500")}>
+                <span className={cn("w-8 h-8 rounded-full grid place-items-center text-xs font-mono shrink-0", complete && "bg-action text-on-action", active && "border-2 border-champagne text-champagne", !complete && !active && "border border-stone-700 text-stone-500")}>
                   {complete ? <CheckCircle2 className="w-4 h-4" /> : index + 1}
                 </span>
                 <span className={cn("text-[10px] uppercase tracking-wider", active ? "text-champagne" : "text-stone-400")}>{label}</span>
@@ -98,19 +98,19 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <section className="p-6 rounded-3xl bg-stone-950 fine-border space-y-5">
+          <section className="p-6 rounded-3xl bg-surface fine-border space-y-5">
             <h2 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne">Bespoke Specifications</h2>
             <div className="grid sm:grid-cols-2 gap-4 text-xs">
-              <div className="p-4 rounded-2xl bg-stone-900/60 border border-stone-800"><span className="text-stone-500 block">Fabric</span><span className="text-warm-ivory">{order.fabricDetails?.name ?? "Awaiting atelier record"}</span></div>
-              <div className="p-4 rounded-2xl bg-stone-900/60 border border-stone-800"><span className="text-stone-500 block">Colour</span><span className="text-warm-ivory">{order.colourDetails?.name ?? "Awaiting atelier record"}</span></div>
+              <div className="p-4 rounded-2xl bg-surface-elevated border border-stone-800"><span className="text-stone-500 block">Fabric</span><span className="text-warm-ivory">{order.fabricDetails?.name ?? "Awaiting atelier record"}</span></div>
+              <div className="p-4 rounded-2xl bg-surface-elevated border border-stone-800"><span className="text-stone-500 block">Colour</span><span className="text-warm-ivory">{order.colourDetails?.name ?? "Awaiting atelier record"}</span></div>
             </div>
           </section>
 
-          <section className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4">
+          <section className="p-6 rounded-3xl bg-surface fine-border space-y-4">
             <h2 className="text-xs font-mono uppercase tracking-[0.25em] text-champagne">Measurements Snapshot Locked to This Order</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {Object.entries(measurementValues).map(([key, value]) => (
-                <div key={key} className="p-3 rounded-xl bg-stone-900/60 border border-stone-800 text-center">
+                <div key={key} className="p-3 rounded-xl bg-surface-elevated border border-stone-800 text-center">
                   <span className="text-[9px] uppercase text-stone-500 block">{key.replace(/([A-Z])/g, " $1")}</span>
                   <span className="text-xs font-mono text-warm-ivory">{String(value)} {String(order.measurementsSnapshot.unit ?? "cm")}</span>
                 </div>
@@ -120,11 +120,11 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         <div className="space-y-6">
-          <section className="p-6 rounded-3xl bg-stone-950 fine-border space-y-4 text-xs">
+          <section className="p-6 rounded-3xl bg-surface fine-border space-y-4 text-xs">
             <h2 className="uppercase tracking-[0.25em] text-champagne font-mono">Fitting Checkpoints</h2>
             {relatedAppointments.length === 0 && <p className="text-stone-500">No appointments are linked to this order.</p>}
             {relatedAppointments.map((appointment) => (
-              <div key={appointment.id} className="p-3 rounded-xl bg-stone-900/50 border border-stone-800">
+              <div key={appointment.id} className="p-3 rounded-xl bg-surface-elevated border border-stone-800">
                 <p className="text-warm-ivory capitalize">{appointment.type.replace(/-/g, " ")}</p>
                 <p className="mt-2 text-stone-400">{appointmentScheduleLabel(appointment.status, Boolean(appointment.scheduledStartAt))}</p>
                 <p className="mt-1 text-stone-300">{appointment.scheduledStartAt ? formatAtelierInstant(appointment.scheduledStartAt) : formatAppointmentPreference(appointment.preferredDate, appointment.preferredTime)}</p>

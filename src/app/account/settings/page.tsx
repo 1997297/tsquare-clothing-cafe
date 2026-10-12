@@ -82,7 +82,7 @@ export default function AccountSettingsPage() {
       )}
 
       {/* Password Management */}
-      <ClientForm onSubmit={handlePasswordChange} className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-5">
+      <ClientForm onSubmit={handlePasswordChange} className="p-6 sm:p-8 rounded-3xl bg-surface fine-border space-y-5">
         <div className="flex items-center gap-2.5 pb-2">
           <Lock className="w-4 h-4 text-champagne" />
           <h2 className="font-display text-lg text-warm-ivory">
@@ -142,7 +142,7 @@ export default function AccountSettingsPage() {
       </ClientForm>
 
       {/* Confidentiality & Discretion Policy */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-stone-950 fine-border space-y-3">
+      <div className="p-6 sm:p-8 rounded-3xl bg-surface fine-border space-y-3">
         <div className="flex items-center gap-2.5 text-champagne">
           <Shield className="w-4 h-4" />
           <h2 className="font-display text-base text-warm-ivory">
@@ -155,7 +155,7 @@ export default function AccountSettingsPage() {
       </div>
 
       {/* Sign Out Card */}
-      <div className="p-6 rounded-3xl bg-stone-950 border border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-6 rounded-3xl bg-surface border border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h3 className="font-display text-base text-warm-ivory">
             Active Private Client Session

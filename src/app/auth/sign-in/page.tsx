@@ -47,7 +47,7 @@ function SignInForm() {
   };
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 selection:bg-champagne selection:text-near-black">
+    <div className="bg-near-black min-h-screen text-warm-ivory flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 selection:bg-action selection:text-on-action">
       <div className="max-w-md w-full mx-auto space-y-8">
         {/* Brand Header */}
         <div className="text-center flex flex-col items-center">
@@ -67,7 +67,7 @@ function SignInForm() {
           </div>
         )}
 
-        <ClientForm onSubmit={handleSubmit} className="p-8 bg-stone-950 fine-border rounded-3xl space-y-5">
+        <ClientForm onSubmit={handleSubmit} className="p-8 bg-surface fine-border rounded-3xl space-y-5">
           <div>
             <label htmlFor="sign-in-email" className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 font-medium">
               Email Address

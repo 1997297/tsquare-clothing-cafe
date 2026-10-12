@@ -13,7 +13,7 @@ export default function AccountSavedPage() {
     return (
       <div className="space-y-8 animate-in fade-in duration-300">
         <ReturnLink href="/account" label="Return to Dashboard" />
-        <div className="flex min-h-64 items-center justify-center rounded-3xl bg-stone-950 fine-border text-xs uppercase tracking-widest text-stone-400">
+        <div className="flex min-h-64 items-center justify-center rounded-3xl bg-surface fine-border text-xs uppercase tracking-widest text-stone-400">
           <Loader2 className="mr-2 h-4 w-4 animate-spin text-champagne" />
           Loading Saved Looks...
         </div>
@@ -52,7 +52,7 @@ export default function AccountSavedPage() {
           {savedStyles.map((style) => (
             <div
               key={style.id}
-              className="group rounded-3xl bg-stone-950 fine-border p-4 space-y-4 hover:border-champagne/40 transition-all flex flex-col justify-between"
+              className="group rounded-3xl bg-surface fine-border p-4 space-y-4 hover:border-champagne/40 transition-all flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-espresso">
@@ -95,7 +95,7 @@ export default function AccountSavedPage() {
                 </Link>
                 <Link
                   href={`/bespoke/create/${style.slug}`}
-                  className="inline-flex items-center justify-center gap-1.5 py-2.5 text-center text-xs uppercase tracking-wider font-bold text-near-black bg-champagne hover:bg-champagne-light rounded-xl transition-colors shadow-sm"
+                  className="inline-flex items-center justify-center gap-1.5 py-2.5 text-center text-xs uppercase tracking-wider font-bold text-on-action bg-action hover:bg-action-hover rounded-xl transition-colors shadow-sm"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Make Mine</span>
@@ -105,8 +105,8 @@ export default function AccountSavedPage() {
           ))}
         </div>
       ) : (
-        <div className="p-12 bg-stone-950 fine-border rounded-3xl text-center space-y-4">
-          <Heart className="w-8 h-8 text-stone-600 mx-auto" />
+        <div className="p-12 bg-surface fine-border rounded-3xl text-center space-y-4">
+          <Heart className="w-8 h-8 text-ink-muted mx-auto" />
           <h3 className="font-display text-xl text-warm-ivory">
             Your Wishlist Is Empty
           </h3>
@@ -116,7 +116,7 @@ export default function AccountSavedPage() {
           <div className="pt-2">
             <Link
               href="/collections"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all"
             >
               <span>Explore The Collections</span>
               <ArrowRight className="w-4 h-4" />

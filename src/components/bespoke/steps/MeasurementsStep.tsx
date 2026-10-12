@@ -130,15 +130,15 @@ export function MeasurementsStep({
             className={cn(
               "w-full flex items-start gap-4 p-5 rounded-2xl border text-left transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50",
               measurementMethod === "saved"
-                ? "border-champagne/60 bg-stone-900/60 ring-1 ring-champagne/20"
-                : "border-stone-800 hover:border-stone-700 hover:bg-stone-900/30"
+                ? "border-champagne/60 bg-surface-elevated ring-1 ring-champagne/20"
+                : "border-stone-800 hover:border-stone-700 hover:bg-surface-elevated"
             )}
           >
             <div
               className={cn(
                 "w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 transition-all",
                 measurementMethod === "saved"
-                  ? "border-champagne bg-champagne"
+                  ? "border-champagne bg-action"
                   : "border-stone-600"
               )}
             />
@@ -153,7 +153,7 @@ export function MeasurementsStep({
                   Use My Saved Measurements
                 </p>
                 {currentMeasurement && (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-stone-800 text-champagne">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-hover text-champagne">
                     Version {currentMeasurement.version}
                   </span>
                 )}
@@ -166,13 +166,13 @@ export function MeasurementsStep({
             </div>
           </button>
         ) : (
-          <div className="flex items-start gap-4 p-5 rounded-2xl border border-stone-800/50 bg-stone-900/20 opacity-50 cursor-not-allowed">
+          <div className="flex items-start gap-4 p-5 rounded-2xl border border-stone-800/50 bg-surface-elevated opacity-50 cursor-not-allowed">
             <div className="w-5 h-5 rounded-full border-2 border-stone-700 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-1">
                 Use My Saved Measurements
               </p>
-              <p className="text-xs text-stone-600">
+              <p className="text-xs text-ink-muted">
                 Sign in to your TSquare Private Client Account to apply your saved anatomical profile.
               </p>
             </div>
@@ -187,14 +187,14 @@ export function MeasurementsStep({
           className={cn(
             "w-full flex items-start gap-4 p-5 rounded-2xl border text-left transition-all duration-200",
             measurementMethod === "manual"
-              ? "border-champagne/60 bg-stone-900/60 ring-1 ring-champagne/20"
-              : "border-stone-800 hover:border-stone-700 hover:bg-stone-900/30"
+              ? "border-champagne/60 bg-surface-elevated ring-1 ring-champagne/20"
+              : "border-stone-800 hover:border-stone-700 hover:bg-surface-elevated"
           )}
         >
           <div className={cn(
             "w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 transition-all",
             measurementMethod === "manual"
-              ? "border-champagne bg-champagne"
+              ? "border-champagne bg-action"
               : "border-stone-600"
           )} />
           <div>
@@ -218,14 +218,14 @@ export function MeasurementsStep({
           className={cn(
             "w-full flex items-start gap-4 p-5 rounded-2xl border text-left transition-all duration-200",
             measurementMethod === "schedule"
-              ? "border-champagne/60 bg-stone-900/60 ring-1 ring-champagne/20"
-              : "border-stone-800 hover:border-stone-700 hover:bg-stone-900/30"
+              ? "border-champagne/60 bg-surface-elevated ring-1 ring-champagne/20"
+              : "border-stone-800 hover:border-stone-700 hover:bg-surface-elevated"
           )}
         >
           <div className={cn(
             "w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 transition-all",
             measurementMethod === "schedule"
-              ? "border-champagne bg-champagne"
+              ? "border-champagne bg-action"
               : "border-stone-600"
           )} />
           <div>
@@ -259,7 +259,7 @@ export function MeasurementsStep({
                   className={cn(
                     "px-4 py-2 text-xs uppercase tracking-widest transition-colors",
                     measurementUnit === u
-                      ? "bg-stone-800 text-warm-ivory"
+                      ? "bg-surface-hover text-warm-ivory"
                       : "text-stone-500 hover:text-stone-300"
                   )}
                 >
@@ -278,7 +278,7 @@ export function MeasurementsStep({
                   aria-expanded={openSection === section.id}
                   aria-controls={`measurement-section-${section.id}`}
                   onClick={() => setOpenSection(openSection === section.id ? "upper" : section.id)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-stone-900/30 transition-colors"
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-surface-elevated transition-colors"
                 >
                   <span className="text-xs uppercase tracking-widest text-warm-ivory font-semibold">
                     {section.label}
@@ -311,20 +311,20 @@ export function MeasurementsStep({
                             onChange={(e) => handleMeasurementChange(field.key, e.target.value)}
                             placeholder="—"
                             className={cn(
-                              "w-full bg-stone-950 border rounded-xl text-xs text-warm-ivory placeholder:text-stone-700 px-4 py-3 pr-12 focus:outline-none transition-colors",
+                              "w-full bg-surface border rounded-xl text-xs text-warm-ivory placeholder:text-ink-muted px-4 py-3 pr-12 focus:outline-none transition-colors",
                               errors[field.key]
                                 ? "border-amber-700/60 focus:border-amber-500"
                                 : "border-stone-800 focus:border-champagne/50"
                             )}
                           />
-                          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] text-stone-600 uppercase">
+                          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] text-ink-muted uppercase">
                             {measurementUnit}
                           </span>
                         </div>
                         {errors[field.key] ? (
                           <p className="text-[10px] text-amber-500 mt-1">{errors[field.key]}</p>
                         ) : (
-                          <p className="text-[10px] text-stone-700 mt-1 leading-tight">{field.hint}</p>
+                          <p className="text-[10px] text-ink-muted mt-1 leading-tight">{field.hint}</p>
                         )}
                       </div>
                     ))}
@@ -348,7 +348,7 @@ export function MeasurementsStep({
               className="text-xs text-stone-400 leading-relaxed cursor-pointer"
             >
               I am not completely sure about some of these measurements.
-              <span className="text-stone-600 block mt-0.5 text-[10px]">
+              <span className="text-ink-muted block mt-0.5 text-[10px]">
                 TSquare will follow up to confirm before production begins.
               </span>
             </label>
@@ -358,7 +358,7 @@ export function MeasurementsStep({
 
       {/* Schedule notice */}
       {measurementMethod === "schedule" && (
-        <div className="mb-8 p-5 bg-stone-900/40 border border-stone-800/60 rounded-2xl">
+        <div className="mb-8 p-5 bg-surface-elevated border border-stone-800/60 rounded-2xl">
           <div className="flex gap-3">
             <AlertCircle className="w-4 h-4 text-champagne flex-shrink-0 mt-0.5" />
             <div>
@@ -389,8 +389,8 @@ export function MeasurementsStep({
           className={cn(
             "flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl transition-all duration-200",
             canContinue
-              ? "bg-champagne text-near-black hover:bg-champagne-light"
-              : "bg-stone-900 text-stone-600 cursor-not-allowed"
+              ? "bg-action text-on-action hover:bg-action-hover"
+              : "bg-surface-elevated text-ink-muted cursor-not-allowed"
           )}
         >
           Continue

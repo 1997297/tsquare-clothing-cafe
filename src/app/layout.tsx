@@ -24,7 +24,7 @@ const montserrat = Montserrat({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#11110F",
+  themeColor: "#101113",
   width: "device-width",
   initialScale: 1,
 };
@@ -91,7 +91,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-near-black text-warm-ivory selection:bg-champagne selection:text-near-black font-sans">
+      <body className="min-h-screen flex flex-col bg-near-black text-warm-ivory selection:bg-action selection:text-on-action font-sans">
         <ThemeProvider>
           <CatalogueProvider styles={catalogue.styles} collections={catalogue.collections}>
             <AuthProvider>

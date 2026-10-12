@@ -52,7 +52,7 @@ export function RequiredDateStep({
           min={todayStr}
           onChange={(e) => onDateChange(e.target.value)}
           className={cn(
-            "w-full sm:w-72 bg-stone-950 border rounded-xl text-sm text-warm-ivory px-4 py-3.5 focus:outline-none transition-colors",
+            "w-full sm:w-72 bg-surface border rounded-xl text-sm text-warm-ivory px-4 py-3.5 focus:outline-none transition-colors",
             isPast
               ? "border-amber-700/60 focus:border-amber-500"
               : "border-stone-800 focus:border-champagne/50"
@@ -67,7 +67,7 @@ export function RequiredDateStep({
 
       {/* Advisory for close dates */}
       {isUrgent && !isPast && (
-        <div className="flex gap-3 p-4 bg-stone-900/50 border border-stone-700/60 rounded-xl mb-8 animate-in fade-in duration-200">
+        <div className="flex gap-3 p-4 bg-surface-elevated border border-stone-700/60 rounded-xl mb-8 animate-in fade-in duration-200">
           <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
           <p className="text-xs text-stone-400 leading-relaxed">
             This date may require special confirmation from the TSquare team. We will review your request and reach out promptly to discuss the timeline.
@@ -76,8 +76,8 @@ export function RequiredDateStep({
       )}
 
       {/* Lead time note */}
-      <div className="mb-10 p-5 bg-stone-950 border border-stone-800/50 rounded-xl">
-        <p className="text-[10px] uppercase tracking-widest text-stone-600 mb-2 font-mono">
+      <div className="mb-10 p-5 bg-surface border border-stone-800/50 rounded-xl">
+        <p className="text-[10px] uppercase tracking-widest text-ink-muted mb-2 font-mono">
           Typical Atelier Lead Times
         </p>
         <div className="space-y-1.5 text-xs text-stone-500">
@@ -94,7 +94,7 @@ export function RequiredDateStep({
             <span className="text-stone-400">4 to 6 weeks</span>
           </div>
         </div>
-        <p className="text-[10px] text-stone-700 mt-3 leading-relaxed">
+        <p className="text-[10px] text-ink-muted mt-3 leading-relaxed">
           These are indicative ranges. Your actual timeline will be confirmed by TSquare after reviewing your request.
         </p>
       </div>
@@ -115,8 +115,8 @@ export function RequiredDateStep({
           className={cn(
             "flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl transition-all duration-200",
             config.requiredDate && !isPast
-              ? "bg-champagne text-near-black hover:bg-champagne-light"
-              : "bg-stone-900 text-stone-600 cursor-not-allowed"
+              ? "bg-action text-on-action hover:bg-action-hover"
+              : "bg-surface-elevated text-ink-muted cursor-not-allowed"
           )}
         >
           Continue

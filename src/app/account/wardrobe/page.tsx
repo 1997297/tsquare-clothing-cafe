@@ -53,7 +53,7 @@ export default function WardrobePage() {
           <div className="flex items-center gap-3 self-start sm:self-auto">
             <Link
               href="/collections"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-champagne text-near-black text-xs font-mono uppercase tracking-wider font-bold hover:bg-champagne-light transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-action text-on-action text-xs font-mono uppercase tracking-wider font-bold hover:bg-action-hover transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Commission New Look</span>
@@ -73,8 +73,8 @@ export default function WardrobePage() {
               className={cn(
                 "px-3.5 py-1.5 rounded-xl text-xs uppercase tracking-wider font-mono font-medium transition-colors whitespace-nowrap",
                 selectedCategory === cat.id
-                  ? "bg-stone-800 text-champagne border border-stone-700 shadow-sm"
-                  : "text-stone-400 hover:text-warm-ivory hover:bg-stone-900/60"
+                  ? "bg-surface-hover text-champagne border border-stone-700 shadow-sm"
+                  : "text-stone-400 hover:text-warm-ivory hover:bg-surface-elevated"
               )}
             >
               {cat.label}
@@ -90,7 +90,7 @@ export default function WardrobePage() {
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
-            className="bg-stone-900 border border-stone-800 text-warm-ivory rounded-xl px-3 py-1.5 focus:outline-none focus:border-champagne/40"
+            className="bg-surface-elevated border border-stone-800 text-warm-ivory rounded-xl px-3 py-1.5 focus:outline-none focus:border-champagne/40"
           >
             <option value="newest">Newest Additions</option>
             <option value="oldest">Earliest Commissions</option>
@@ -105,11 +105,11 @@ export default function WardrobePage() {
             <Link
               key={item.id}
               href={`/account/wardrobe/${item.id}`}
-              className="group rounded-3xl bg-stone-950 fine-border overflow-hidden hover:border-champagne/40 transition-all duration-300 flex flex-col justify-between"
+              className="group rounded-3xl bg-surface fine-border overflow-hidden hover:border-champagne/40 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 {/* Hero Editorial Photography */}
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-stone-900">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface-elevated">
                   <Image
                     src={item.heroImage}
                     alt={item.styleName}
@@ -163,7 +163,7 @@ export default function WardrobePage() {
               </div>
 
               {/* Card Footer */}
-              <div className="px-6 py-4 border-t border-stone-800/60 bg-stone-900/30 flex items-center justify-between text-[11px] font-mono text-stone-500">
+              <div className="px-6 py-4 border-t border-stone-800/60 bg-surface-elevated flex items-center justify-between text-[11px] font-mono text-stone-500">
                 <span>
                   Finished {new Date(item.completionDate).toLocaleDateString("en-NG", {
                     month: "short",
@@ -179,7 +179,7 @@ export default function WardrobePage() {
         </div>
       ) : (
         /* ── Empty State ── */
-        <div className="py-20 px-6 rounded-3xl bg-stone-950 fine-border text-center space-y-6 max-w-2xl mx-auto">
+        <div className="py-20 px-6 rounded-3xl bg-surface fine-border text-center space-y-6 max-w-2xl mx-auto">
           <div className="w-16 h-16 rounded-full bg-champagne/10 border border-champagne/25 flex items-center justify-center mx-auto text-champagne">
             <Sparkles className="w-8 h-8" />
           </div>
@@ -196,7 +196,7 @@ export default function WardrobePage() {
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/collections"
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-champagne text-near-black text-xs uppercase tracking-widest font-bold hover:bg-champagne-light transition-all"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-action text-on-action text-xs uppercase tracking-widest font-bold hover:bg-action-hover transition-all"
             >
               Explore Collection
             </Link>

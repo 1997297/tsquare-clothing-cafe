@@ -85,7 +85,7 @@ export default function BespokeProcessPage() {
   ];
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory selection:bg-champagne selection:text-near-black pt-28 sm:pt-36 pb-24">
+    <div className="bg-near-black min-h-screen text-warm-ivory selection:bg-action selection:text-on-action pt-28 sm:pt-36 pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-24">
@@ -102,12 +102,12 @@ export default function BespokeProcessPage() {
           {steps.map((step, idx) => (
             <div key={idx} className="relative group">
               {/* Timeline Bullet */}
-              <div className="absolute -left-[31px] sm:-left-[55px] top-1 flex h-8 w-8 items-center justify-center bg-near-black border border-stone-700 text-champagne font-mono text-xs font-bold group-hover:border-champagne group-hover:bg-stone-900 transition-colors">
+              <div className="absolute -left-[31px] sm:-left-[55px] top-1 flex h-8 w-8 items-center justify-center bg-near-black border border-stone-700 text-champagne font-mono text-xs font-bold group-hover:border-champagne group-hover:bg-surface-elevated transition-colors">
                 {step.num}
               </div>
 
               {/* Step Card Content */}
-              <div className="p-6 sm:p-8 bg-stone-950 fine-border hover:border-stone-700 transition-colors">
+              <div className="p-6 sm:p-8 bg-surface fine-border hover:border-stone-700 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-3">
                   <h3 className="font-display text-2xl sm:text-3xl text-warm-ivory">
                     {step.num}. {step.name}
@@ -140,7 +140,7 @@ export default function BespokeProcessPage() {
         </div>
 
         {/* Ready to begin callout */}
-        <div className="mt-24 p-8 sm:p-12 bg-stone-950 fine-border text-center">
+        <div className="mt-24 p-8 sm:p-12 bg-surface fine-border text-center">
           <h2 className="font-display text-3xl text-warm-ivory">
             Ready to initiate your bespoke journey?
           </h2>

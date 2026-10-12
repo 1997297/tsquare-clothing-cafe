@@ -97,7 +97,7 @@ export function StyleSummary({ config, className, compact }: StyleSummaryProps) 
             <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-champagne-light mb-1">
               {displayCode}
             </p>
-            <p className="text-sm font-display text-white leading-tight">
+            <p className="text-sm font-display text-ink leading-tight">
               {displayName}
             </p>
           </div>

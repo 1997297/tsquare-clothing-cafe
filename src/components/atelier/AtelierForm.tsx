@@ -19,7 +19,7 @@ function Confirmation({ text, busy, close, confirm }: { text: string; busy: bool
     element?.showModal();
     return () => element?.close();
   }, []);
-  return <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); if (!busy) close(); }} className="atelier-panel m-auto w-[calc(100%-2rem)] max-w-md rounded-3xl border border-stone-700 bg-stone-950 p-6 text-warm-ivory shadow-2xl backdrop:bg-black/75">
+  return <dialog ref={dialog} aria-labelledby={titleId} onCancel={event => { event.preventDefault(); if (!busy) close(); }} className="atelier-panel m-auto w-[calc(100%-2rem)] max-w-md rounded-3xl border border-stone-700 bg-surface p-6 text-warm-ivory shadow-2xl backdrop:bg-black/75">
     <h2 id={titleId} className="font-display text-2xl">Confirm atelier action</h2>
     <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-stone-300">{text}</p>
     <div className="mt-6 flex flex-wrap justify-end gap-3">

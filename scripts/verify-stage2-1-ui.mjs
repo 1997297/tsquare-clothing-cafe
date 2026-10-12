@@ -5,6 +5,7 @@ import { readFile, readdir, mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { resolve, join, relative } from 'node:path';
 import { createRequire } from 'node:module';
 import puppeteer from 'puppeteer-core';
+import { inspectThemeContrast } from './theme-contrast.mjs';
 const require = createRequire(import.meta.url), pkg = require('next/dist/compiled/webpack/webpack');
 pkg.init(); const { webpack } = pkg;
 const temp = resolve('supabase/.temp'), out = join(temp, 'stage21-ui');
@@ -68,6 +69,7 @@ try {
     assert.deepEqual(result.badgeTexts, ['2', '3', '99+']);
     assert.ok(result.noOverlap && result.noOverflow && result.unavailable);
     assert.equal(result.requestRows, 3); assert.equal(result.orderRows, 2);
+    assert.deepEqual((await page.evaluate(inspectThemeContrast)).failures, [], 'Rendered staff attention contrast');
     // Browser computes actual theme colours; badge and non-colour label stay readable.
     const contrast = await page.evaluate(() => {
       const ratio = (a, b) => { const lum = s => { const c = s.match(/[\d.]+/g).slice(0,3).map(Number).map(v => v/255).map(v => v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4); return c[0]*.2126+c[1]*.7152+c[2]*.0722; }; const x=lum(a),y=lum(b); return (Math.max(x,y)+.05)/(Math.min(x,y)+.05); };

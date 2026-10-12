@@ -27,7 +27,7 @@ export function ProfileAvatar({ profile, className, imageClassName, priority = f
   return (
     <span
       className={cn(
-        "relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-champagne/40 bg-champagne/15 font-display text-xs font-bold tracking-wider text-champagne shadow-inner",
+        "relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-champagne/40 bg-champagne/15 font-display text-xs font-bold tracking-wider text-ink shadow-inner",
         className
       )}
       aria-label={imageUrl ? `${accessibleName} profile picture` : `${accessibleName} profile initials`}

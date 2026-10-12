@@ -8,7 +8,7 @@ export function RequestPaymentLink() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   return <button type="button" disabled={pending} onClick={() => startTransition(() => router.push("/admin/orders"))}
-    className="inline-flex w-fit items-center justify-center rounded-xl bg-champagne px-4 py-3 text-xs font-semibold text-near-black transition-colors hover:bg-champagne-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne disabled:cursor-wait disabled:opacity-50">
+    className="inline-flex w-fit items-center justify-center rounded-xl bg-action px-4 py-3 text-xs font-semibold text-on-action transition-colors hover:bg-action-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne disabled:cursor-wait disabled:opacity-50">
     <span className="inline-flex items-center gap-2" aria-live="polite">
     {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
     {pending ? "Opening orders…" : "Request Payment"}

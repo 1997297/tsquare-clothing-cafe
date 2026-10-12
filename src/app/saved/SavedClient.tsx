@@ -20,7 +20,7 @@ export default function SavedClient() {
   }
 
   return (
-    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-champagne selection:text-near-black">
+    <div className="bg-near-black min-h-screen text-warm-ivory pt-28 sm:pt-36 pb-24 selection:bg-action selection:text-on-action">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="border-b border-stone-800/80 pb-8 mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -36,7 +36,7 @@ export default function SavedClient() {
         </div>
 
         {/* Persistence notice */}
-        <div className="mb-12 p-4 bg-stone-950 fine-border rounded-2xl text-xs text-stone-400 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="mb-12 p-4 bg-surface fine-border rounded-2xl text-xs text-stone-400 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-champagne shrink-0" />
             <span>
@@ -56,8 +56,8 @@ export default function SavedClient() {
 
         {/* Content */}
         {savedStyles.length === 0 ? (
-          <div className="py-24 text-center fine-border rounded-3xl bg-stone-950 p-12 max-w-2xl mx-auto">
-            <Heart className="h-12 w-12 text-stone-600 mx-auto stroke-[1.2]" />
+          <div className="py-24 text-center fine-border rounded-3xl bg-surface p-12 max-w-2xl mx-auto">
+            <Heart className="h-12 w-12 text-ink-muted mx-auto stroke-[1.2]" />
             <h3 className="font-display text-2xl text-warm-ivory mt-4">
               Your saved looks are currently empty
             </h3>
@@ -98,7 +98,7 @@ export default function SavedClient() {
             </div>
 
             {/* Bottom Group Action */}
-            <div className="mt-20 p-8 bg-stone-950 fine-border rounded-2xl sm:rounded-3xl text-center max-w-2xl mx-auto">
+            <div className="mt-20 p-8 bg-surface fine-border rounded-2xl sm:rounded-3xl text-center max-w-2xl mx-auto">
               <h3 className="font-display text-2xl text-warm-ivory">
                 Ready to review these pieces with a master tailor?
               </h3>

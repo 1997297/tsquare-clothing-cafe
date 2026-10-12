@@ -69,12 +69,12 @@ export function RequestReviewPanel({ request }: { request: AdminRequestRecord })
   }
 
   return (
-    <section className="rounded-3xl border border-stone-800 bg-stone-950/70 p-6 sm:p-8">
+    <section className="rounded-3xl border border-stone-800 bg-surface p-6 sm:p-8">
       <h2 className="font-display text-2xl">Review decision</h2>
       {error && <p role="alert" className="mt-5 rounded-xl border border-red-800/50 bg-red-950/30 p-3 text-xs text-red-300">{error}</p>}
 
       {request.status === "submitted" && (
-        <button type="button" onClick={() => ask("start_review")} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-champagne px-5 py-3 text-xs font-bold uppercase tracking-wider text-near-black">
+        <button type="button" onClick={() => ask("start_review")} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-action px-5 py-3 text-xs font-bold uppercase tracking-wider text-on-action">
           <SearchCheck className="h-4 w-4" /> Start review
         </button>
       )}
@@ -84,7 +84,7 @@ export function RequestReviewPanel({ request }: { request: AdminRequestRecord })
           <label className="block">
             <span className="text-[10px] uppercase tracking-wider text-stone-500">Client-facing message</span>
             <textarea value={message} onChange={(event) => setMessage(event.target.value)} rows={5} maxLength={2000} placeholder="Required for changes requested or decline; optional for approval." className="mt-2 w-full rounded-2xl border border-stone-700 bg-near-black p-4 text-sm leading-6 outline-none focus:border-champagne" />
-            <span className="mt-1 block text-right text-[10px] text-stone-600">{message.length}/2000</span>
+            <span className="mt-1 block text-right text-[10px] text-ink-muted">{message.length}/2000</span>
           </label>
           <div className="grid gap-3 sm:grid-cols-3">
             <button type="button" onClick={() => ask("request_changes")} className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-700/60 px-4 py-3 text-xs uppercase tracking-wider text-amber-300"><MessageSquareWarning className="h-4 w-4" /> Changes</button>
@@ -101,7 +101,7 @@ export function RequestReviewPanel({ request }: { request: AdminRequestRecord })
       )}
 
       {request.status === "confirmed" && !request.convertedOrder && (
-        <button type="button" onClick={() => ask("convert")} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-champagne px-5 py-3 text-xs font-bold uppercase tracking-wider text-near-black">
+        <button type="button" onClick={() => ask("convert")} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-action px-5 py-3 text-xs font-bold uppercase tracking-wider text-on-action">
           <FilePlus2 className="h-4 w-4" /> Create production order
         </button>
       )}

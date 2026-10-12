@@ -21,13 +21,15 @@ interface ThemeContextValue {
 const STORAGE_KEY = "tcc-theme";
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-function applyTheme(theme: Theme) {
+function applyTheme(theme: Theme, persist = true) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute("content", theme === "dark" ? "#11110F" : "#F6F1E8");
-  localStorage.setItem(STORAGE_KEY, theme);
+    ?.setAttribute("content", theme === "dark" ? "#101113" : "#F4EFE6");
+  if (persist) {
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch { /* Theme still works when storage is unavailable. */ }
+  }
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -35,13 +37,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const activeTheme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+    applyTheme(activeTheme, false);
     setThemeState(activeTheme);
 
     const onStorage = (event: StorageEvent) => {
       if (event.key !== STORAGE_KEY) return;
       const nextTheme = event.newValue === "light" ? "light" : "dark";
-      document.documentElement.dataset.theme = nextTheme;
-      document.documentElement.style.colorScheme = nextTheme;
+      applyTheme(nextTheme, false);
       setThemeState(nextTheme);
     };
 

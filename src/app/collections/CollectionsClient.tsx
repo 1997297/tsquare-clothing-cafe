@@ -95,8 +95,8 @@ export default function CollectionsClient() {
                   className="object-cover object-top filter brightness-[0.7] group-hover:scale-105 group-hover:brightness-[0.85] transition-all duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-                <div className="relative z-10">
-                  <h3 className="font-display text-sm text-[#FAF8F5] group-hover:text-champagne transition-colors font-medium">
+                <div className="photo-copy relative z-10">
+                  <h3 className="font-display text-sm text-photo group-hover:text-champagne transition-colors font-medium">
                     {c.name}
                   </h3>
                   <span className="text-[9px] uppercase tracking-widest text-stone-300 font-mono block mt-0.5">
@@ -109,7 +109,7 @@ export default function CollectionsClient() {
         </div>
 
         {/* Interactive Filters Bar with Rounded-2xl */}
-        <div className="bg-stone-950 fine-border rounded-2xl p-6 sm:p-8 mb-12 shadow-sm">
+        <div className="bg-surface fine-border rounded-2xl p-6 sm:p-8 mb-12 shadow-sm">
           <div className="flex items-center gap-2 text-[10px] uppercase font-mono tracking-[0.25em] text-champagne font-semibold mb-5">
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Curate Your Selection
@@ -194,7 +194,7 @@ export default function CollectionsClient() {
 
         {/* Styles Grid */}
         {filteredStyles.length === 0 ? (
-          <div className="py-20 text-center fine-border bg-stone-950 rounded-2xl p-12">
+          <div className="py-20 text-center fine-border bg-surface rounded-2xl p-12">
             <h3 className="font-display text-xl text-stone-300">
               No garments matching this specific curation
             </h3>

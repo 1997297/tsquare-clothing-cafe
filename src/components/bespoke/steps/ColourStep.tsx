@@ -41,7 +41,7 @@ export function ColourStep({
           if (!groupColours.length) return null;
           return (
             <div key={group}>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-stone-600 font-mono mb-4">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-ink-muted font-mono mb-4">
                 {group}
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -63,8 +63,8 @@ export function ColourStep({
                       className={cn(
                         "flex items-center gap-3 p-3.5 rounded-xl border transition-all duration-200 text-left group",
                         isSelected
-                          ? "border-champagne/60 bg-stone-900/60 ring-1 ring-champagne/20"
-                          : "border-stone-800 hover:border-stone-700 hover:bg-stone-900/30"
+                          ? "border-champagne/60 bg-surface-elevated ring-1 ring-champagne/20"
+                          : "border-stone-800 hover:border-stone-700 hover:bg-surface-elevated"
                       )}
                     >
                       {/* Swatch */}
@@ -94,7 +94,7 @@ export function ColourStep({
 
       {/* Selected preview */}
       {config.colour && (
-        <div className="flex items-center gap-3 px-4 py-3 mb-8 rounded-xl bg-stone-900/60 border border-stone-800/60">
+        <div className="flex items-center gap-3 px-4 py-3 mb-8 rounded-xl bg-surface-elevated border border-stone-800/60">
           <div
             className="w-6 h-6 rounded-full border border-warm-ivory/15 flex-shrink-0"
             style={{ background: config.colour.hex }}
@@ -106,7 +106,7 @@ export function ColourStep({
         </div>
       )}
 
-      <p className="text-[10px] text-stone-600 italic mb-6 leading-relaxed">
+      <p className="text-[10px] text-ink-muted italic mb-6 leading-relaxed">
         Colour accuracy may vary between screens. Final colour will be confirmed with physical swatches at your TSquare consultation.
       </p>
 
@@ -126,8 +126,8 @@ export function ColourStep({
           className={cn(
             "flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-bold rounded-2xl transition-all duration-200",
             config.colour
-              ? "bg-champagne text-near-black hover:bg-champagne-light"
-              : "bg-stone-900 text-stone-600 cursor-not-allowed"
+              ? "bg-action text-on-action hover:bg-action-hover"
+              : "bg-surface-elevated text-ink-muted cursor-not-allowed"
           )}
         >
           Continue

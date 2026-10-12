@@ -7,6 +7,10 @@ import { AtelierForm, AtelierField } from '../../src/components/atelier/AtelierF
 import { AppointmentCard, AtelierTimeline, ServiceHeader } from '../../src/components/atelier/ServiceUI';
 import { RequestAppointmentSummary } from '../../src/components/atelier/RequestAppointmentSummary';
 import { atelierInput } from '../../src/components/atelier/styles';
+import { Button } from '../../src/components/common/Button';
+import { Badge } from '../../src/components/common/Badge';
+import { ConfirmDialog } from '../../src/components/admin/ConfirmDialog';
+import { OrderStatusBadge, RequestStatusBadge, WorkflowTimeline } from '../../src/components/atelier/WorkflowUI';
 
 const params = new URLSearchParams(location.search);
 const role = params.get('role') || 'ceo';
@@ -20,7 +24,21 @@ const workspace = { requests: [request], orders: [{ id: 'order', customer_id: 'c
 const appointment = { id: 'appointment', type: 'consultation', status: 'requested', preferred_date: '2026-12-12', preferred_time: 'afternoon', scheduled_start_at: null, location: 'TCC office' };
 
 function App() {
+  const [confirming, setConfirming] = React.useState(false);
   return <main className="mx-auto max-w-5xl space-y-8 p-4 sm:p-8">
+    {mode === 'theme' && <><ServiceHeader title="Theme controls" description="Local visual fixture — no backend actions." />
+      <section className="atelier-surface rounded-3xl p-6 space-y-5">
+        <div className="flex flex-wrap gap-4">{['primary','secondary','outline','champagne','ghost'].map(variant => <Button key={variant} variant={variant} data-variant={variant}>{variant}</Button>)}<Button disabled>Disabled</Button></div>
+        <div className="flex flex-wrap gap-3">{['champagne','outline','dark','stone'].map(variant => <Badge key={variant} variant={variant}>{variant}</Badge>)}</div>
+        <div className="flex flex-wrap gap-3">{['submitted','under_review','needs_clarification','confirmed','converted_to_order','declined'].map(status => <RequestStatusBadge key={status} status={status} />)}{['order_confirmed','measurements_confirmed','in_production','finishing','ready','completed'].map(status => <OrderStatusBadge key={status} status={status} />)}</div>
+        <label className="block text-sm">Date input<input type="date" className={atelierInput} /></label>
+        <label className="block text-sm">Text field<input className={atelierInput} placeholder="Readable placeholder" /></label>
+        <Button variant="outline" onClick={() => setConfirming(true)}>Open confirmation</Button>
+      </section>
+      <WorkflowTimeline events={[{id:'timeline',eventType:'request_submitted',actorType:'customer',createdAt:'2026-10-12T10:00:00Z',metadata:{message:'A readable client-facing timeline message.'}}]} />
+      <WorkflowTimeline events={[]} />
+      <ConfirmDialog open={confirming} title="Confirm fixture action" description="Synthetic confirmation only. No record will change." confirmLabel="Confirm fixture" busy={false} onCancel={() => setConfirming(false)} onConfirm={() => setConfirming(false)} />
+    </>}
     {mode === 'bank' && <><ServiceHeader title="Payments" description="Local fixture — no production data or backend requests." /><BankSettingsForm bank={state.bank} ceo={role === 'ceo'} /></>}
     {mode === 'payment' && <PaymentDetail workspace={workspace} summary={summary} requestId="request" staff={role !== 'client'} />}
     {mode === 'chat' && <><ServiceHeader reference="TCC-CON-FIXTURE" title="Your private Concierge" description="Messages with the atelier" /><section className="atelier-panel rounded-3xl bg-stone-950 p-5 sm:p-7"><ConciergeMessages requestId="thread" initialMessages={state.messages.slice(0, 40)} initialHasMore={false} initialReadSeq={0} staff={role !== 'client'}>
