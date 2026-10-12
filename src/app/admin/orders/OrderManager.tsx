@@ -7,14 +7,15 @@ import { OrderStatusBadge } from "@/components/atelier/WorkflowUI";
 import type { AdminOrderRecord } from "@/lib/server/atelier-workflow";
 import { ORDER_STATUS_LABELS, ORDER_WORKFLOW_STATUSES, type OrderWorkflowStatus } from "@/lib/atelier-workflow";
 import { cn } from "@/lib/utils";
+import { ORDER_ATTENTION_STATUSES } from "@/lib/staff-attention";
 
-export function OrderManager({ orders }: { orders: AdminOrderRecord[] }) {
+export function OrderManager({ orders, initialFilter = "all" }: { orders: AdminOrderRecord[]; initialFilter?: "all" | "attention" }) {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<"all" | OrderWorkflowStatus>("all");
+  const [filter, setFilter] = useState<"all" | "attention" | OrderWorkflowStatus>(initialFilter);
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return orders.filter((order) => {
-      if (filter !== "all" && order.status !== filter) return false;
+      if (filter === "attention" ? !ORDER_ATTENTION_STATUSES.includes(order.status) : filter !== "all" && order.status !== filter) return false;
       if (!needle) return true;
       const customer = order.customer ? `${order.customer.firstName} ${order.customer.lastName} ${order.customer.email}` : "";
       return `${order.orderReference} ${order.requestReference ?? ""} ${order.styleName} ${customer}`.toLowerCase().includes(needle);
@@ -33,10 +34,12 @@ export function OrderManager({ orders }: { orders: AdminOrderRecord[] }) {
       <div className="space-y-4">
         <label className="flex max-w-xl items-center gap-3 rounded-2xl border border-stone-800 bg-stone-950/60 px-4 py-3"><Search className="h-4 w-4 text-stone-500" /><span className="sr-only">Search orders</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Order, request, client, email or Fit" className="w-full bg-transparent text-sm outline-none placeholder:text-stone-600" /></label>
         <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Order status filters">
+          <button type="button" onClick={() => setFilter("attention")} className={cn("shrink-0 rounded-xl border px-3.5 py-2 text-[10px] uppercase tracking-wider", filter === "attention" ? "border-champagne/40 bg-champagne/10 text-champagne" : "border-stone-800 text-stone-500")}>Needs attention</button>
           <button type="button" onClick={() => setFilter("all")} className={cn("shrink-0 rounded-xl border px-3.5 py-2 text-[10px] uppercase tracking-wider", filter === "all" ? "border-champagne/40 bg-champagne/10 text-champagne" : "border-stone-800 text-stone-500")}>All</button>
           {ORDER_WORKFLOW_STATUSES.map((status) => <button key={status} type="button" onClick={() => setFilter(status)} className={cn("shrink-0 rounded-xl border px-3.5 py-2 text-[10px] uppercase tracking-wider", filter === status ? "border-champagne/40 bg-champagne/10 text-champagne" : "border-stone-800 text-stone-500")}>{ORDER_STATUS_LABELS[status]}</button>)}
         </div>
       </div>
+      {filter === "attention" && <p className="text-sm text-stone-400">Confirm measurements for new orders, or record completed handover for ready orders. Production work in progress is not counted here.</p>}
       {visible.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-stone-800 p-12 text-center"><PackageCheck className="mx-auto h-8 w-8 text-stone-600" /><h2 className="mt-4 font-display text-xl">No matching orders</h2><p className="mt-2 text-sm text-stone-500">An approved request must be deliberately converted before it appears here.</p></div>
       ) : (

@@ -7,9 +7,11 @@ import { RequestStatusBadge } from "@/components/atelier/WorkflowUI";
 import type { AdminRequestRecord } from "@/lib/server/atelier-workflow";
 import { REQUEST_STATUS_LABELS, type RequestWorkflowStatus } from "@/lib/atelier-workflow";
 import { cn } from "@/lib/utils";
+import { REQUEST_ATTENTION_STATUSES } from "@/lib/staff-attention";
 
-const FILTERS: Array<{ value: "all" | RequestWorkflowStatus; label: string }> = [
+const FILTERS: Array<{ value: "all" | "attention" | RequestWorkflowStatus; label: string }> = [
   { value: "all", label: "All" },
+  { value: "attention", label: "Needs attention" },
   { value: "submitted", label: "Pending" },
   { value: "under_review", label: "In review" },
   { value: "needs_clarification", label: "Changes" },
@@ -18,13 +20,13 @@ const FILTERS: Array<{ value: "all" | RequestWorkflowStatus; label: string }> = 
   { value: "converted_to_order", label: "Converted" },
 ];
 
-export function RequestManager({ requests }: { requests: AdminRequestRecord[] }) {
+export function RequestManager({ requests, initialFilter = "all" }: { requests: AdminRequestRecord[]; initialFilter?: "all" | "attention" }) {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]["value"]>("all");
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]["value"]>(initialFilter);
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return requests.filter((request) => {
-      if (filter !== "all" && request.status !== filter) return false;
+      if (filter === "attention" ? !REQUEST_ATTENTION_STATUSES.includes(request.status) : filter !== "all" && request.status !== filter) return false;
       if (!needle) return true;
       const customer = request.customer
         ? `${request.customer.firstName} ${request.customer.lastName} ${request.customer.email}`
@@ -56,6 +58,7 @@ export function RequestManager({ requests }: { requests: AdminRequestRecord[] })
         </div>
       </div>
 
+      {filter === "attention" && <p className="text-sm text-stone-400">Submitted and under-review requests need a staff decision. Approved requests await deliberate order conversion.</p>}
       {visible.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-stone-800 p-12 text-center">
           <ClipboardList className="mx-auto h-8 w-8 text-stone-600" />

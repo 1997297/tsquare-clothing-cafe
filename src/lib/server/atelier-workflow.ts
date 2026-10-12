@@ -227,13 +227,26 @@ function mapReferences(value: unknown): AdminReferenceImage[] {
   });
 }
 
+// Do not silently truncate a destination while Overview shows an exact count.
+// Keep the existing list UI; fail visibly instead of presenting partial totals.
+async function readWorkflowRows(query: (start: number, end: number) => PromiseLike<{ data: Row[] | null; error: { code: string; message: string } | null }>) {
+  const data: Row[] = [];
+  for (let start = 0; start < 10000; start += 500) {
+    const result = await query(start, start + 499);
+    if (result.error) return { data: null, error: result.error };
+    data.push(...(result.data ?? []));
+    if ((result.data ?? []).length < 500) return { data, error: null };
+  }
+  throw new Error("WORKFLOW_LIST_TOO_LARGE");
+}
+
 export async function getAdminRequests(): Promise<AdminRequestRecord[]> {
   await requireStaff();
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
+  const { data, error } = await readWorkflowRows((start, end) => supabase
     .from("bespoke_requests")
     .select("id,request_reference,customer_id,style_id,style_code,style_name,style_image,style_image_snapshot,garment_category,is_idea_path,fabric,colour,preferences,fit_preference,measurements_snapshot,measurement_confidence,occasion,event_name,event_date,required_date,appointment_request,reference_images,special_instructions,contact_info,status,clarification_notes,submitted_at,last_submitted_at,reviewed_at,reviewed_by,approved_at,approved_by,approved_revision,revision,lock_version,created_at,updated_at")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false }).order("id").range(start, end));
   if (error) {
     console.error("Admin request query failed", { code: error.code, message: error.message });
     throw new Error("REQUEST_MANAGEMENT_UNAVAILABLE");
@@ -318,10 +331,10 @@ export async function getAdminRequest(requestId: string): Promise<AdminRequestRe
 export async function getAdminOrders(): Promise<AdminOrderRecord[]> {
   await requireStaff();
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
+  const { data, error } = await readWorkflowRows((start, end) => supabase
     .from("orders")
     .select("id,order_reference,customer_id,bespoke_request_id,style_id,style_code,style_name,style_image,garment_category,fabric_details,colour_details,preferences,measurements_snapshot,accepted_request_snapshot,status,target_completion_date,production_stage_updated_at,special_instructions,created_at,updated_at,lock_version")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false }).order("id").range(start, end));
   if (error) {
     console.error("Admin order query failed", { code: error.code, message: error.message });
     throw new Error("ORDER_MANAGEMENT_UNAVAILABLE");

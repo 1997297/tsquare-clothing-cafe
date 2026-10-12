@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Clock3, Radio } from "lucide-react";
 import { getAdminOverviewData } from "@/lib/server/admin-overview";
+import { OverviewActions } from "@/components/admin/OverviewActions";
 
 function humanize(value: string) {
   return value
@@ -33,9 +34,7 @@ export default async function AdminOverviewPage() {
         </div>
       )}
 
-      <nav aria-label="Quick actions" className="flex flex-wrap gap-3">
-        {[["Add Fit", "/admin/collections/new"], ["Review requests", "/admin/requests"], ["View orders", "/admin/orders"], ["Verify payments", "/admin/payments"], ["Appointments", "/admin/appointments"], ["Concierge", "/admin/concierge"], ["Find client", "/admin/clients"]].map(([label, href]) => <Link key={href} href={href} className="rounded-xl border border-stone-700 px-4 py-3 text-xs text-champagne hover:border-champagne">{label}</Link>)}
-      </nav>
+      <OverviewActions counts={overview.attention} />
 
       <section aria-label="Operational summaries" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {overview.metrics.map((metric) => (

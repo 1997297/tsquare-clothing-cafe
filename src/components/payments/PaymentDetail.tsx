@@ -30,7 +30,7 @@ export function PaymentDetail({ workspace, summary, requestId, staff }: { worksp
     {!staff && request.status === "active" && position.remaining > 0 && position.pending === 0 && <EvidenceForm requestId={request.id} remaining={position.remaining} />}
     <PaymentHistory workspace={workspace} requestId={staff ? undefined : request.id} />
     <PaymentActivity workspace={workspace} />
-    {staff && submissions.filter(s => s.status === "awaiting_verification").map(s => <ReviewSubmissionForm key={s.id} submission={s} />)}
+    {staff && submissions.filter(s => s.status === "awaiting_verification").map(s => <div key={s.id} id={`review-${s.id}`} className="scroll-mt-8"><ReviewSubmissionForm submission={s} /></div>)}
     {staff && request.status === "active" && position.verified === 0 && position.pending === 0 && <CancelRequestForm request={request} />}
   </div>;
 }

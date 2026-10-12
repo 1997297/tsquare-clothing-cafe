@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { FinancialSummary, PaymentRequest, PaymentWorkspace } from "@/lib/payments/manual";
 import { paymentPercent, PAYMENT_PURPOSES, requestPosition, requestOrderSummary } from "@/lib/payments/manual";
 import { formatMinor } from "@/lib/payments/money";
+import { pendingPaymentSubmissions } from "@/lib/payments/attention";
 
 export const panelClass = "payment-panel rounded-3xl border border-stone-800 bg-stone-950/60 p-5 sm:p-7 min-w-0";
 export const inputClass = "mt-2 w-full min-w-0 rounded-xl border border-stone-700 bg-near-black px-3 py-3 text-sm text-warm-ivory focus:outline-none focus:ring-2 focus:ring-champagne/60 disabled:opacity-50";
@@ -27,7 +28,10 @@ export function RequestCard({ request, workspace, staff }: { request: PaymentReq
   const financial = requestOrderSummary(request, workspace.financials);
   const order = workspace.orders.find(o => o.id === request.order_id);
   const customer = workspace.customers.find(c => c.id === request.customer_id);
-  return <Link href={`/${staff ? "admin" : "account"}/payments/${request.id}`} className="block min-w-0 rounded-2xl border border-stone-800 p-5 transition-colors hover:border-champagne/50 focus-visible:outline-champagne">
+  const pending = staff ? pendingPaymentSubmissions([request], workspace.submissions) : [];
+  const needsVerification = pending.length > 0;
+  return <Link href={`/${staff ? "admin" : "account"}/payments/${request.id}${needsVerification ? `#review-${pending[0].id}` : ""}`} className={`block min-w-0 rounded-2xl border p-5 transition-colors hover:border-champagne/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-champagne ${needsVerification ? "payment-needs-verification" : "border-stone-800"}`}>
+    {needsVerification && <p className="payment-verification-label mb-4 text-sm font-semibold">Needs Verification{pending.length > 1 ? ` · ${pending.length} pending submissions` : ""}</p>}
     <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="break-all font-mono text-xs text-champagne">{request.request_reference}</p><p className="mt-2 text-sm">{order?.order_reference} · {PAYMENT_PURPOSES[request.purpose]}</p>{staff && customer && <p className="mt-1 break-words text-xs text-stone-400">{customer.first_name} {customer.last_name} · {customer.email}</p>}</div><span className="text-xs text-stone-400">{position.status}</span></div>
     {financial ? <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
       {([['Order total', financial.total_minor], ['Verified paid on order', financial.verified_minor], ['Order outstanding balance', financial.balance_minor]] as const).map(([label, amount]) => <div key={label}><dt className="text-xs text-stone-400">{label}</dt><dd className="mt-1 break-words font-display text-xl tabular-nums">{formatMinor(amount)}</dd></div>)}
@@ -38,6 +42,7 @@ export function RequestCard({ request, workspace, staff }: { request: PaymentReq
       <p>Request outstanding amount: {formatMinor(position.remaining)}</p>
     </div>
     <p className="mt-2 text-xs text-stone-500">Issued {paymentDate(request.created_at)}{request.due_date ? ` · Due ${paymentDate(request.due_date)}` : ""}</p>
+    {needsVerification && <span className="staff-attention-badge mt-4 inline-flex rounded-xl px-4 py-3 text-xs font-semibold">Review Payment<span className="sr-only"> — {request.request_reference}</span></span>}
   </Link>;
 }
 export function PaymentHistory({ workspace, requestId }: { workspace: PaymentWorkspace; requestId?: string }) {

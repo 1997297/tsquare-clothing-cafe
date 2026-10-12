@@ -1,6 +1,6 @@
 # TSquare Clothing Cafe — Project Handoff
 
-Last updated: 2026-10-11 (Africa/Lagos)
+Last updated: 2026-10-12 (Africa/Lagos)
 
 ## Current status
 
@@ -11,6 +11,35 @@ deployment `dpl_FK3c3Fc7dtRtecTF5rt1CpbZDKsQ` at that exact SHA.
 Phase 7 implementation and its final authentication release gate have passed.
 This remains the final development phase; no Phase 8 is authorized. The user has
 now authorized the separate post-Phase-7 Stage 1 and Stage 2 corrections below.
+
+### Post-development Stage 2.1 — verification in progress
+
+- Authorized scope: payment verification visibility and staff Overview action counts
+  only. No Stage 3 or new phase. Read STAGE2_1_CORRECTIONS_REPORT.md for definitions.
+- Entry checkpoint: clean main/local/GitHub equality at
+  9be78d12f5288f54ad4d19f251529e31e0fe3256; exact production READY deployment
+  dpl_5ryVWiZoeYWnqZgqdLFBwC15BaiA, main, with the public production alias.
+- Pending evidence highlights/priority/direct review anchors and authorized Overview
+  counts are implemented. No financial actions, ledger calculations, RLS or migrations
+  changed. Request/order lists page through rows to avoid silent count truncation.
+- Typecheck, lint, 78 automated tests and optimized 68-page build have passed.
+  All 18 isolated component scenarios passed at 390/768/1440 in dark/light across
+  all roles, including review anchor navigation and >=4.5:1 new indicator text contrast.
+  Known-secret scan: 438 source/browser files, zero matches, no private files tracked.
+  Actual Next local production-build matrix: 44 checks passed at 05:37 WAT, with
+  all-role logins/guards, correct counts/destinations, no browser errors/business writes.
+  Commit/push, exact deployment, production smoke and cleanup remain; do not claim closure.
+- Current production baseline is 38 tables/376 rows and five original Auth users.
+  Preserve all activity since earlier reports; never restore an older baseline.
+  Three stage21-tagged temporary Auth identities exist for read-only role/browser QA.
+  Their ignored supabase/.temp/stage21-manifest.json holds cleanup IDs/credentials and
+  baseline fingerprints; never print or commit it. No QA business records were created.
+- Live RLS-scoped queries match independent SQL: appointments 2; payments, requests,
+  order decisions and unread conversations 0. Admin/CEO match; Client sees only own
+  zero counts and anonymous cannot read payment submissions. Positive payment and
+  transition cases use isolated synthetic fixtures, not legitimate payment decisions.
+- Finish browser QA, review, commit/push, exact READY verification, read-only production
+  smoke and exact stage-owned cleanup, then finalize this section and the report.
 
 ### Post-Phase-7 Stage 2 — production verified; final documentation checkpoint
 
