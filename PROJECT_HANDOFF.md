@@ -4,75 +4,87 @@ Last updated: 2026-10-13 (Africa/Lagos)
 
 ## Current scope
 
-Phases 1–7 and post-development corrections Stages 1, 2 and 2.1 are complete.
-Stage 3 theme refinement is now authorized by the October 12 user brief. It covers
-the existing dark/light colour system, contrast, surfaces and visual usability only.
-Do not redesign routes/layouts, change workflows or start Phase 8/new major features.
+Phases 1–7 and post-development corrections Stages 1, 2, 2.1 and 3 are complete.
+Stage 3 refined the existing dark/light colour system, contrast, surfaces and visual
+usability only. Stop here: no further phase, redesign or corrections backlog is authorized.
 
-The previous task was repository housekeeping: remove historical reports, superseded
-planning/progress notes, two obsolete screenshot-audit scripts and an accidental
-empty file. No application source, assets, dependency configuration, tests, database
-schema, production data or secrets were changed. Cleanup is checkpointed locally as
-6cccf0dd902fb9f0668a65bd1bf3f9cc3ef7aea2; it has not yet been pushed or deployed.
+One semantic RGB-token system in globals.css and tailwind.config.ts covers page,
+surface/elevation/hover, typography, control boundaries/focus, actions and status colours.
+Legacy aliases keep established components compatible; there is no second framework.
+Photo copy has stable light foregrounds in both modes. Theme persistence, cross-tab
+synchronization, native colour schemes and denied-storage handling were verified.
 
-Stage 3 is in progress. Read the full user attachment c90a8fe6-350f-41ee-835f-f688f36edc73
-before resuming. Required: shared semantic tokens; all Public/Client/Admin/CEO surfaces;
-preserved payment attention indicators; before/after rendered QA at 390/768/1440,
-both themes; contrast/focus and theme persistence checks; typecheck/lint/tests/build;
-exact Git/READY deployment and production smoke. No business or authentication logic
-changes. Final results should be delivered to the user, not recreate removed report files.
-Ignored supabase/.temp/stage3-* helpers/state are owned by this pass. The manifest may
-contain temporary QA credentials and baseline fingerprints: never display or commit it.
-Inspect its status before retrying setup/cleanup after interruption; do not blindly
-recreate identities or discard preservation evidence. Only stage-tagged disposable
-accounts are permitted for browser reads; never edit legitimate users or financial data.
+| Token | Light | Dark |
+| --- | --- | --- |
+| Page | #F4EFE6 | #101113 |
+| Surface | #FFFCF7 | #22252A |
+| Elevated | #ECE5D9 | #2B2E34 |
+| Hover | #E5DBC9 | #353941 |
+| Primary text | #171717 | #F5F4F1 |
+| Secondary text | #4B4843 | #C3C6CB |
+| Muted text | #665F55 | #ADB2BA |
+| Decorative border | #D9D0C3 | #464B54 |
+| Control border | #887B69 | #808791 |
+| Focus | #70522F | #D2BD98 |
+| Text accent | #775934 | #C6AF8A |
+| Filled action | #A58B62 | #B8A17D |
+| Pending surface | #FBE7EB | #44262D |
+| Pending text | #9C233D | #FFD0D6 |
 
-Stage 3 working evidence (not a release): fresh baseline is 377 rows across 38 tables
-and five original Auth users; the extra row since the earlier release is legitimate.
-Three tagged disposable QA identities exist in the ignored manifest and must be cleaned
-up through stage3-ops.mjs only after production verification. Before screenshots passed
-54 checks. Final typecheck, lint, all 87 tests and the optimized 68-page build passed.
-Isolated browser fixtures passed 18 payment-attention scenarios and 54 bank,
-Concierge, appointment and theme-control scenarios, with no backend writes.
-The full local matrix audited 152 cases / 10,701 text samples with zero overflow,
-browser exceptions or business writes. It found only the shared active-profile avatar
-initials at 4.44:1 on Admin/CEO light desktop. ProfileAvatar now uses semantic primary
-ink, with two nested-tint regression tests; the 42-case final-build three-role browser
-rerun passed 1,954 text samples, nine interactions, zero browser errors and zero writes.
-Decorative standalone Client-header dividers are correctly
-excluded from text contrast. Production push, both-theme production verification and
-ownership-checked QA cleanup are still required.
-Source comparison verified style-only edits outside the stylesheet/theme provider;
-authentication, financial code, schema, catalogue data, photography and logo are unchanged.
-The final-build known-secret scan covered 439 tracked-source/browser files with zero matches;
-environment files and temporary QA state are untracked. Theme refinements use one
-semantic RGB token system, readable neutral/status palettes, native control schemes,
-visible keyboard focus and photo-specific copy colours. No new styling framework.
+Notification bubbles remain #BE123C with white numbers. Complete success/warning/error,
+information/progress, hover and photographic tokens remain in globals.css.
+Public collections/fit/configurator/auth/content pages, Client/Admin/CEO workspaces,
+forms, dialogs, payments, bank cards, Concierge bubbles, timelines, tables and status
+states use the shared palette. Routes, actions, labels, fonts and photography are preserved.
 
-Cleanup verification: 16 files removed (13 historical reports/notes, two obsolete
-audit scripts and one empty file). No non-generated empty project files or dangling
-references to the removed files remain. Typecheck, lint and all 78 tests passed.
-No production build was needed because runtime source and configuration are unchanged.
+The preceding housekeeping commit 6cccf0dd902fb9f0668a65bd1bf3f9cc3ef7aea2 removed
+16 files: 13 historical reports/notes, two obsolete audit scripts and one empty file.
+It was pushed with Stage 3. Removed historical material remains recoverable from Git.
+Do not recreate historical report files; use this compact operational handoff instead.
 
 Keep this handoff and AGENTS.md: they are required by the working agreement.
 Operational and integration documentation remains because it supports safe maintenance.
 
 ## Last verified release checkpoint
 
-Verified October 12, before this housekeeping task; not a fresh production inspection:
+Verified October 13, 2026 (Africa/Lagos):
 
-- Stage 2.1 application: 40d7a82cb92cce09b17fc68bdbf0056f6b24889a.
-- Final documentation/main: 69a23c5f9eafcaef391ed5fa635b5f604ae735aa.
-- Exact READY production: dpl_8qAZsL8xNDuv6AUmrAYU9WY531Jp.
+- Stage 3 application: b6bbefd0352c6224c90a12f407d87fced6421590.
+- Exact READY application deployment: dpl_82M1F6BgNkEpr7KoAgCsUs56bLKM.
 - Alias: https://tsquare-clothing-cafe.vercel.app, independently matched to that deployment.
-- Local main, origin/main and GitHub matched with a clean worktree at release.
-- Typecheck, lint, 78 tests and optimized 68-page build passed.
-- 18 isolated component scenarios, 44 local and 44 production browser checks passed
-  at 390/768/1440 in both themes with Client/Admin/CEO roles. Six final public/auth
-  HTTP checks passed on the final documentation deployment.
-- Known-private-secret scan: 438 source/browser files, zero matches; private files untracked.
-- Stage 2.1 temporary users, memberships, sessions, credentials, screenshots and
-  helpers were removed. Do not recreate completed QA fixtures.
+- Local main, origin/main and GitHub matched before this handoff-only closure commit.
+  It changes documentation only; its exact Git/READY alias and final public smoke
+  results are reported in the delivery response.
+- Typecheck, lint, 87 tests and optimized 68-page build passed. The deployed build
+  also generated all 68 pages with zero catalogue fallback warnings.
+- 72 isolated browser scenarios passed: 54 theme/bank/Concierge/appointment and
+  18 payment-attention cases. All backend actions were mocked, with zero live writes.
+- 54 before checks/screenshots; 152-case local audit across Public/Client/Admin/CEO
+  and secondary routes at 390/768/1440 in both themes. Zero overflow, exceptions or
+  business writes. Its sole defect was shared active-profile avatar text (two cases,
+  4.44:1); semantic primary ink fixed it, with two new nested-tint regression tests.
+- Final-build dashboard/profile regression: 42 checks, 1,954 text samples and nine
+  interactions passed across all three roles, both themes and all three widths.
+- Production: 76 checks, 6,220 text samples and 15 interactions passed, with zero
+  contrast failures, overflow, browser exceptions or business writes. Actual
+  Client/Admin/CEO login succeeded using disposable QA accounts, not existing passwords.
+- Neutral/action/status text passed 4.5:1 tests; control edges and focus passed 3:1
+  palette tests. Rendered text was checked with size-aware thresholds. Photo overlays
+  and disabled states were visually reviewed; decorative pipes are not text-content
+  failures. This is representative Chromium QA, not a formal cross-browser certification.
+- Theme toggle/reload persistence, cross-tab metadata synchronization, denied-storage
+  operation, navigation drawers, search, inputs, hover/focus/disabled states, statuses,
+  dialogs, pending-payment tint/counts and review/refresh behaviour passed.
+- AST comparison: 84 style-only source files; only globals.css and the theme provider
+  have broader theme-specific changes. Auth, financial logic, schema, catalogue data,
+  stable Fit IDs/Saved Looks, original images, logo and font families are unchanged.
+- Known-private-secret scan: 439 source/browser files, zero matches; private files untracked.
+- Three UUID/email/tag-verified QA accounts were removed after ownership checks.
+  Their Auth users, profiles, staff memberships, sessions and refresh tokens all count zero.
+  Local QA credentials, screenshots, browser profiles and generated fixtures were removed
+  after recording these preservation results. Reusable verification scripts are retained.
+- No known remaining Stage 3 blocker or required manual configuration. Do not recreate
+  completed QA accounts or begin the next phase without a new user request.
 
 The UI changes highlight genuine pending payment evidence and show staff-only
 action counts. Exact predicates are in src/lib/payments/attention.ts and
@@ -82,10 +94,11 @@ were tested with isolated fixtures, not decisions on legitimate production recei
 
 ## Production safety
 
-The latest completed preservation check matched 376 original rows across 38
+The October 13 preservation check matched all 377 original rows across 38
 application/storage tables, five original Auth/password fingerprints, four buckets,
-eight Storage objects and policy fingerprints. Zero application tables lacked RLS;
-zero application triggers were disabled. These are historical checkpoint figures,
+eight Storage objects and policy fingerprints. Changed tables: zero. Existing bank
+configuration, payments, receipts and business history are unchanged. Zero application
+tables lacked RLS; zero application triggers were disabled. These are checkpoint figures,
 not targets to restore if legitimate activity has since occurred.
 
 - Preserve real bank configuration, payment history, receipts, balances and all
