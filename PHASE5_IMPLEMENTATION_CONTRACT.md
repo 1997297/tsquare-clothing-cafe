@@ -2,7 +2,8 @@
 
 Status (2026-10-06): implemented and production-verified on main application
 commit f9ad898. This document preserves the original contract and preflight below;
-see PHASE5_ROLLOUT_REPORT.md for final verification, cleanup and deployment evidence.
+historical verification, cleanup and deployment evidence remains in Git history.
+See PROJECT_HANDOFF.md for the latest checkpoint and retrieval instructions.
 Phase 4 base: 74b05f6.
 User approved CEO-editable bank fields with placeholders. Placeholders are UI hints,
 not payable instructions. Bank configuration starts incomplete; issuing a request

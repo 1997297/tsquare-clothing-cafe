@@ -7,7 +7,8 @@ describes the historical worker handoff, not current state. Core migration is li
 Follow-up `20261005075136_phase5_transfer_date_lagos.sql` is also live, preserving
 the evidence RPC except its upper date bound now uses the Africa/Lagos calendar.
 Both migrations passed dry runs, row-preservation checks and rollback verification.
-See `../PHASE5_ROLLOUT_REPORT.md` for application/HTTP/advisor/deployment status.
+See `../PROJECT_HANDOFF.md` for the current checkpoint; historical application,
+HTTP, advisor and deployment evidence remains in Git history.
 Parent has now completed production browser/HTTP verification and exact-fixture
 cleanup. The stopped Worker2 disposable cluster was removed after exact-path and
 no-running-PostgreSQL checks. The limitations below are historical Worker2 handoff

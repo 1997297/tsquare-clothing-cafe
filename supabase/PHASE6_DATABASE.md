@@ -20,8 +20,8 @@ Names were generated with cached Supabase CLI `migration new`, following `--help
 so the CLI does not write outside the workspace. No CLI login, link, push, remote
 query or installation was performed. Do not reapply previous production migrations.
 
-The approved design is documented in `PHASE6_DB_PROPOSAL.md`; this file records
-the executable integration contract. Client/session architecture is unchanged:
+The original design proposal remains in Git history; this file records the
+executable integration contract. Client/session architecture is unchanged:
 server checks use verified user identity, DB mutations use `commission_actor`,
 staff membership is checked and locked live. JWTs are not claimed to be immediately
 revoked by logout. No auth.sessions change and no Phase 7 work.

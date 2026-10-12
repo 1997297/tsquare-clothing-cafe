@@ -45,8 +45,8 @@ rollout; do not weaken grants/guards or drop useful indexes to silence notices.
 ## Ownership and implementation boundaries
 
 Actual second-account Worker2 uses `codex/phase6-db` in the separate
-`TCC-worker2-phase6-db` worktree. Its initial task is the local database proposal
-`supabase/PHASE6_DB_PROPOSAL.md`; parent reviews before assigning migration work.
+`TCC-worker2-phase6-db` worktree. Its initial database proposal is retained in Git
+history; the implemented integration contract is in `supabase/PHASE6_DATABASE.md`.
 Worker2 does not read credentials, mutate production, push main or edit application
 files. Parent owns application/types/UI/server actions, integration, review and rollout.
 
@@ -93,7 +93,8 @@ Actual Worker2 database and HTTP harness changes were reviewed and integrated as
 `5c57452` and `b8cd908`. Native verification passed 321 unique SQL assertions,
 23 Phase 6 concurrency/replay checks and eight Phase 4 races. Expansion is live;
 all 55 live HTTP expansion checks pass. Application typecheck, lint, 38 tests and
-optimized build pass. See PHASE6_ROLLOUT_REPORT.md for current rollout evidence.
+optimized build pass. See PROJECT_HANDOFF.md for the latest release checkpoint;
+historical rollout evidence remains in Git history.
 
 October 8 final HTTP correction: counts now distinguishes logged-out 401 and denied
 staff 403 from genuine 503 failures without changing the existing authenticated

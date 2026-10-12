@@ -1,7 +1,7 @@
 # TCC operations and owner handover
 
 This guide describes the implemented application. Release verification and remaining
-work are recorded separately in `PHASE7_ROLLOUT_REPORT.md` and `PROJECT_HANDOFF.md`.
+work are recorded in `PROJECT_HANDOFF.md`; historical release reports remain in Git history.
 
 ## CEO first use
 

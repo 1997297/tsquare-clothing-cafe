@@ -57,7 +57,8 @@ link substituted for inbox delivery. Both temporary email-test accounts were glo
 session-revoked/deleted and verified absent; local cookies/credentials/links were removed.
 All five legitimate passwords and all 327 production rows across 38 tables are unchanged.
 Existing Client/Admin/CEO dashboard access was user-verified, not automated with their
-legitimate credentials. Detailed timestamps/evidence are in PHASE7_ROLLOUT_REPORT.md.
+legitimate credentials. Detailed historical release evidence remains in Git history;
+see PROJECT_HANDOFF.md for the latest checkpoint and retrieval instructions.
 
 The application uses its existing PKCE code-exchange callback. Preserve SMTP and URL
 settings; no new email service, environment change or code repair was needed in this
@@ -134,4 +135,4 @@ retain all real rows and use the Storage API for objects.
 Read `PROJECT_HANDOFF.md` before work. Two accounts need separate worktrees and
 `codex/<task>` branches, with review before integration. Never share an actively edited
 worktree or copy credentials into commits/messages. Final QA and cleanup status belong
-in the rollout report; this architecture guide does not itself certify completion.
+in PROJECT_HANDOFF.md; this architecture guide does not itself certify completion.

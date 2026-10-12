@@ -2,510 +2,121 @@
 
 Last updated: 2026-10-12 (Africa/Lagos)
 
-## Current status
+## Current scope
 
-Phases 1–6 are complete. The Phase 7 entry gate freshly verified clean `main`,
-HEAD/origin/main/remote equality at `76bbb53318cff0ac541dc5354e42fa4bfdcc7712`,
-and production alias https://tsquare-clothing-cafe.vercel.app assigned to READY
-deployment `dpl_FK3c3Fc7dtRtecTF5rt1CpbZDKsQ` at that exact SHA.
-Phase 7 implementation and its final authentication release gate have passed.
-This remains the final development phase; no Phase 8 is authorized. The user has
-now authorized the separate post-Phase-7 Stage 1, Stage 2 and Stage 2.1 corrections below.
+Phases 1–7 and post-development corrections Stages 1, 2 and 2.1 are complete.
+Stage 3, Phase 8, major new features and a comprehensive theme redesign are not
+authorized. Follow the latest user request and actual repository state.
 
-### Post-development Stage 2.1 — production verified; closure documentation checkpoint
+The current task is repository housekeeping: remove historical reports, superseded
+planning/progress notes, two obsolete screenshot-audit scripts and an accidental
+empty file. No application source, assets, dependency configuration, tests, database
+schema, production data or secrets are changed. This cleanup is local and has not
+been committed, pushed or deployed.
 
-- Authorized scope: payment verification visibility and staff Overview action counts
-  only. No Stage 3 or new phase. Read STAGE2_1_CORRECTIONS_REPORT.md for definitions.
-- Entry checkpoint: clean main/local/GitHub equality at
-  9be78d12f5288f54ad4d19f251529e31e0fe3256; exact production READY deployment
-  dpl_5ryVWiZoeYWnqZgqdLFBwC15BaiA, main, with the public production alias.
-- Pending evidence highlights/priority/direct review anchors and authorized Overview
-  counts are implemented. No financial actions, ledger calculations, RLS or migrations
-  changed. Request/order lists page through rows to avoid silent count truncation.
-- Typecheck, lint, 78 automated tests and optimized 68-page build have passed.
-  All 18 isolated component scenarios passed at 390/768/1440 in dark/light across
-  all roles, including review anchor navigation and >=4.5:1 new indicator text contrast.
-  Known-secret scan: 438 source/browser files, zero matches, no private files tracked.
-  Actual Next local production-build matrix: 44 checks passed at 05:37 WAT, with
-  all-role logins/guards, correct counts/destinations, no browser errors/business writes.
-  Application commit 40d7a82cb92cce09b17fc68bdbf0056f6b24889a was pushed and matched
-  local/origin/GitHub main at its checkpoint. READY dpl_FYEZ7iTP44t7FexeCbUyopLvW6mq served
-  that exact SHA with the public alias; build logs show 68 pages/zero catalogue fallbacks.
-  All 44 production browser checks passed at 05:48 WAT, with zero browser errors or
-  business writes. Independent Vercel alias lookup matched the exact deployment.
-- Current production baseline is 38 tables/376 rows and five original Auth users.
-  Preserve all activity since earlier reports; never restore an older baseline.
-  Three stage21-tagged temporary Auth identities and their profiles, two staff
-  memberships, sessions and refresh tokens are now removed; all remaining counts
-  are zero. No QA business records were created. Do not recreate these fixtures.
-  All 376 original row fingerprints, five original passwords, four buckets/eight
-  objects and policy fingerprints match. Zero missing RLS/disabled app triggers.
-  The initial verification timed out after deleting the QA identities; account
-  absence was confirmed before retrying only read-only checks in smaller batches.
-  No legitimate data changed and no snapshot was restored.
-- Live RLS-scoped queries match independent SQL: appointments 2; payments, requests,
-  order decisions and unread conversations 0. Admin/CEO match; Client sees only own
-  zero counts and anonymous cannot read payment submissions. Positive payment and
-  transition cases use isolated synthetic fixtures, not legitimate payment decisions.
-- Stage-owned temporary credentials, screenshots, generated bundle, browser profiles
-  and QA helpers are removed during closure; reusable synthetic tests remain tracked.
-  The non-secret deployment helper is removed after final verification.
-- STAGE2_1_CORRECTIONS_REPORT.md records all nine requested areas and test limitations.
-  Final docs-only clean main/local/origin/GitHub equality and exact READY/production
-  alias are checked after this commit, with the final SHA/deployment recorded in
-  delivery rather than embedded circularly. No manual configuration or Stage 2.1
-  production blocker remains. Stop here; Stage 3 is not authorized.
+Cleanup verification: 16 files removed (13 historical reports/notes, two obsolete
+audit scripts and one empty file). No non-generated empty project files or dangling
+references to the removed files remain. Typecheck, lint and all 78 tests passed.
+No production build was needed because runtime source and configuration are unchanged.
 
-### Post-Phase-7 Stage 2 — production verified; final documentation checkpoint
+Keep this handoff and AGENTS.md: they are required by the working agreement.
+Operational and integration documentation remains because it supports safe maintenance.
 
-- Scope: CEO bank display/edit card, historical request Transfer To/copy card,
-  shared Concierge bubbles/composer/refresh layout, human appointment wording,
-  and selective decorative heading-label removal. No Stage 3 or new major feature.
-- Entry gate verified clean main/local/origin/GitHub equality at
-  3bb9505f1f1eeab215ad705ed73fadde307b8121 and exact READY production
-  dpl_FVdvxgQ7zyEGf8A3jjjiSEhhteuN, with the public production alias.
-- Application 2a441c89c0a9e6289d81f210335a571c7ce60ee9 is pushed to main and
-  verified READY on dpl_6eb7CtNMj8XH92B28wgWvti3WdY9 with the public alias.
-  Local/origin/main matched cleanly after push. Existing payment actions, ledger,
-  RLS, server authentication, callbacks and migrations are unchanged. A small
-  ClientForm opt-in focuses the bank editor only after its inert hydration gate.
-- Final typecheck, lint, 70 tests and optimized 68-page build passed. All 48 isolated
-  real-component browser checks passed at 390/768/1440 in both themes, including
-  focus, failures/retry, exact copy, sender colours and chat pagination/scrolling.
-  Browser fixture suite uses real components with explicitly mocked
-  actions: NEVER use it as evidence of actual production bank persistence.
-  scripts/verify-stage2-ui.mjs runs on port 3001 after a build with that port free.
-- Four tagged temporary Auth identities (Client, unrelated Client, Admin, CEO)
-  were used for safe authenticated READ checks and are now deleted, with zero
-  profiles/staff memberships/sessions/refresh tokens remaining. No QA business
-  records were created. Do not recreate these completed fixtures or their manifest.
-  Production bank saving must not be exercised, even with identical details.
-  Existing conversations must not be marked read just to test their presentation.
-- Eight live role/RLS checks passed, including specifically unauthorized Client/Admin
-  bank operations and unrelated-client financial/appointment/conversation isolation.
-- Actual local production build passed the 36-check all-role responsive/theme smoke,
-  real password login/guards, CEO Edit/Cancel, read-only real record displays and copy.
-  All business POSTs were blocked, including automatic conversation mark-read.
-  Final known-secret scan: 439 source/browser files, zero matches/private files tracked.
-- All 36 production smoke checks also passed on the exact application deployment:
-  actual Client/Admin/CEO login and same responsive/theme/read-only checks; zero
-  browser exceptions or business writes. Build logs have zero catalogue fallbacks.
-- Final preservation check at 18:34 WAT: bank settings, verified payments, original
-  order, five original passwords, four buckets/seven objects and RLS/triggers match.
-  IMPORTANT: the original active CEO legitimately converted another request, priced
-  its new order and issued a payment request between 18:22 and 18:28 WAT. Preserve
-  that activity. Current baseline is 38 tables/345 rows, two orders/two payment
-  requests. 326 original row fingerprints match; read-only reconstruction of the
-  converted request's prior status/version/timestamp matches its original hash.
-  The 18 added rows and five audit events are attributed to original staff, not QA.
-  No rollback/restoration was performed. Never restore the earlier 327-row state.
-- STAGE2_CORRECTIONS_REPORT.md records all 11 requested areas, test limitations and
-  cleanup evidence. All 22 temporary Stage 2 credential/screenshot/browser/proof/
-  generated-helper items are removed; reusable synthetic component tests remain
-  tracked. The non-secret deployment helper is removed after final verification.
-- Final documentation checkpoint: clean main/local/origin/GitHub equality and exact
-  READY production are checked again after this docs-only commit. Its SHA/deployment
-  are recorded in delivery, not embedded circularly in its own commit. No manual
-  configuration or production blocker remains.
-  Do not start Stage 3, Phase 8 or a comprehensive theme redesign.
+## Last verified release checkpoint
 
-### Post-Phase-7 Stage 1 corrections — verified and closed
+Verified October 12, before this housekeeping task; not a fresh production inspection:
 
-- All seven scoped corrections are implemented and production-verified. Read
-  STAGE1_CORRECTIONS_REPORT.md for each result, root cause, checks and limitations.
-  This is historical Stage 1 closure. Stage 2 is separately authorized above;
-  Stage 3, a new phase, theme redesign and major features remain out of scope.
-- Application commits: be14098c07833024decd452459dfc53f4e6038a7 and authentication
-  follow-up fe504fcf7be0cb6e0dbe653d3622d1ef9603b619. The latter is verified READY
-  on dpl_8vSHPRAHKhnJK5wQSnQ8VnES4G7u with the public production alias.
-  Documentation checkpoint 7699443919489f4b83d3afadb08b4bc5be77d56a is READY on
-  dpl_3kGZDtEscwPTkPcJGxp2Zdq8ZBHr. Final closure documentation is pushed afterward;
-  its exact SHA/READY/alias and clean local/remote equality are checked after push
-  and recorded in the final delivery message, not fabricated inside its own commit.
-- Typecheck, lint, 63 application tests and optimized 68-page build passed.
-  Native PostgreSQL replay passed 377 SQL assertions and 38 concurrency/replay checks.
-  Local/production 39-check all-role navigation/payment/auth matrices, six token-
-  refresh/browser-restart checks and seven Fit upload/retry/publication/archive
-  checks passed. The 39-check production matrix also passed on the auth follow-up.
-- Payment issue: individual-request remainder was shown as though it were the
-  whole-order balance. Existing authorized get_order_financials now provides the
-  distinct order figures. The live NGN 360,000/260,000/100,000 example passed
-  read-only verification and Admin/CEO UI checks. No financial record was changed.
-- Session-only cookies preserve refresh/new-tab/SSR access, secure HTTPS and PKCE.
-  The SDK's flow-specific verifier cookies are covered. Browser session restore
-  can retain session cookies; no claim of guaranteed browser-close detection.
-- REAL EMAIL GATE PASSED October 10: pre-confirmation password/protected access
-  denied and zero sessions verified. Actual inbox confirmation completed the
-  production callback to /account at about 17:21 WAT; reload and fresh password
-  login passed. Actual recovery email completed /auth/reset-password at 17:25 WAT.
-  No password was submitted or changed, including the temporary QA password.
-  The later retry failure was observed as Supabase otp_expired before any callback
-  code; a normal resend with fresh PKCE passed. The earliest swallowed callback
-  error cannot be retrospectively proven; do not invent its cause.
-- CLEANUP COMPLETE October 11: all six stage-owned Auth identities and associated
-  profiles/staff/sessions/refresh tokens removed; two stale QA-only Auth flow records
-  removed after verifying the users were absent. Three synthetic Fits and copied
-  media are removed. Before final email-account deletion, all 87 application UUID
-  references and owned Storage objects were checked for unexpected activity.
-- Final comparison at 00:33 WAT October 11: all 38 tables/327 legitimate rows and
-  five original password hashes unchanged. Five legitimate Auth users, four buckets
-  and seven original Storage objects remain. No missing RLS or disabled app triggers;
-  policy fingerprints match. Bank settings, payments and all legitimate data preserved.
-- The isolated email browser closed. Stage-owned temporary credentials, consumed
-  links, screenshots and helpers are removed during final closure. Do not recreate
-  fixtures or attempt to resume deleted Stage 1 test sessions/manifests.
-- Final known-secret scan: 428 source/browser assets, zero matches; private env/temp
-  files untracked. Advisors unchanged: seven intentional deny-all INFO, 31 guarded
-  definer WARN, 14 unused-index INFO and the existing leaked-password-protection WARN.
-- Local shared-cache /icon.svg build failure was resolved by stopping the competing
-  TCC dev server and rebuilding cleanly. That local build used the existing catalogue
-  fallback when fetches failed; the Vercel build had zero catalogue-fallback warnings,
-  and live public catalogue/detail requests returned 200. Generated cache backup removed.
-- No required manual action, environment change, migration, RLS or SMTP change.
-  Confirm email remains ON with production Site URL and /auth/callback allowlist.
-  Optional existing hardening: leaked-password protection if the plan supports it.
-  Any stricter server-side session-expiry policy is future work requiring approval.
+- Stage 2.1 application: 40d7a82cb92cce09b17fc68bdbf0056f6b24889a.
+- Final documentation/main: 69a23c5f9eafcaef391ed5fa635b5f604ae735aa.
+- Exact READY production: dpl_8qAZsL8xNDuv6AUmrAYU9WY531Jp.
+- Alias: https://tsquare-clothing-cafe.vercel.app, independently matched to that deployment.
+- Local main, origin/main and GitHub matched with a clean worktree at release.
+- Typecheck, lint, 78 tests and optimized 68-page build passed.
+- 18 isolated component scenarios, 44 local and 44 production browser checks passed
+  at 390/768/1440 in both themes with Client/Admin/CEO roles. Six final public/auth
+  HTTP checks passed on the final documentation deployment.
+- Known-private-secret scan: 438 source/browser files, zero matches; private files untracked.
+- Stage 2.1 temporary users, memberships, sessions, credentials, screenshots and
+  helpers were removed. Do not recreate completed QA fixtures.
 
-### Phase 7 release checkpoint — authentication gate passed
+The UI changes highlight genuine pending payment evidence and show staff-only
+action counts. Exact predicates are in src/lib/payments/attention.ts and
+src/lib/staff-attention.ts. Counts use authenticated server queries with existing RLS;
+no financial decisions, ledger logic or policies changed. Positive receipt transitions
+were tested with isolated fixtures, not decisions on legitimate production receipts.
 
-- EMAIL-GATE COMPLETE, October 9: Confirm email is verified ON by public Auth
-  settings (`mailer_autoconfirm=false`) and authenticated CLI `config pull --dry-run`.
-  Live Site URL is `https://tsquare-clothing-cafe.vercel.app`; live redirect list
-  contains `https://tsquare-clothing-cafe.vercel.app/auth/callback`. No config was
-  changed. HEAD/origin/GitHub main equal `97de604fa048771c5d257557f9ffa91e621fd519`;
-  production alias was verified READY on `dpl_3J2RrL5Q27Tv32Hrz9CzdjHHRkgA` at that
-  SHA for the actual email tests. The final docs-only SHA/READY checkpoint is recorded
-  in the delivery message after its push; do not confuse these two checkpoints.
-- Approved real-mailbox signup used the production UI after checking the address was
-  absent. Signup returned 200/no session; password login returned 400/email_not_confirmed;
-  protected /account redirected to sign-in. SQL verified zero pre-confirmation sessions
-  and refresh tokens. Actual user-supplied confirmation-email link then passed the
-  production PKCE callback (307 to /account) at 16:40:37 UTC / 17:40:37 WAT. Session
-  survived reload; fresh password login and protected SSR/API access also passed.
-- Production Forgot Password sent an actual email at 16:41:38 UTC / 17:41:38 WAT.
-  Its delivered link passed the callback (307 to /auth/reset-password); the authenticated
-  reset form was displayed. No password was changed, including the QA password.
-  No admin-generated link was used. Earlier consumed/expired email links were identified
-  through Auth logs; a normal resend with fresh PKCE resolved that test-link issue.
-- Exact Auth IDs `f9659c33-6b8b-473d-a573-1e5f04049c9e` and
-  `bf6e9296-4a73-4ed6-b95e-dad29f282940` are now deleted through the Auth API after
-  global session revocation. SQL confirms zero users/profiles/sessions/refresh tokens
-  for both. No staff/business fixture was created. The disposable browsers closed and
-  all four local email-test files, including credentials and consumed links, were removed.
-  Do not recreate fixtures or try to resume the deleted helper/session manifest.
-- Fresh post-cleanup comparison matched all 38 tables/327 legitimate rows exactly,
-  including bank configuration, payments, four buckets and seven storage objects.
-  All five existing passwords remain unchanged; five legitimate Auth users remain.
-  Zero public/private application tables lack RLS; zero application triggers are disabled.
-  Existing Client/Admin/CEO dashboards were explicitly confirmed accessible by the user
-  on October 9: user-verified access, not automated use of legitimate credentials.
-  No code, environment, schema, RLS, bank or SMTP changes were made in this closure pass.
+## Production safety
 
-- Client directory/dossier and CEO Admin onboarding/status/history are implemented
-  and deployed. No Phase 8 or new messaging/payment infrastructure was introduced.
-- Application repair commit `5ed69195fb06e227cb8e9ff2c226c25292f85e31` is pushed
-  to main. Exact production alias was verified READY on
-  `dpl_EqyPVXKxR8a1prv7ossWHJexXayu`. Local and origin/main were equal/clean after
-  this push. The documentation-only follow-up also requires exact Git/READY equality.
-- Typecheck, lint, all 52 tests and optimized Next 15.5.27 build (68 pages) passed.
-  Production dependency audit is clear. Nine development-tool findings remain
-  classified in TCC_TECHNICAL_HANDOVER.md; no forced major upgrade was made.
-- Additive migration `20261008002757_phase7_people_management.sql` is live; all 16
-  migration files are applied. Native PostgreSQL replay passed 377 SQL assertions,
-  seven staff concurrency/replay checks, eight Phase 4 races and 23 Phase 6 checks.
-- Full synthetic browser journey passed locally against live Supabase: profile,
-  measurements, Saved Look, request/change/revision/approval/conversion, partial
-  payment/synthetic receipt/exact balance, appointment, Concierge, completed wardrobe.
-  No real bank transfer occurred. All 38 live HTTP security/isolation checks passed.
-- Exact repaired production passed the 151-check all-role responsive/theme/invalid
-  reference/private receipt/SSR-form matrix, 11 completed-journey rechecks, and both
-  modal keyboard tests. No browser exceptions or horizontal overflow were recorded.
-  Bounded CLI error scan of that deployment over one hour returned no error rows.
-  Connector build-log access returned 403; scoped CLI inspection/logs succeeded.
-  This is not continuous monitoring or a guarantee about older deployments.
-- Repairs include owned UUID/readable Request links, saved_styles.saved_at in the
-  dossier, route-tree-based SiteLayout for root 404 hydration, focus containment/
-  restoration in confirmation and catalogue option dialogs, truthful contact copy,
-  explicit same-origin signup callback and compatible dependency security patches.
-- FINAL QA CLEANUP COMPLETE: six tagged Auth users, sessions/refresh tokens, three
-  test staff memberships, synthetic business/financial records and one receipt object
-  were removed after an exact rollback rehearsal. Do not recreate the completed
-  workflow fixtures. All 15 affected immutable guards are enabled; no RLS was weakened.
-  A transaction verified all 316 non-QA rows across 36 public/private tables unchanged.
-- Final comparison preserves all 326 original-field row fingerprints across the
-  37 pre-migration tables, including all seven original storage objects/four buckets.
-  One additional legitimate profile/Auth user created during testing was also retained:
-  five real users remain. Final table set has 38 tables/327 rows. Final email-pass
-  bank aggregate full-row hash is `1ac370f4d4507fa6d601704f1199046a` (the earlier
-  Phase 7 hash used a different serialization). Never restore the older empty bank state.
-- Final advisors: seven intentional private deny-all INFO, 31 guarded-definer WARN,
-  14 unused-index INFO and one existing leaked-password warning; no missing-FK finding.
-  Secret scan: 436 source/browser assets, zero known-secret matches, private files
-  untracked. Rerun if source changes. All 29 generated Phase 7 temporary files
-  (credential manifest, screenshots, receipt, helpers and proofs) were removed after
-  documenting results; unrelated temp files/runtime/worktrees were preserved. All QA
-  browsers closed, including the two stale helper processes. Port 3001 serves the
-  verified local production build for the user.
-- RESOLVED BLOCKER: hosted Auth previously had `mailer_autoconfirm=true`; the owner
-  enabled Confirm email and actual inbox/callback/login/recovery testing now passes.
-  Preserve current SMTP and URL settings. Previously autoconfirmed accounts are not
-  retroactively inbox-verified; CEO must independently verify intended staff identities.
-- PHASE7_ROLLOUT_REPORT.md contains all 17 sections and distinguishes no remaining
-  functional blockers from post-approval business/legal decisions, accepted security
-  maintenance and future enhancements. Technical handover reflects verified live Auth.
-  Final docs-only Git equality, clean worktree and exact READY deployment are checked
-  after this commit; the delivery message records that checkpoint and completion.
+The latest completed preservation check matched 376 original rows across 38
+application/storage tables, five original Auth/password fingerprints, four buckets,
+eight Storage objects and policy fingerprints. Zero application tables lacked RLS;
+zero application triggers were disabled. These are historical checkpoint figures,
+not targets to restore if legitimate activity has since occurred.
 
-Final HTTP-status correction: after c308b64 reached READY, a read-only
-logged-out probe found /api/atelier/counts returned 503 for AUTH_REQUIRED. The narrow
-response adapter now distinguishes 401/403 from genuine 503 outages, keeps private
-no-store and leaves getAtelierCounts authentication/data loading unchanged. Three
-regression tests were added; typecheck/lint/all 41 tests/optimized build passed.
-Local HTTP verification passed: 401 Authentication required, private/no-store and
-no exposed counts. The final Phase 6 SHA/READY equality was verified at Phase 7 entry.
-Do not recreate cleaned QA data; authenticated success output is unchanged and
-regression-tested. The final commit/SHA check is recorded in the delivery message.
+- Preserve real bank configuration, payment history, receipts, balances and all
+  customer/staff records. Older empty-bank and lower-row-count reports are obsolete.
+- Never reset/reseed production, restore an old snapshot or weaken RLS.
+- Preserve stable Fit IDs, Saved Looks, immutable revisions, audit history and
+  idempotency/version guards. Archive/deactivate instead of deleting business records.
+- Use only new versioned migrations; never edit/reapply already-applied migrations.
+- QA cleanup must verify exact fixture IDs/tags and ownership first. After an ambiguous
+  timeout, check what already completed before retrying any mutation.
+- Do not delete ignored local state, old manifests or another account's worktree
+  merely because it is outside Git. Check ownership, active processes and recovery needs.
+- Never commit environment files, credentials, email links, tokens or service keys.
 
-## Phase 6 completed rollout
+## Authentication and authorization
 
-- Appointments/fittings and Concierge are production-verified. Do not begin Phase 7
-  without a new instruction. Detailed evidence: PHASE6_ROLLOUT_REPORT.md and
-  supabase/PHASE6_DATABASE.md.
-- Application b4744b20e1ebd26449e544df107b1c27021827ed is pushed to main and READY
-  in production deployment dpl_FGqDdzhCLnR1pXt7hnBnVLA5Y9AT, public domain assigned.
-  The final documentation-only closure must also be checked for exact SHA/READY
-  assignment, origin/main equality and clean worktree after its push.
-- Actual second-account Worker2 used branch codex/phase6-db at
-  C:/Users/Young Duke/Documents/VS Codes Doc/TCC-worker2-phase6-db, thread
-  01a10ed7-bd33-7cb3-8532-56464033910f. Database c6fa347 and HTTP harness f51c7a1
-  were reviewed and integrated as 5c57452 and b8cd908. No shared-worktree edits,
-  credentials supplied to Worker2, or Worker2 production mutation.
-- Existing appointments/changes and Concierge threads/messages were extended.
-  Both Admin modules are operational. New actions use session-authenticated RPCs;
-  old service-based appointment/Concierge wrappers and raw sender reads are removed.
-  Preserve the retained public fitting and Phase 4 appointment-creation paths.
-- Canonical Lagos schedules, conflict/version guards, staff confirmation/reschedule/
-  cancellation/completion, reviewed Client proposals, history/private notes,
-  safe paginated messages and monotonic shared TCC read state are implemented.
-  Order detail, dashboards, notification links and unread navigation use real data.
-- Expansion 20261006063802 applied October 6; contract 20261006063803 applied
-  October 7 only after the exact application SHA and 19 production browser checks
-  passed. Both are in migration history. Never edit/reapply them.
-- All 37 expanded-table full-row hashes matched across contract application.
-  After exact QA cleanup, all 303 original rows across 33 baseline tables retain
-  identical original-field fingerprints. Existing policies hash remains
-  ca9adf5be9bc5d9090d96717b9ff3001; every public/private table retains RLS.
-- Verification: typecheck, lint, 41 tests, optimized build/68 pages; 321 unique
-  native SQL assertions, 23 Phase 6 concurrency/replay checks, eight Phase 4 races;
-  55 live expansion and 55 live contract HTTP checks; full 19-check production
-  browser workflow and nine-check post-contract recheck all passed.
-- Both features passed 390/768/1440 in Dark/Light with visual review. Tests cover
-  owned context, confirmation/review/decline/reschedule/cancel/complete, private
-  notes, Concierge round trip/unread/closure/reopen/isolation and navigation.
-  Public fitting positive HTTP compatibility passed after the contract.
-- Pre-hydration form privacy was fixed: explicit POST, controls disabled until
-  hydration. Regression and actual JavaScript-disabled checks pass. Message
-  refresh queuing preserves visibility when sending during an existing fetch.
-- QA sessions were revoked; exact synthetic records and four Auth accounts were
-  removed after reviewed rollback dry runs. SQL confirms no QA identities,
-  sessions, refresh tokens, profiles or staff memberships remain. All ten exact
-  immutable guards are enabled. Four original Auth users and four storage
-  buckets/five objects remain. No real bank/payment/customer/catalogue data changed.
-- Temporary QA browsers were closed and all 70 top-level Phase 6 temp artifacts
-  (including credentials, screenshots, proofs, helpers and rollout copies) removed.
-  Worker2's stopped log-only temp directory was removed; its worktree and the
-  PostgreSQL distribution were preserved. Never commit QA credentials.
-- Final advisors: zero missing-FK warnings, six intentional private deny-all INFO,
-  26 guarded-definer WARN, 15 unused-index INFO and the pre-existing leaked-password
-  warning. No RLS weakening or unnecessary index deletion.
-- The Vercel connector log scope returned 403; the CLI subsequently authenticated
-  and confirmed the exact project. A bounded one-hour error scan returned only two
-  expected P0001 denials, matching the tagged second-Client isolation test IDs.
-  No unexplained errors in that window; no continuous monitoring claim.
-- No new environment variables or manual infrastructure action for Phase 6.
-  Recommended pre-existing hardening: enable leaked-password protection if the
-  Supabase plan supports it. Keep .env.local and all secrets untracked.
-- Phase 5 empty-bank statements below describe historical closure only. Legitimate
-  bank/payment activity existed in the Phase 6 baseline and was preserved exactly.
+Actual inbox confirmation, post-confirmation login and password-recovery callbacks
+passed their release gates, including the Stage 1 session-cookie regression.
+No existing password was changed. Preserve the working PKCE callback and SMTP settings.
 
-## Phase 5 historical closure checkpoint
+Previously verified production settings: Confirm email ON, Site URL
+https://tsquare-clothing-cafe.vercel.app and callback allowlist entry
+https://tsquare-clothing-cafe.vercel.app/auth/callback. Recheck live settings before
+making configuration claims or changes. Previously autoconfirmed staff identities
+still require independent work-identity verification.
 
-- User approved CEO-editable bank fields with placeholder hints. Real details are
-  deliberately absent; the singleton is empty/unconfigured. Payment issuance stays
-  blocked until CEO saves TCC's actual bank account after approval.
-- Both migrations are live: 20261002074022_phase5_payments.sql and
-  20261005075136_phase5_transfer_date_lagos.sql. NEVER edit/reapply them. Separate
-  dry runs, row fingerprints, live rollback and calendar/ACL checks passed.
-- Worker2 used separate codex/phase5-db and codex/phase5-security-review worktrees.
-  Database commit 8d9ca7a was cherry-picked as a5d7a6c. Its review found mixed-read
-  snapshots and two legacy voucher issues; parent fixed all three. Its date fix
-  aligns evidence validation with Africa/Lagos without changing RPC privileges.
-- Native PG17.6 replay: 48 security + 58 Phase 4 + 79 Phase 5 assertions and 16
-  observed concurrent races passed. Live rollback suite passed 79 assertions.
-- TypeScript, ESLint, 28 application tests and optimized production build passed.
-  Local authenticated browser workflow passed price setting, deposit, partial
-  recognition, remainder, rejection/correction, instalment and final balance.
-  Fully-paid display correctly removes further-transfer forms.
-- Mobile 390, tablet 768 and desktop 1440 layouts fit in both themes. Confirmation
-  dialogs and CEO placeholder fields passed locally and on production. Final light
-  feedback contrast was verified on the deployed application.
-- Local HTTP receipt/RLS/role/origin/MIME/size/retry/expiry/immutable tests passed.
-  The same complete suite and browser workflow passed on the deployed site, including
-  private receipt bytes and actual signed-URL expiry. Final synthetic order reached
-  NGN 500,000 verified, zero balance and Fully paid with no further-transfer form.
-- Request creation/CEO configuration were tested in a guarded SQL transaction that
-  restored the original bank row before commit. Other sessions never saw temporary
-  global bank details; only QA requests have explicit NO TRANSFERS snapshots.
-  Positive issuance is RPC-verified; real bank activation is deliberately deferred.
-- Production variable names/scopes confirmed, values never displayed:
-  NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-  SUPABASE_SECRET_KEY, NEXT_PUBLIC_SITE_URL, NEXT_PUBLIC_TCC_DEMO_MODE.
-- Advisors: two deliberate deny-all private ledgers; 13 guarded definer RPC notices;
-  preexisting leaked-password warning; four unrelated missing FK indexes and ten
-  unused-index INFO notices. RLS remains enabled.
-- All four tagged QA Auth users/sessions, two staff memberships, three orders, six
-  payment requests, ten submissions, nine synthetic payments and twelve receipt
-  objects were removed. Related events/notifications/private replay results removed.
-  SQL confirms zero fixtures and active immutable triggers/RLS. Storage deletion used
-  its API after exact-fixture metadata cleanup under owner/exclusive transaction locks.
-- Full-row before/after fingerprints matched for all 31 public/private tables and
-  271 non-test rows. Bank singleton remains byte-equivalent and unconfigured.
-- Test browser contexts closed; temporary manifest, proof, screenshots and one-run
-  helpers removed before closure push. Parent/Worker2 disposable PG data removed;
-  preserve Worker2 worktrees and the PostgreSQL distribution.
-- Vercel runtime logs could not be read: connection has no listed teams, empty team
-  is rejected and observed slug returns 403. No log-drain integration is configured.
-  Do not claim a clean runtime-log audit; browser/HTTP/SQL verification passed.
-- Detailed contract/evidence: PHASE5_ROLLOUT_REPORT.md,
-  PHASE5_IMPLEMENTATION_CONTRACT.md, supabase/PHASE5_DATABASE.md.
+Active staff authorization comes from staff_accounts, not editable Auth metadata.
+Admin operates the atelier; CEO additionally manages staff and bank configuration.
+Inactive staff must not fall back to Client privileges. Session-only cookies can
+survive browser session restore; do not claim guaranteed browser-close detection.
 
-## Completed earlier phases
+## Maintained references
 
-Phase 1 catalogue architecture, Phase 2 active Admin/CEO authorization and Phase 3
-catalogue management are implemented. Stable Fit IDs and Saved Looks are preserved.
-Phase 4 authenticated request/revision/review/approval/order/production workflow is
-live and verified. Both its expansion and security-contract migrations are applied.
-Its final application fix is 3c7d4a9; final documentation checkpoint is 74b05f6.
-See PHASE4_ROLLOUT_REPORT.md for exact deployment, SQL, HTTP, browser and cleanup
-evidence. Phase 4 fixtures were removed; that statement does not refer to Phase 5.
+- TCC_OPERATIONS_GUIDE.md: owner setup, daily workflows and optional business decisions.
+- TCC_TECHNICAL_HANDOVER.md: environment names, roles, storage boundaries and security notes.
+- PHASE5_IMPLEMENTATION_CONTRACT.md, PHASE6_IMPLEMENTATION_CONTRACT.md and
+  PHASE7_IMPLEMENTATION_CONTRACT.md: retained implementation invariants and original scope.
+- supabase/README.md, supabase/PHASE5_DATABASE.md and supabase/PHASE6_DATABASE.md:
+  schema/integration and migration guidance.
+- supabase/PHASE6_HTTP_VERIFICATION.md: guarded HTTP-test setup and cleanup limitations.
+- supabase/migrations/, supabase/tests/, tests/ and scripts/verify-*: maintained
+  migrations and reusable regression tools.
+- public/images/styles/CATALOGUE-ASSET-SOURCES.md: retained image provenance.
 
-Legitimate preserved baseline: one order, two requests, four profiles, two staff,
-24 Fits, 28 current catalogue images and six Saved Looks. The earlier 26-image count
-was stale; preserve current rows. A legitimate staff member created
-the original order during Phase 4 testing; never restore the older zero-order count.
-Connector deployment reads use empty teamId for this connected account scope.
+Historical reports and superseded proposals remain recoverable from Git commit
+69a23c5f9eafcaef391ed5fa635b5f604ae735aa. Read a removed file without restoring it
+with `git show 69a23c5f9eafcaef391ed5fa635b5f604ae735aa:<repository-relative-path>`.
+Do not use historical snapshots as current production truth.
 
-## Phase 3 functionality
+## Local workflow and verification
 
-- `/admin/collections`: live totals, search, filters, Fit inventory, archive controls, and reusable option management.
-- `/admin/collections/new`: validated draft creation.
-- `/admin/collections/[fitId]/edit`: Fit details, lifecycle, fabrics, colours, and gallery management.
-- `/admin/collections/[fitId]/preview`: staff-only preview using the customer presentation with customer actions disabled.
-- Gallery: private JPEG/PNG/WebP upload, 8 MB limit, Fit-scoped paths, persistent ordering, cover selection, alt text, focal position, and confirmed removal.
-- Lifecycle: `draft`, `published`, and `archived`; public queries return published Fits under active categories only.
-- Safe options: published Fits require an active category plus at least one active fabric, active colour, and gallery image.
-- Existing public collection/category filters now derive from live catalogue data.
+Read AGENTS.md and this file first; inspect branch, status and commits before edits.
+Preserve unrelated changes. Local browser port is 3001:
+`npm run dev -- -p 3001`. Avoid concurrent Next dev/build processes writing .next.
 
-## Live Supabase migrations
+Run `npm run typecheck`, `npm run lint` and `npm test` for application changes.
+Run `npm run build` before delivery when production behavior changes. Supabase changes
+also require migration, preservation, RLS/storage and advisor verification. Do not
+run live mutation harnesses without controlled fixtures and explicit scope.
 
-- `20260929131433_phase3_catalogue_management.sql`
-- `20260929131721_phase3_catalogue_policy_optimization.sql`
-- `20260929140000_phase4_commission_core.sql`
-- `20260929140100_phase4_commission_contract.sql`
-- `20261002074022_phase5_payments.sql`
-- `20261005075136_phase5_transfer_date_lagos.sql`
-- `20261006063802_phase6_atelier_expansion.sql`
-- `20261006063803_phase6_atelier_contract.sql`
+After an authorized push, verify exact Git equality, READY deployment and active
+production alias; a successful push alone is not release verification.
+For parallel accounts, use separate worktrees and codex/<task> branches, non-overlapping
+ownership and reviewed integration. Preserve the existing Worker2 worktrees.
 
-Historical Phase 3/4 post-migration preservation check:
-
-- 6 categories
-- 24 published Fits
-- 26 Fit images
-- 12 reusable fabrics and 48 Fit/fabric links
-- 33 reusable colours and 72 Fit/colour links
-- 6 existing Saved Looks
-
-The private `catalogue-media` bucket is configured for JPEG, PNG, and WebP objects up to 8 MB. Anonymous users can read media only for published Fits; active Admin/CEO staff can manage media.
-
-## Verification completed
-
-- TypeScript typecheck: passed.
-- ESLint: passed.
-- Node tests: 18 passed.
-- Next.js production build: passed.
-- Current Phase 4 application checks: TypeScript passed, ESLint passed, 20 Node tests
-  passed, and the optimized Next.js build passed with all 67 routes generated.
-- Phase 4 SQL: native PostgreSQL 17.6 replay passed 48 security and 58 workflow
-  assertions using the repository SQL suites with a local assertion adapter (not the
-  pgTAP extension or a complete local Supabase service). Four real concurrent storage
-  UPDATE/DELETE versus submission tests passed. Existing synthetic rows were preserved.
-- `scripts/verify-phase4-db.mjs` creates and stops an isolated disposable Windows
-  PostgreSQL cluster. Its `--compare-linked` mode compares the pre-expansion baseline
-  and was used before rollout; it is not a current-live-schema comparison after core.
-- Worker2 performed an isolated read-only review. Retry keys now survive interrupted
-  transport within each form, saved measurement intent is deterministic, measurement
-  provenance is visible, and resubmitted special instructions map correctly.
-- Production browser workflow passed creation, changes requested, client resubmission,
-  current-revision approval, conversion, and Admin/CEO stage updates. Unrelated clients
-  cannot view the request/order; Admin is denied CEO-only Staff while CEO is allowed.
-- Contract dry-run listed only `20260929140100`; application succeeded and remote
-  history confirms it. The complete 58-assertion lifecycle suite passed live inside
-  a rolled-back transaction. The final native replay passed 48 security + 58 lifecycle
-  assertions and eight real concurrent storage/workflow race cases.
-- Contact input focus fix: TypeScript, ESLint, 20 tests and production build passed.
-- Post-contract checks: 48 live security assertions and 58 live workflow assertions
-  passed inside rolled-back transactions. All 23 actual Supabase HTTP authentication/
-  RLS checks passed, including forbidden client actions and duplicate conversion.
-- Final application checks after the navigation correction: TypeScript, ESLint,
-  20 tests and optimized production build (67 routes) passed on 2026-10-01.
-- Post-contract advisors rerun: intentional deny-all private operation ledger and six
-  guarded authenticated SECURITY DEFINER RPC notices; preexisting leaked-password
-  protection warning; four unrelated missing FK indexes and 14 unused-index notices.
-  No Phase 4 blocking regression identified. Details: `PHASE4_ROLLOUT_REPORT.md`.
-- Supabase migration rollback tests: passed before application.
-- Supabase catalogue security checks: anonymous insert denied; browser Fit deletion denied; gallery RPC uses invoker rights.
-- Supabase advisors: no Phase 3 security issue; catalogue policy duplication and uploader index findings were remediated.
-- Real temporary CRUD lifecycle under active-staff RLS: create draft, assign options, add/update/reorder gallery metadata, publish, anonymous visibility, archive, anonymous hiding, deactivate, exact cleanup — passed.
-- Cleanup check: zero temporary Phase 3 validation records remain.
-- Public browser verification on port 3001: all 24 Fits rendered; a real Fit detail loaded its three-image gallery and live option data; mobile collection layout was visually checked.
-
-Authenticated Phase 4 Client/Admin/CEO browser checks used isolated temporary accounts,
-not existing staff passwords. Existing users' credentials were not changed. The final
-one-line navigation fix does not change authentication, authorization or database code.
-
-## Key files
-
-- `src/app/admin/collections/` — management UI, server actions, Fit editor, gallery manager, and staff preview routes.
-- `src/lib/catalogue-admin.ts` — shared catalogue types and mutation validation.
-- `src/lib/server/catalogue-management.ts` — staff catalogue snapshot loader.
-- `src/lib/catalogue-server.ts` — public published catalogue loader and private media URL signing.
-- `src/components/admin/ConfirmDialog.tsx` — safe confirmation UI.
-- `supabase/migrations/20260929131433_phase3_catalogue_management.sql` — Phase 3 schema, RLS, RPC, and storage.
-- `supabase/migrations/20260929131721_phase3_catalogue_policy_optimization.sql` — RLS performance cleanup and uploader index.
-- `tests/remediation.test.mts` and `supabase/tests/remediation_security.test.sql` — application and database security assertions.
-
-## Environment and local run
-
-Required public Supabase variable names:
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (preferred) or `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-Do not copy secret values into this file or Git. Keep them in each account's untracked `.env.local` or configured deployment environment.
-
-Local command: `npm run dev -- -p 3001`
-
-## Second Codex account startup
-
-1. Obtain repository access from the owner and clone or pull the latest `main` branch.
-2. Open the repository in Codex; this `AGENTS.md` will be loaded automatically.
-3. Read this handoff and inspect the latest commits before making changes.
-4. Configure that machine/account's untracked `.env.local` with the required variable names.
-5. For independent parallel work, create a separate worktree and `codex/<task>` branch. Do not share one checked-out branch between both accounts.
-6. Update this handoff whenever a task or phase is completed or paused.
-
-## Remaining manual security setting
-
-Supabase currently reports leaked-password protection as disabled. This is an Auth dashboard setting, not a Phase 3 code issue. Enable it in Supabase Auth password-security settings when available for the project plan.
+Optional existing hardening and owner choices are recorded in the maintained guides;
+they are not authorization to begin another phase. In particular, assess leaked-password
+protection availability without silently changing Auth configuration.
 

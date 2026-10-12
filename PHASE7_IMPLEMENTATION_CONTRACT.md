@@ -4,7 +4,8 @@ Started 2026-10-08 (Africa/Lagos). This is the final phase, not a new product ar
 
 ## Entry checkpoint verified before implementation
 
-- Read PROJECT_HANDOFF.md, PHASE6_ROLLOUT_REPORT.md and the complete Phase 7 brief.
+- Read PROJECT_HANDOFF.md, the Phase 6 rollout evidence (now retained in Git history)
+  and the complete Phase 7 brief.
 - Clean main, HEAD and origin/main equal GitHub main:
   `76bbb53318cff0ac541dc5354e42fa4bfdcc7712`.
 - Production alias resolves to READY `dpl_FK3c3Fc7dtRtecTF5rt1CpbZDKsQ`, exact SHA.
