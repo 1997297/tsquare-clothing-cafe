@@ -1,6 +1,7 @@
 # TCC Stage 2.1 — Payment verification visibility and dashboard action indicators
 
-Status: implementation complete; release verification in progress. October 12, 2026 (WAT).
+Status: implementation, production verification and QA cleanup passed.
+October 12, 2026 (WAT). Final documentation checkpoint: see section 8.
 Stage 3 has not started.
 
 ## 1. Payment verification highlighting
@@ -70,8 +71,8 @@ these staff props. No financial decisions or authorization policies were changed
 
 Live temporary-role query checks passed: Admin and CEO match independent SQL;
 Client sees only its own zero counts; anonymous payment-submission access is denied.
-Actual local Client/Admin/CEO browser logins and staff/public guard checks passed.
-Final production deployment verification is pending.
+Actual local and production Client/Admin/CEO browser logins and staff/public guard
+checks passed. These used temporary role accounts, not legitimate users' credentials.
 
 ## 6. Tests and responsive checks
 
@@ -91,7 +92,10 @@ Final production deployment verification is pending.
   Client/Admin/CEO login, public/client staff denial, exact dashboard counts, pending
   filters, request/order destination totals, existing payment-detail access, CEO-only
   bank Edit visibility, all widths/themes, refresh and revisit. No browser errors or
-  business writes. The deployed read-only browser matrix is pending.
+  business writes.
+- Exact application deployment: all 44 production browser checks passed at
+  05:48 WAT on October 12, covering the same roles, responsive/theme matrix,
+  authorized counts, destinations and guards. Zero browser errors or business writes.
 
 No legitimate receipt will be verified/rejected to test presentation. Production
 currently has zero pending payment submissions; positive payment UI/transition cases
@@ -104,7 +108,25 @@ This supersedes the older Stage 2 baseline and preserves subsequent real activit
 Only three clearly tagged temporary Auth identities and two QA staff memberships
 were created. No QA business records, bank edits, financial submissions or emails.
 All same-origin business POSTs are blocked during read-only browser verification.
-Cleanup and final row/password/storage/policy fingerprint comparison are pending.
+All three temporary Auth users and their profiles, two staff memberships, sessions
+and refresh tokens are removed; each corresponding remaining count is zero.
+Deletion was restricted to manifest IDs whose email and stage tag were verified,
+after checking that no business or Storage records referenced those identities.
+
+Final comparison matched all 376 original full-row fingerprints across all 38 tables.
+Bank configuration, payment evidence, verified-payment ledger, order balances and
+client records are unchanged. All five original Auth/password fingerprints, four
+Storage buckets, eight Storage objects and policy fingerprints match. Zero application
+tables lack RLS; zero application triggers are disabled. No snapshot was restored.
+
+The initial cleanup verification timed out after account deletion. A separate Auth
+read confirmed all three accounts absent; only read-only verification was retried,
+using smaller fingerprint-query batches. The final comparison passed without any
+additional deletion or production-data repair.
+
+Stage-owned local credentials, screenshots, generated bundle, browser profiles and
+one-run proof/QA helpers are removed during closure. Reusable synthetic tests remain
+tracked. The non-secret deployment helper is removed after the final READY check.
 No schema migration or RLS/storage-policy change is required for this correction.
 
 ## 8. Git and deployment
@@ -112,11 +134,28 @@ No schema migration or RLS/storage-policy change is required for this correction
 Entry: `9be78d12f5288f54ad4d19f251529e31e0fe3256`, synchronized clean main.
 Entry production: `dpl_5ryVWiZoeYWnqZgqdLFBwC15BaiA`, exact SHA, READY, production,
 main, alias https://tsquare-clothing-cafe.vercel.app.
-Stage 2.1 application commit/push and deployment are pending verification.
+Application commit: `40d7a82cb92cce09b17fc68bdbf0056f6b24889a`, pushed to main with
+verified local/origin/GitHub equality and a clean worktree at the application checkpoint.
+Deployment: `dpl_FYEZ7iTP44t7FexeCbUyopLvW6mq`, READY, production, main, exact commit,
+with https://tsquare-clothing-cafe.vercel.app assigned. Build logs confirm all 68 pages
+and zero catalogue fallback warnings. Git-triggered deployment appeared after a delay;
+no manual deployment, configuration change or extra application commit was needed.
+The production alias was also independently resolved through Vercel's alias API and
+matched that deployment exactly.
+
+The final documentation-only commit updates this report and PROJECT_HANDOFF.md;
+application source is unchanged from the verified commit above. After pushing it,
+verify clean local HEAD/origin/main/GitHub equality, its exact READY deployment and
+the live production alias, then perform a final public/unauthenticated HTTP smoke.
+The final delivery message records that SHA and deployment ID, avoiding a circular
+self-referential commit hash inside this report.
 
 ## 9. Remaining work / manual actions
 
-Remaining release gates: commit/push,
-exact READY deployment, production smoke, stage-owned QA cleanup and final report.
+No unresolved Stage 2.1 application, authorization or production-data blocker remains.
+The final documentation checkpoint described above is the last release operation.
 No manual Supabase configuration or new environment variable is needed.
+No real payment-verification decision was performed; positive receipt transitions
+were tested synthetically to preserve legitimate financial activity.
+Optional pre-existing hardening and future theme work are not Stage 2.1 blockers.
 Stop after Stage 2.1; Stage 3 theme refinement is not authorized by this directive.

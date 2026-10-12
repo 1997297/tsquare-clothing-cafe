@@ -10,9 +10,9 @@ and production alias https://tsquare-clothing-cafe.vercel.app assigned to READY
 deployment `dpl_FK3c3Fc7dtRtecTF5rt1CpbZDKsQ` at that exact SHA.
 Phase 7 implementation and its final authentication release gate have passed.
 This remains the final development phase; no Phase 8 is authorized. The user has
-now authorized the separate post-Phase-7 Stage 1 and Stage 2 corrections below.
+now authorized the separate post-Phase-7 Stage 1, Stage 2 and Stage 2.1 corrections below.
 
-### Post-development Stage 2.1 — verification in progress
+### Post-development Stage 2.1 — production verified; closure documentation checkpoint
 
 - Authorized scope: payment verification visibility and staff Overview action counts
   only. No Stage 3 or new phase. Read STAGE2_1_CORRECTIONS_REPORT.md for definitions.
@@ -28,18 +28,33 @@ now authorized the separate post-Phase-7 Stage 1 and Stage 2 corrections below.
   Known-secret scan: 438 source/browser files, zero matches, no private files tracked.
   Actual Next local production-build matrix: 44 checks passed at 05:37 WAT, with
   all-role logins/guards, correct counts/destinations, no browser errors/business writes.
-  Commit/push, exact deployment, production smoke and cleanup remain; do not claim closure.
+  Application commit 40d7a82cb92cce09b17fc68bdbf0056f6b24889a was pushed and matched
+  local/origin/GitHub main at its checkpoint. READY dpl_FYEZ7iTP44t7FexeCbUyopLvW6mq served
+  that exact SHA with the public alias; build logs show 68 pages/zero catalogue fallbacks.
+  All 44 production browser checks passed at 05:48 WAT, with zero browser errors or
+  business writes. Independent Vercel alias lookup matched the exact deployment.
 - Current production baseline is 38 tables/376 rows and five original Auth users.
   Preserve all activity since earlier reports; never restore an older baseline.
-  Three stage21-tagged temporary Auth identities exist for read-only role/browser QA.
-  Their ignored supabase/.temp/stage21-manifest.json holds cleanup IDs/credentials and
-  baseline fingerprints; never print or commit it. No QA business records were created.
+  Three stage21-tagged temporary Auth identities and their profiles, two staff
+  memberships, sessions and refresh tokens are now removed; all remaining counts
+  are zero. No QA business records were created. Do not recreate these fixtures.
+  All 376 original row fingerprints, five original passwords, four buckets/eight
+  objects and policy fingerprints match. Zero missing RLS/disabled app triggers.
+  The initial verification timed out after deleting the QA identities; account
+  absence was confirmed before retrying only read-only checks in smaller batches.
+  No legitimate data changed and no snapshot was restored.
 - Live RLS-scoped queries match independent SQL: appointments 2; payments, requests,
   order decisions and unread conversations 0. Admin/CEO match; Client sees only own
   zero counts and anonymous cannot read payment submissions. Positive payment and
   transition cases use isolated synthetic fixtures, not legitimate payment decisions.
-- Finish browser QA, review, commit/push, exact READY verification, read-only production
-  smoke and exact stage-owned cleanup, then finalize this section and the report.
+- Stage-owned temporary credentials, screenshots, generated bundle, browser profiles
+  and QA helpers are removed during closure; reusable synthetic tests remain tracked.
+  The non-secret deployment helper is removed after final verification.
+- STAGE2_1_CORRECTIONS_REPORT.md records all nine requested areas and test limitations.
+  Final docs-only clean main/local/origin/GitHub equality and exact READY/production
+  alias are checked after this commit, with the final SHA/deployment recorded in
+  delivery rather than embedded circularly. No manual configuration or Stage 2.1
+  production blocker remains. Stop here; Stage 3 is not authorized.
 
 ### Post-Phase-7 Stage 2 — production verified; final documentation checkpoint
 
